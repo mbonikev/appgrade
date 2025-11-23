@@ -9,6 +9,7 @@ interface ButtonProps {
   onClick?: () => void;
   icon?: React.ReactNode;
   className?: string;
+  active?: boolean;
 }
 
 function Button({
@@ -17,6 +18,7 @@ function Button({
   special = false,
   large = false,
   onClick,
+  active,
   icon,
   className = "",
 }: ButtonProps) {
@@ -26,9 +28,11 @@ function Button({
       className={`w-fit group min-w-[46px] font-semibold rounded-full relative ${
         large ? "h-[60px] px-8 text-xl" : "h-[44px] px-4"
       } ${
-        special ? "text-bodyBg hover:text-bodyBg" : "text-textColorWeak hover:text-textColor"
+        special
+          ? "text-bodyBg hover:text-bodyBg"
+          : "text-textColorWeak hover:text-textColor"
       }
-      
+      ${active && "persist_link"}
       ${className}`}
     >
       {/* hidden text for spacing */}
