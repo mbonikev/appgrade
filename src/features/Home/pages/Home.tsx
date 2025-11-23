@@ -5,9 +5,9 @@ import AppGrid from '../components/AppGrid'
 
 function Home() {
   return (
-    <div className="min-h-screen bg-bodyBg text-textColor">
+    <div className="h-fit bg-bodyBg text-textColor">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 md:px-10">
+      <div className="w-full h-fit px-10 md:px-10 max-md:px-4">
         <FilterBar />
         <ProBanner />
         <AppGrid />
