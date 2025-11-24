@@ -4,7 +4,8 @@ import { RiSearch2Line, RiCloseLine, RiMacbookLine, RiSmartphoneLine } from 'rea
 import SearchSidebar from './SearchSidebar';
 import TrendingView from './TrendingView';
 import ListPreviewView from './ListPreviewView';
-import { categories, uiElements, flows, trendingScreens } from '../data/mockSearchData';
+import ThemesView from './ThemesView';
+import { categories, uiElements, flows, trendingScreens, themes } from '../data/mockSearchData';
 
 interface SearchModalProps {
     isOpen: boolean;
@@ -35,7 +36,9 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
             case 'flows':
                 return <ListPreviewView items={flows} title="Flows" />;
             case 'screens':
-                return <ListPreviewView items={trendingScreens} title="Screens" />; // Reusing trendingScreens for now, ideally would be a full list
+                return <ListPreviewView items={trendingScreens} title="Screens" />;
+            case 'themes':
+                return <ThemesView items={themes} />;
             default:
                 return <TrendingView />;
         }

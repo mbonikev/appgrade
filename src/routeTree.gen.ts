@@ -9,11 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as CreatorsRouteImport } from './routes/creators'
 import { Route as AwardsRouteImport } from './routes/awards'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProfileProfileIdRouteImport } from './routes/profile.$profileId'
 
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CreatorsRoute = CreatorsRouteImport.update({
   id: '/creators',
   path: '/creators',
@@ -34,18 +41,27 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileProfileIdRoute = ProfileProfileIdRouteImport.update({
+  id: '/$profileId',
+  path: '/$profileId',
+  getParentRoute: () => ProfileRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/awards': typeof AwardsRoute
   '/creators': typeof CreatorsRoute
+  '/profile': typeof ProfileRouteWithChildren
+  '/profile/$profileId': typeof ProfileProfileIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/awards': typeof AwardsRoute
   '/creators': typeof CreatorsRoute
+  '/profile': typeof ProfileRouteWithChildren
+  '/profile/$profileId': typeof ProfileProfileIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +69,34 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/awards': typeof AwardsRoute
   '/creators': typeof CreatorsRoute
+  '/profile': typeof ProfileRouteWithChildren
+  '/profile/$profileId': typeof ProfileProfileIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/awards' | '/creators'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/awards'
+    | '/creators'
+    | '/profile'
+    | '/profile/$profileId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/awards' | '/creators'
-  id: '__root__' | '/' | '/about' | '/awards' | '/creators'
+  to:
+    | '/'
+    | '/about'
+    | '/awards'
+    | '/creators'
+    | '/profile'
+    | '/profile/$profileId'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/awards'
+    | '/creators'
+    | '/profile'
+    | '/profile/$profileId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,10 +104,18 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AwardsRoute: typeof AwardsRoute
   CreatorsRoute: typeof CreatorsRoute
+  ProfileRoute: typeof ProfileRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/creators': {
       id: '/creators'
       path: '/creators'
@@ -99,14 +144,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile/$profileId': {
+      id: '/profile/$profileId'
+      path: '/$profileId'
+      fullPath: '/profile/$profileId'
+      preLoaderRoute: typeof ProfileProfileIdRouteImport
+      parentRoute: typeof ProfileRoute
+    }
   }
 }
+
+interface ProfileRouteChildren {
+  ProfileProfileIdRoute: typeof ProfileProfileIdRoute
+}
+
+const ProfileRouteChildren: ProfileRouteChildren = {
+  ProfileProfileIdRoute: ProfileProfileIdRoute,
+}
+
+const ProfileRouteWithChildren =
+  ProfileRoute._addFileChildren(ProfileRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AwardsRoute: AwardsRoute,
   CreatorsRoute: CreatorsRoute,
+  ProfileRoute: ProfileRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

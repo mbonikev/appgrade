@@ -9,7 +9,7 @@ import {
   LuMoon,
   LuSunMedium,
 } from "react-icons/lu";
-import { useRouter } from "@tanstack/react-router";
+import { useRouter, Link } from "@tanstack/react-router";
 import SearchModal from "../../features/Search/components/SearchModal";
 
 const themes = ["light", "dark", "system"] as const;
@@ -128,7 +128,7 @@ function Navbar() {
                 key={item.label}
                 label={item.label}
                 active={currentPath === item.to}
-                onClick={() => router.navigate({ to: item.to })}
+                to={item.to}
                 className="text-textColor hover:text-mainColor"
               />
             ))}
@@ -195,9 +195,13 @@ function Navbar() {
                       tgusenga2003@gmail.com
                     </p>
 
-                    <button className="w-full px-4 py-2 bg-cardItemBg font-semibold rounded-full text-textColor hover:bg-mainColor hover:text-white hover:transition">
+                    <Link
+                      to="/profile"
+                      className="w-full block text-center px-4 py-2 bg-cardItemBg font-semibold rounded-full text-textColor hover:bg-mainColor hover:text-white hover:transition"
+                      onClick={() => setOpenProfile(false)}
+                    >
                       View profile
-                    </button>
+                    </Link>
                   </div>
                   <div className="flex flex-col gap- border-t border-b border-cardItemBg px-2 py-2">
                     <div className="text-left py-0.5 text-textColor pl-3 pr-2 font-medium flex items-center justify-between">
@@ -324,7 +328,8 @@ function Navbar() {
                       key={item.label}
                       label={item.label}
                       active={currentPath === item.to}
-                      onClick={() => router.navigate({ to: item.to })}
+                      to={item.to}
+                      onClick={() => setOpenMenu(false)}
                       className="text-textColor hover:text-mainColor"
                     />
                   ))}
@@ -339,7 +344,7 @@ function Navbar() {
             </motion.div>
           </>
         )}
-      </AnimatePresence>
+      </AnimatePresence >
 
       <SearchModal isOpen={openSearchModal} onClose={() => setOpenSearchModal(false)} />
     </>

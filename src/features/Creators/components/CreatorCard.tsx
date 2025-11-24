@@ -6,9 +6,17 @@ interface CreatorCardProps {
     creator: Creator;
 }
 
+import { Link } from '@tanstack/react-router';
+
+// ... imports
+
 const CreatorCard: React.FC<CreatorCardProps> = ({ creator }) => {
     return (
-        <div className="group relative bg-cardBg rounded-3xl overflow-hidden hover:bg-cardItemBg transition-colors duration-300 cursor-pointer flex flex-col h-full">
+        <Link
+            to="/profile/$profileId"
+            params={{ profileId: creator.id }}
+            className="group relative bg-cardBg rounded-3xl overflow-hidden hover:bg-cardItemBg transition-colors duration-300 cursor-pointer flex flex-col h-full"
+        >
             {/* Cover Image */}
             <div className="h-24 w-full overflow-hidden">
                 <img
@@ -60,7 +68,7 @@ const CreatorCard: React.FC<CreatorCardProps> = ({ creator }) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </Link>
     );
 };
 

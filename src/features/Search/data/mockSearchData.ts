@@ -5,7 +5,9 @@ export interface SearchItem {
     image?: string;
     category?: string;
     group?: string;
-    type: 'app' | 'screen' | 'ui_element' | 'flow' | 'category';
+    font?: string;
+    colors?: string[];
+    type: 'app' | 'screen' | 'ui_element' | 'flow' | 'category' | 'theme';
 }
 
 export const trendingApps: SearchItem[] = [
@@ -58,6 +60,17 @@ export const categories: SearchItem[] = [
     { id: 'c4', name: 'SaaS', count: 250, type: 'category', image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=500' },
     { id: 'c5', name: 'Agency', count: 200, type: 'category', image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=500' },
     { id: 'c6', name: 'Education', count: 180, type: 'category', image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=500' },
+];
+
+export const themes: SearchItem[] = [
+    { id: 't1', name: 'Medium', type: 'theme', font: 'sohne', colors: ['#22c55e', '#ffffff', '#1f2937'] },
+    { id: 't2', name: 'Lemon Squeezy', type: 'theme', font: 'Inter', colors: ['#8b5cf6', '#ffffff', '#1f2937'] },
+    { id: 't3', name: 'Clay', type: 'theme', font: 'Verlag', colors: ['#f97316', '#ffffff', '#1f2937'] },
+    { id: 't4', name: 'Loom', type: 'theme', font: 'Circular', colors: ['#6366f1', '#ffffff', '#1f2937'] },
+    { id: 't5', name: 'Equals', type: 'theme', font: 'Aeonik Pro', colors: ['#2563eb', '#ffffff', '#000000'] },
+    { id: 't6', name: 'Dovetail', type: 'theme', font: 'Plus Jakarta Sans', colors: ['#6366f1', '#ffffff', '#1e1b4b'] },
+    { id: 't7', name: 'IFTTT', type: 'theme', font: 'Avenir Next', colors: ['#000000', '#ffffff', '#333333'] },
+    { id: 't8', name: 'Basecamp', type: 'theme', font: '', colors: ['#facc15', '#ffffff', '#0f172a'] },
 ];
 
 export const searchTags = [

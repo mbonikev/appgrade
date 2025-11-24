@@ -13,6 +13,7 @@ const SearchSidebar: React.FC<SearchSidebarProps> = ({ activeTab, setActiveTab }
         { id: 'screens', label: 'Screens', icon: HiViewGrid },
         { id: 'ui_elements', label: 'UI Elements', icon: HiTemplate },
         { id: 'flows', label: 'Flows', icon: HiLightningBolt },
+        { id: 'themes', label: 'Themes', icon: HiCollection },
     ];
 
     return (
