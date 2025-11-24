@@ -6,7 +6,7 @@ import TrendingView from './TrendingView';
 import ListPreviewView from './ListPreviewView';
 import ThemesView from './ThemesView';
 import CreatorsView from './CreatorsView';
-import { categories, uiElements, trendingScreens, themes } from '../data/mockSearchData';
+import { uiElements, trendingScreens, themes } from '../data/mockSearchData';
 import { topCreators, mostActiveCreators } from '../../Creators/data/mockCreators';
 
 interface SearchModalProps {
@@ -31,8 +31,8 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
         switch (activeTab) {
             case 'trending':
                 return <TrendingView />;
-            case 'categories':
-                return <ListPreviewView items={categories} title="Categories" />;
+            // case 'categories':
+            //     return <ListPreviewView items={categories} title="Categories" />;
             case 'ui_elements':
                 return <ListPreviewView items={uiElements} title="UI Elements" />;
             // case 'flows':
@@ -78,10 +78,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 autoFocus
                             />
-                            {/* <div className="flex items-center gap-2 text-textColorWeak">
-                                <RiSmartphoneLine className="text-xl hover:text-textColor cursor-pointer" />
-                                <RiMacbookLine className="text-xl hover:text-textColor cursor-pointer" />
-                            </div> */}
+
                             <div className="w-px h-6 bg-linesColor" />
                             <button
                                 onClick={onClose}

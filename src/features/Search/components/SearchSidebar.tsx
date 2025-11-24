@@ -22,7 +22,7 @@ const SearchSidebar: React.FC<SearchSidebarProps> = ({
 
   const menuItems = [
     { id: "trending", label: "Trending", icon: HiTrendingUp },
-    { id: "categories", label: "Categories", icon: HiCollection },
+    // { id: "categories", label: "Categories", icon: HiCollection },
     { id: "screens", label: "Screens", icon: HiViewGrid },
     { id: "ui_elements", label: "UI Elements", icon: HiTemplate },
     { id: "themes", label: "Themes", icon: HiCollection },
@@ -42,37 +42,36 @@ const SearchSidebar: React.FC<SearchSidebarProps> = ({
           </span>
           <span className="text-2xl">{openMobileMenu ? <BiChevronUp /> : <BiChevronDown />}</span>
         </button>
-        
+
         <div className="relative w-full">
-        <AnimatePresence>
-          {openMobileMenu && (
-            <motion.div
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.18 }}
-              className="absolute w-full left-0 top-0 z-20 ring-1 ring-linesColor mt-2 bg-bodyBg p-2 rounded-[28px] flex flex-col gap-1 overflow-hidden shadow-lg"
-            >
-              {menuItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setActiveTab(item.id);
-                    setOpenMobileMenu(false);
-                  }}
-                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-3xl font-medium transition-colors ${
-                    activeTab === item.id
-                      ? "bg-mainColor text-white"
-                      : "text-textColorWeak hover:bg-cardBg hover:text-textColor"
-                  }`}
-                >
-                  <item.icon className="text-xl" />
-                  {item.label}
-                </button>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence></div>
+          <AnimatePresence>
+            {openMobileMenu && (
+              <motion.div
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.18 }}
+                className="absolute w-full left-0 top-0 z-20 ring-1 ring-linesColor mt-2 bg-bodyBg p-2 rounded-[28px] flex flex-col gap-1 overflow-hidden shadow-lg"
+              >
+                {menuItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActiveTab(item.id);
+                      setOpenMobileMenu(false);
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-3xl font-medium transition-colors ${activeTab === item.id
+                        ? "bg-mainColor text-white"
+                        : "text-textColorWeak hover:bg-cardBg hover:text-textColor"
+                      }`}
+                  >
+                    <item.icon className="text-xl" />
+                    {item.label}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence></div>
       </div>
 
       {/* Desktop sidebar */}
@@ -81,11 +80,10 @@ const SearchSidebar: React.FC<SearchSidebarProps> = ({
           <button
             key={item.id}
             onClick={() => setActiveTab(item.id)}
-            className={`flex items-center gap-3 px-4 py-2.5 rounded-2xl text-base font-medium transition-colors ${
-              activeTab === item.id
+            className={`flex items-center gap-3 px-4 py-2.5 rounded-2xl text-base font-medium transition-colors ${activeTab === item.id
                 ? "bg-cardItemBg text-textColor"
                 : "text-textColorWeak hover:text-textColor hover:bg-cardItemBg"
-            }`}
+              }`}
           >
             <item.icon className="text-xl" />
             {item.label}

@@ -3,14 +3,19 @@ import type { SearchItem } from '../data/mockSearchData';
 
 interface ThemesViewProps {
     items: SearchItem[];
+    selectedCategory?: string;
 }
 
-const ThemesView: React.FC<ThemesViewProps> = ({ items }) => {
+const ThemesView: React.FC<ThemesViewProps> = ({ items, selectedCategory = 'All' }) => {
+    const filteredItems = selectedCategory === 'All'
+        ? items
+        : items.filter(item => item.category === selectedCategory);
+
     return (
         <div className="flex-1 h-full overflow-y-auto px-6 py-2">
             <h3 className="text-textColorWeak text-sm font-medium mb-4">Themes</h3>
             <div className="flex flex-col gap-1">
-                {items.map((item) => (
+                {filteredItems.map((item) => (
                     <div
                         key={item.id}
                         className="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer hover:bg-cardItemBg transition-colors group"

@@ -6,7 +6,19 @@ import {
 } from "../data/mockSearchData";
 import { RiSearch2Line } from "react-icons/ri";
 
-const TrendingView: React.FC = () => {
+interface TrendingViewProps {
+  selectedCategory?: string;
+}
+
+const TrendingView: React.FC<TrendingViewProps> = ({ selectedCategory = 'All' }) => {
+  const filteredApps = selectedCategory === 'All'
+    ? trendingApps
+    : trendingApps.filter(app => app.category === selectedCategory);
+
+  const filteredScreens = selectedCategory === 'All'
+    ? trendingScreens
+    : trendingScreens.filter(screen => screen.category === selectedCategory);
+
   return (
     <div className="flex-1 px-6 py-2 overflow-y-auto">
       {/* Recent Searchs */}
@@ -25,7 +37,7 @@ const TrendingView: React.FC = () => {
       {/* Apps Row */}
       <h3 className="text-textColorWeak text-sm font-medium mb-4">Apps</h3>
       <div className="flex flex-wrap gap-4 mb-8 p-1 overflow-x-auto pb-4 scrollbar-hide">
-        {trendingApps.map((app) => (
+        {filteredApps.map((app) => (
           <div
             key={app.id}
             className="flex-shrink-0 size-16 bg-cardBg ring-1 ring-linesColor rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transition-transform flex items-center justify-center shadow-sm"
@@ -43,7 +55,7 @@ const TrendingView: React.FC = () => {
       <div>
         <h3 className="text-textColorWeak text-sm font-medium mb-4">Screens</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {trendingScreens.slice(0, 4).map((screen) => (
+          {filteredScreens.slice(0, 4).map((screen) => (
             <div key={screen.id} className="group cursor-pointer">
               <div className="aspect-[4/3] bg-cardBg rounded-2xl overflow-hidden mb-2 relative border border-linesColor">
                 <img

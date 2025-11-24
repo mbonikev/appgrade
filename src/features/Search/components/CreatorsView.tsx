@@ -7,17 +7,26 @@ interface CreatorsViewProps {
     items: Creator[];
     searchQuery: string;
     onClose: () => void;
+    selectedCategory?: string;
 }
 
-const CreatorsView: React.FC<CreatorsViewProps> = ({ items, searchQuery, onClose }) => {
+const CreatorsView: React.FC<CreatorsViewProps> = ({ items, searchQuery, onClose, selectedCategory = 'All' }) => {
     const filteredItems = useMemo(() => {
-        if (!searchQuery) return items;
+        let result = items;
+
+        // Filter by category if needed (assuming creators have categories, if not, this might need adjustment or be omitted)
+        // For now, assuming creators might not have categories directly, but if they did:
+        // if (selectedCategory !== 'All') {
+        //     result = result.filter(item => item.category === selectedCategory);
+        // }
+
+        if (!searchQuery) return result;
         const query = searchQuery.toLowerCase();
-        return items.filter(item =>
+        return result.filter(item =>
             item.name.toLowerCase().includes(query) ||
             item.username.toLowerCase().includes(query)
         );
-    }, [items, searchQuery]);
+    }, [items, searchQuery, selectedCategory]);
 
     return (
         <div className="flex-1 overflow-y-auto px-6 py-2">
@@ -31,7 +40,7 @@ const CreatorsView: React.FC<CreatorsViewProps> = ({ items, searchQuery, onClose
                     <thead>
                         <tr className="border-b border-linesColor bg-cardItemBg/50">
                             <th className="p-4 font-medium text-textColorWeak text-sm">Designer</th>
-                           
+
                             <th className="p-4 font-medium text-textColorWeak text-sm text-right">Followers</th>
                             <th className="p-4 font-medium text-textColorWeak text-sm text-right">Apps</th>
                         </tr>

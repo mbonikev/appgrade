@@ -5,9 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 interface ListPreviewViewProps {
     items: SearchItem[];
     title: string;
+    selectedCategory?: string;
 }
 
-const ListPreviewView: React.FC<ListPreviewViewProps> = ({ items }) => {
+const ListPreviewView: React.FC<ListPreviewViewProps> = ({ items, selectedCategory = 'All' }) => {
     const [hoveredItem, setHoveredItem] = useState<SearchItem | null>(null);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
@@ -20,8 +21,12 @@ const ListPreviewView: React.FC<ListPreviewViewProps> = ({ items }) => {
         return () => window.removeEventListener('mousemove', handleMouseMove);
     }, []);
 
+    const filteredItems = selectedCategory === 'All'
+        ? items
+        : items.filter(item => item.category === selectedCategory);
+
     // Group items
-    const groupedItems = items.reduce((acc, item) => {
+    const groupedItems = filteredItems.reduce((acc, item) => {
         const group = item.group || 'Other';
         if (!acc[group]) acc[group] = [];
         acc[group].push(item);
