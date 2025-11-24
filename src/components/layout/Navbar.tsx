@@ -11,6 +11,7 @@ import {
 } from "react-icons/lu";
 import { useRouter, Link } from "@tanstack/react-router";
 import SearchModal from "../../features/Search/components/SearchModal";
+import SubmitProjectModal from "../../features/Submit/components/SubmitProjectModal";
 
 const themes = ["light", "dark", "system"] as const;
 type Theme = (typeof themes)[number];
@@ -18,6 +19,7 @@ type Theme = (typeof themes)[number];
 function Navbar() {
   const [openSearch, setOpenSearch] = useState(false);
   const [openSearchModal, setOpenSearchModal] = useState(false);
+  const [openSubmitModal, setOpenSubmitModal] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState(false);
@@ -165,7 +167,10 @@ function Navbar() {
             special
             label="Submit Project"
             className="text-white hover:text-white px-5 hidden md:block"
+            onClick={() => setOpenSubmitModal(true)}
           />
+
+          <SubmitProjectModal isOpen={openSubmitModal} onClose={() => setOpenSubmitModal(false)} />
 
           <div className="relative" ref={profileRef}>
             <div
