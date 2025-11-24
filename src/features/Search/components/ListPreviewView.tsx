@@ -36,7 +36,7 @@ const ListPreviewView: React.FC<ListPreviewViewProps> = ({ items, title }) => {
     });
 
     return (
-        <div className="flex-1 h-full overflow-y-auto p-6 relative">
+        <div className="flex-1 h-full overflow-y-auto px-6 py-2 relative">
             {groups.map((group) => (
                 <div key={group} className="mb-8">
                     {group !== 'Other' && (
@@ -52,11 +52,11 @@ const ListPreviewView: React.FC<ListPreviewViewProps> = ({ items, title }) => {
                                 onMouseLeave={() => setHoveredItem(null)}
                                 className="flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer hover:bg-cardItemBg transition-colors group"
                             >
-                                <span className="text-textColor font-medium group-hover:text-white transition-colors">
+                                <span className="text-textColor font-medium transition-colors">
                                     {item.name}
                                 </span>
                                 {item.count && (
-                                    <span className="text-textColorWeak text-sm group-hover:text-white/60 transition-colors">
+                                    <span className="text-textColorWeak text-sm transition-colors">
                                         {item.count.toLocaleString()}
                                     </span>
                                 )}

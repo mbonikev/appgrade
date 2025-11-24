@@ -74,7 +74,7 @@ export const themes: SearchItem[] = [
 ];
 
 export const searchTags = [
-    { label: 'Brilliant', icon: 'https://logo.clearbit.com/brilliant.org' },
+    { label: 'Brilliant', icon: null },
     { label: 'trading', icon: null },
     { label: 'agency', icon: null },
     { label: 'bank', icon: null },

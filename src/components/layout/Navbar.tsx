@@ -4,14 +4,11 @@ import Button from "../ui/Button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRef, useEffect } from "react";
 import { MdArrowOutward } from "react-icons/md";
-import {
-  LuLaptopMinimal,
-  LuMoon,
-  LuSunMedium,
-} from "react-icons/lu";
+import { LuLaptopMinimal, LuMoon, LuSunMedium } from "react-icons/lu";
 import { useRouter, Link } from "@tanstack/react-router";
 import SearchModal from "../../features/Search/components/SearchModal";
 import SubmitProjectModal from "../../features/Submit/components/SubmitProjectModal";
+import { Logo } from "../../assets";
 
 const themes = ["light", "dark", "system"] as const;
 type Theme = (typeof themes)[number];
@@ -111,6 +108,11 @@ function Navbar() {
 
   return (
     <>
+      <SubmitProjectModal
+        isOpen={openSubmitModal}
+        onClose={() => setOpenSubmitModal(false)}
+      />
+
       <div className="w-full flex items-center justify-between sticky top-0 z-40 py-4 px-4 md:px-10 gap-2 bg-bodyBgWeak backdrop-blur-xl">
         {/* Left */}
         <div className="flex items-center">
@@ -121,7 +123,7 @@ function Navbar() {
             >
               <RiMenu2Fill />
             </button>
-            <img src="./logo.svg" className="h-8 mr-5" />
+            <img src={Logo} className="h-8 mr-5" />
           </div>
 
           <div id="menu" className="hidden md:flex items-center gap-0">
@@ -140,7 +142,7 @@ function Navbar() {
         {/* Middle search */}
         <div className="hidden md:flex flex-1 justify-center">
           <label
-            className="w-full max-w-[500px] flex items-center gap-3 bg-cardBg px-4 rounded-full text-textColor cursor-pointer hover:bg-cardItemBg transition-colors"
+            className="w-full max-w-[500px] flex items-center gap-3 bg-cardBg px-4 rounded-full text-textColor cursor-pointer hover:bg-cardItemBg hover:transition-colors"
             onClick={() => setOpenSearchModal(true)}
           >
             <RiSearch2Line className="text-textColor text-xl" />
@@ -153,7 +155,7 @@ function Navbar() {
         {/* Right */}
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setOpenSearch(true)}
+            onClick={() => setOpenSearchModal(true)}
             className="md:hidden text-textColor text-2xl p-2 rounded-full bg-cardBg"
           >
             <RiSearch2Line />
@@ -169,9 +171,6 @@ function Navbar() {
             className="text-white hover:text-white px-5 hidden md:block"
             onClick={() => setOpenSubmitModal(true)}
           />
-
-          <SubmitProjectModal isOpen={openSubmitModal} onClose={() => setOpenSubmitModal(false)} />
-
           <div className="relative" ref={profileRef}>
             <div
               className="size-10 md:size-11 rounded-full bg-cardBg shadow-md ml-2 overflow-hidden cursor-pointer"
@@ -251,49 +250,6 @@ function Navbar() {
         </div>
       </div>
 
-      {/* Mobile search */}
-      <AnimatePresence>
-        {openSearch && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.17 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-start justify-center p-4 max-sm:p-0 z-50"
-          >
-            <motion.div
-              initial={{ y: 30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 30, opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              className="w-full max-w-[500px] max-sm:h-svh max-h-svh overflow-y-auto bg-bodyBg rounded-[30px] max-sm:rounded-none p-4 shadow-lg mt-10 max-sm:mt-0 flex flex-col"
-            >
-              <div className="flex items-center gap-3 bg-cardBg px-4 py-3 rounded-full">
-                <RiSearch2Line className="text-textColor text-xl" />
-                <input
-                  type="text"
-                  placeholder="Search a project..."
-                  className="bg-transparent outline-none font-medium text-base w-full text-textColor placeholder-textColorWeak"
-                  autoFocus
-                />
-              </div>
-
-              <div className="w-full flex-1 flex flex-col gap-2 py-16 items-center justify-center">
-                <RiSearch2Line className="text-textColorWeak text-4xl opacity-25" />
-                <p className="text-textColorWeak">Type Something...</p>
-              </div>
-
-              <Button
-                label="Close"
-                special
-                onClick={() => setOpenSearch(false)}
-                className="mt-3 w-full min-h-[48px] text-white hover:text-white"
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Left Sidebar / Mobile Menu */}
       <AnimatePresence>
         {openMenu && (
@@ -349,9 +305,12 @@ function Navbar() {
             </motion.div>
           </>
         )}
-      </AnimatePresence >
+      </AnimatePresence>
 
-      <SearchModal isOpen={openSearchModal} onClose={() => setOpenSearchModal(false)} />
+      <SearchModal
+        isOpen={openSearchModal}
+        onClose={() => setOpenSearchModal(false)}
+      />
     </>
   );
 }

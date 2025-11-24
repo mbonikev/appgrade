@@ -5,7 +5,7 @@ import SearchSidebar from './SearchSidebar';
 import TrendingView from './TrendingView';
 import ListPreviewView from './ListPreviewView';
 import ThemesView from './ThemesView';
-import DesignersView from './DesignersView';
+import CreatorsView from './CreatorsView';
 import { categories, uiElements, flows, trendingScreens, themes } from '../data/mockSearchData';
 import { topCreators, mostActiveCreators } from '../../Creators/data/mockCreators';
 
@@ -35,14 +35,14 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
                 return <ListPreviewView items={categories} title="Categories" />;
             case 'ui_elements':
                 return <ListPreviewView items={uiElements} title="UI Elements" />;
-            case 'flows':
-                return <ListPreviewView items={flows} title="Flows" />;
+            // case 'flows':
+            //     return <ListPreviewView items={flows} title="Flows" />;
             case 'screens':
                 return <ListPreviewView items={trendingScreens} title="Screens" />;
             case 'themes':
                 return <ThemesView items={themes} />;
-            case 'designers':
-                return <DesignersView items={[...topCreators, ...mostActiveCreators]} searchQuery={searchQuery} onClose={onClose} />;
+            case 'creators':
+                return <CreatorsView items={[...topCreators, ...mostActiveCreators]} searchQuery={searchQuery} onClose={onClose} />;
             default:
                 return <TrendingView />;
         }
@@ -51,12 +51,12 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 max-md:p-0">
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
                         onClick={onClose}
                     />
 
@@ -65,34 +65,34 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         transition={{ duration: 0.2 }}
-                        className="relative w-full max-w-5xl h-[80vh] bg-modalBg rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-linesColor"
+                        className="relative w-full max-w-5xl h-[80vh] max-md:h-svh bg-modalBg rounded-3xl max-md:rounded-none shadow-2xl overflow-hidden flex flex-col"
                     >
                         {/* Header */}
-                        <div className="flex items-center gap-4 p-4 border-b border-linesColor bg-modalBg z-10">
+                        <div className="flex items-center gap-5 py-3 px-5 bg-modalBg z-10">
                             <RiSearch2Line className="text-textColorWeak text-xl" />
                             <input
                                 type="text"
                                 placeholder="Web Apps, Screens, UI Elements, Flows or Keywords..."
-                                className="flex-1 bg-transparent text-lg text-textColor placeholder-textColorWeak outline-none"
+                                className="flex-1 bg-transparent text-base text-textColor placeholder-textColorWeak outline-none"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 autoFocus
                             />
-                            <div className="flex items-center gap-2 text-textColorWeak">
+                            {/* <div className="flex items-center gap-2 text-textColorWeak">
                                 <RiSmartphoneLine className="text-xl hover:text-textColor cursor-pointer" />
                                 <RiMacbookLine className="text-xl hover:text-textColor cursor-pointer" />
-                            </div>
-                            <div className="w-px h-6 bg-linesColor mx-2" />
+                            </div> */}
+                            <div className="w-px h-6 bg-linesColor" />
                             <button
                                 onClick={onClose}
-                                className="p-1 hover:bg-cardBg rounded-lg text-textColorWeak hover:text-textColor transition-colors"
+                                className="p-2 hover:bg-cardItemBg rounded-full text-textColorWeak hover:text-textColor transition-colors"
                             >
                                 <RiCloseLine className="text-2xl" />
                             </button>
                         </div>
 
                         {/* Main Content Area */}
-                        <div className="flex flex-1 overflow-hidden bg-bodyBgWeak">
+                        <div className="flex flex-1 max-md:flex-col overflow-hidden bg-modalBgWeak pb-5">
                             <SearchSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
                             {renderContent()}
                         </div>
