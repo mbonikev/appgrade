@@ -5,7 +5,9 @@ import SearchSidebar from './SearchSidebar';
 import TrendingView from './TrendingView';
 import ListPreviewView from './ListPreviewView';
 import ThemesView from './ThemesView';
+import DesignersView from './DesignersView';
 import { categories, uiElements, flows, trendingScreens, themes } from '../data/mockSearchData';
+import { topCreators, mostActiveCreators } from '../../Creators/data/mockCreators';
 
 interface SearchModalProps {
     isOpen: boolean;
@@ -39,6 +41,8 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
                 return <ListPreviewView items={trendingScreens} title="Screens" />;
             case 'themes':
                 return <ThemesView items={themes} />;
+            case 'designers':
+                return <DesignersView items={[...topCreators, ...mostActiveCreators]} searchQuery={searchQuery} onClose={onClose} />;
             default:
                 return <TrendingView />;
         }

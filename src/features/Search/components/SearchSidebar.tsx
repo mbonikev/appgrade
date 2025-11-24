@@ -1,5 +1,5 @@
 import React from 'react';
-import { HiTrendingUp, HiViewGrid, HiTemplate, HiCollection, HiLightningBolt } from 'react-icons/hi';
+import { HiTrendingUp, HiViewGrid, HiTemplate, HiCollection, HiLightningBolt, HiUserGroup } from 'react-icons/hi';
 
 interface SearchSidebarProps {
     activeTab: string;
@@ -14,6 +14,7 @@ const SearchSidebar: React.FC<SearchSidebarProps> = ({ activeTab, setActiveTab }
         { id: 'ui_elements', label: 'UI Elements', icon: HiTemplate },
         { id: 'flows', label: 'Flows', icon: HiLightningBolt },
         { id: 'themes', label: 'Themes', icon: HiCollection },
+        { id: 'designers', label: 'Designers', icon: HiUserGroup },
     ];
 
     return (
@@ -23,8 +24,8 @@ const SearchSidebar: React.FC<SearchSidebarProps> = ({ activeTab, setActiveTab }
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${activeTab === item.id
-                            ? 'bg-cardItemBg text-white'
-                            : 'text-textColorWeak hover:text-textColor hover:bg-cardBg'
+                        ? 'bg-cardItemBg text-white'
+                        : 'text-textColorWeak hover:text-textColor hover:bg-cardBg'
                         }`}
                 >
                     <item.icon className="text-lg" />
