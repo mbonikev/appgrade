@@ -10,7 +10,7 @@ const CreatorsPage: React.FC = () => {
 
             <div className="w-full h-fit px-10 md:px-10 max-md:px-4">
                 {/* Header Section */}
-                <div className="mb-12 text-center max-w-2xl mx-auto">
+                <div className="mb-12 mt-16 text-center max-w-2xl mx-auto">
                     <h1 className="text-4xl md:text-5xl font-bold mb-4 text-textColor">
                         Meet the Creators
                     </h1>
