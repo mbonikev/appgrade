@@ -6,17 +6,18 @@ import { useRef, useEffect } from "react";
 import { MdArrowOutward } from "react-icons/md";
 import {
   LuLaptopMinimal,
-  LuMonitor,
   LuMoon,
   LuSunMedium,
 } from "react-icons/lu";
 import { useRouter } from "@tanstack/react-router";
+import SearchModal from "../../features/Search/components/SearchModal";
 
 const themes = ["light", "dark", "system"] as const;
 type Theme = (typeof themes)[number];
 
 function Navbar() {
   const [openSearch, setOpenSearch] = useState(false);
+  const [openSearchModal, setOpenSearchModal] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState(false);
@@ -136,13 +137,14 @@ function Navbar() {
 
         {/* Middle search */}
         <div className="hidden md:flex flex-1 justify-center">
-          <label className="w-full max-w-[500px] flex items-center gap-3 bg-cardBg px-4 rounded-full text-textColor">
+          <label
+            className="w-full max-w-[500px] flex items-center gap-3 bg-cardBg px-4 rounded-full text-textColor cursor-pointer hover:bg-cardItemBg transition-colors"
+            onClick={() => setOpenSearchModal(true)}
+          >
             <RiSearch2Line className="text-textColor text-xl" />
-            <input
-              type="text"
-              placeholder="Search a project.."
-              className="bg-transparent outline-none font-medium h-[48px] text-base w-full text-textColor placeholder-textColorWeak"
-            />
+            <div className="bg-transparent font-medium h-[48px] flex items-center text-base w-full text-textColorWeak select-none">
+              Search a project...
+            </div>
           </label>
         </div>
 
@@ -338,6 +340,8 @@ function Navbar() {
           </>
         )}
       </AnimatePresence>
+
+      <SearchModal isOpen={openSearchModal} onClose={() => setOpenSearchModal(false)} />
     </>
   );
 }

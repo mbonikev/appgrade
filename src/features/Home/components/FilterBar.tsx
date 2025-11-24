@@ -22,11 +22,10 @@ const FilterBar = () => {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`font-medium transition-colors duration-200 pt-2 pb-1 border-b-2 ${
-              activeTab === tab
+            className={`font-medium transition-colors duration-200 pt-2 pb-1 border-b-2 ${activeTab === tab
                 ? "text-textColor border-textColor"
                 : "text-textColorWeak border-transparent hover:text-textColor"
-            }`}
+              }`}
           >
             {tab}
           </button>
