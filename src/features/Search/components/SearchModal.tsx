@@ -72,7 +72,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
                             <RiSearch2Line className="text-textColorWeak text-xl" />
                             <input
                                 type="text"
-                                placeholder="Web Apps, Screens, UI Elements, Flows or Keywords..."
+                                placeholder="Web Apps, Screens, UI Elements, Creators or Keywords..."
                                 className="flex-1 bg-transparent text-base text-textColor placeholder-textColorWeak outline-none"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}

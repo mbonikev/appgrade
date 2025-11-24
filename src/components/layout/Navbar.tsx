@@ -147,7 +147,7 @@ function Navbar() {
           >
             <RiSearch2Line className="text-textColor text-xl" />
             <div className="bg-transparent font-medium h-[48px] flex items-center text-base w-full text-textColorWeak select-none">
-              Search a project...
+              Search...
             </div>
           </label>
         </div>

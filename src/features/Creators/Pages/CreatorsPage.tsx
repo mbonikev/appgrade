@@ -14,7 +14,7 @@ const CreatorsPage: React.FC = () => {
                     <h1 className="text-4xl md:text-5xl font-bold mb-4 text-textColor">
                         Meet the Creators
                     </h1>
-                    <p className="text-textColorWeak text-lg">
+                    <p className="text-textColorWeak text-lg max-md:text-base max-w-[80%] mx-auto text-center">
                         Discover the talented developers and designers building the next generation of applications.
                     </p>
                 </div>
