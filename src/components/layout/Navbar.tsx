@@ -11,9 +11,6 @@ import {
   LuSunMedium,
 } from "react-icons/lu";
 import { useRouter } from "@tanstack/react-router";
-import { Route as AwardsRoute } from "../../routes/awards";
-import { Route as CreatorsRoute } from "../../routes/creators";
-import { Route as SitesRoute } from "../../routes/";
 
 const themes = ["light", "dark", "system"] as const;
 type Theme = (typeof themes)[number];
@@ -28,9 +25,9 @@ function Navbar() {
   const currentPath = router.state.location.pathname; // current URL
 
   const menuItems = [
-    { label: "Sites", route: SitesRoute },
-    { label: "Creators", route: CreatorsRoute },
-    { label: "Awards", route: AwardsRoute },
+    { label: "Sites", to: "/" },
+    { label: "Creators", to: "/creators" },
+    { label: "Awards", to: "/awards" },
   ];
 
   const [theme, setTheme] = useState<Theme>("system");
@@ -129,8 +126,8 @@ function Navbar() {
               <Button
                 key={item.label}
                 label={item.label}
-                active={currentPath === item.route.fullPath} // fullPath or path from the route
-                onClick={() => router.navigate(item.route)}
+                active={currentPath === item.to}
+                onClick={() => router.navigate({ to: item.to })}
                 className="text-textColor hover:text-mainColor"
               />
             ))}
@@ -324,8 +321,8 @@ function Navbar() {
                     <Button
                       key={item.label}
                       label={item.label}
-                      active={currentPath === item.route.fullPath} // fullPath or path from the route
-                      onClick={() => router.navigate(item.route)}
+                      active={currentPath === item.to}
+                      onClick={() => router.navigate({ to: item.to })}
                       className="text-textColor hover:text-mainColor"
                     />
                   ))}
