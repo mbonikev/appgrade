@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import AppCard from "./AppCard";
 import { AnimatePresence, motion } from "framer-motion";
 import Button from "../../../components/ui/Button";
 import { MdArrowOutward } from "react-icons/md";
 import { HiCursorClick, HiStar } from "react-icons/hi";
 import { HiOutlineBookmark } from "react-icons/hi2";
+import { Link } from '@tanstack/react-router';
 
 // Mock Data based on the image
 export const apps = [
@@ -114,6 +115,7 @@ const AppGrid = () => {
                     <img
                       src={selectedApp.icon}
                       className="w-14 h-14 rounded-2xl"
+                      alt={selectedApp.title}
                     />
                     <div>
                       <h2 className="text-3xl font-bold text-textColor">
@@ -141,16 +143,21 @@ const AppGrid = () => {
                     <button className="text-textColor h-[48px] aspect-square flex items-center justify-center text-2xl rounded-full bg-cardItemBg">
                       <HiOutlineBookmark />
                     </button>
-                    <button className="text-left text-white h-[48px] max-md:flex-1 max-md:justify-center bg-mainColor pl-4 pr-5 whitespace-nowrap rounded-full font-medium flex items-center justify-start gap-2">
+                    <Link
+                      to="/preview/$projectId"
+                      params={{ projectId: selectedApp.id.toString() }}
+                      className="text-left text-white h-[48px] max-md:flex-1 max-md:justify-center bg-mainColor pl-4 pr-5 whitespace-nowrap rounded-full font-medium flex items-center justify-start gap-2 hover:bg-mainColorHover transition-colors"
+                    >
                       <HiCursorClick className="text-xl" />
                       Start Testing
-                    </button>
+                    </Link>
                   </div>
                 </div>
                 {selectedApp.image && (
                   <img
                     src={selectedApp.image}
                     className="w-full rounded-2xl mt-6 shadow-2xl"
+                    alt={selectedApp.title}
                   />
                 )}
               </div>
@@ -159,6 +166,7 @@ const AppGrid = () => {
                   <img
                     src="https://i.pinimg.com/736x/a9/70/8f/a9708f9840565fc2aae91b5847fcceab.jpg"
                     className="w-full h-full object-cover"
+                    alt="User"
                   />
                 </div>
                 <p className="text-textColor text-lg font-medium">UserName</p>

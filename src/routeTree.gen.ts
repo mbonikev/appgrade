@@ -15,6 +15,7 @@ import { Route as AwardsRouteImport } from './routes/awards'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfileProfileIdRouteImport } from './routes/profile.$profileId'
+import { Route as PreviewProjectIdRouteImport } from './routes/preview.$projectId'
 
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
@@ -46,6 +47,11 @@ const ProfileProfileIdRoute = ProfileProfileIdRouteImport.update({
   path: '/$profileId',
   getParentRoute: () => ProfileRoute,
 } as any)
+const PreviewProjectIdRoute = PreviewProjectIdRouteImport.update({
+  id: '/preview/$projectId',
+  path: '/preview/$projectId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/awards': typeof AwardsRoute
   '/creators': typeof CreatorsRoute
   '/profile': typeof ProfileRouteWithChildren
+  '/preview/$projectId': typeof PreviewProjectIdRoute
   '/profile/$profileId': typeof ProfileProfileIdRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/awards': typeof AwardsRoute
   '/creators': typeof CreatorsRoute
   '/profile': typeof ProfileRouteWithChildren
+  '/preview/$projectId': typeof PreviewProjectIdRoute
   '/profile/$profileId': typeof ProfileProfileIdRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/awards': typeof AwardsRoute
   '/creators': typeof CreatorsRoute
   '/profile': typeof ProfileRouteWithChildren
+  '/preview/$projectId': typeof PreviewProjectIdRoute
   '/profile/$profileId': typeof ProfileProfileIdRoute
 }
 export interface FileRouteTypes {
@@ -80,6 +89,7 @@ export interface FileRouteTypes {
     | '/awards'
     | '/creators'
     | '/profile'
+    | '/preview/$projectId'
     | '/profile/$profileId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -88,6 +98,7 @@ export interface FileRouteTypes {
     | '/awards'
     | '/creators'
     | '/profile'
+    | '/preview/$projectId'
     | '/profile/$profileId'
   id:
     | '__root__'
@@ -96,6 +107,7 @@ export interface FileRouteTypes {
     | '/awards'
     | '/creators'
     | '/profile'
+    | '/preview/$projectId'
     | '/profile/$profileId'
   fileRoutesById: FileRoutesById
 }
@@ -105,6 +117,7 @@ export interface RootRouteChildren {
   AwardsRoute: typeof AwardsRoute
   CreatorsRoute: typeof CreatorsRoute
   ProfileRoute: typeof ProfileRouteWithChildren
+  PreviewProjectIdRoute: typeof PreviewProjectIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -151,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileProfileIdRouteImport
       parentRoute: typeof ProfileRoute
     }
+    '/preview/$projectId': {
+      id: '/preview/$projectId'
+      path: '/preview/$projectId'
+      fullPath: '/preview/$projectId'
+      preLoaderRoute: typeof PreviewProjectIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -171,6 +191,7 @@ const rootRouteChildren: RootRouteChildren = {
   AwardsRoute: AwardsRoute,
   CreatorsRoute: CreatorsRoute,
   ProfileRoute: ProfileRouteWithChildren,
+  PreviewProjectIdRoute: PreviewProjectIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
