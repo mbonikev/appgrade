@@ -6,6 +6,7 @@ import TrendingView from './TrendingView';
 import ListPreviewView from './ListPreviewView';
 import ThemesView from './ThemesView';
 import CreatorsView from './CreatorsView';
+import CategoriesView from './CategoriesView';
 import { categories, uiElements, flows, trendingScreens, themes } from '../data/mockSearchData';
 import { topCreators, mostActiveCreators } from '../../Creators/data/mockCreators';
 
@@ -32,7 +33,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
             case 'trending':
                 return <TrendingView />;
             case 'categories':
-                return <ListPreviewView items={categories} title="Categories" />;
+                return <CategoriesView items={categories} />;
             case 'ui_elements':
                 return <ListPreviewView items={uiElements} title="UI Elements" />;
             // case 'flows':
