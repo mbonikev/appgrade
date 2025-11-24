@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RiSearch2Line, RiCloseLine, RiMacbookLine, RiSmartphoneLine } from 'react-icons/ri';
+import { RiSearch2Line, RiCloseLine } from 'react-icons/ri';
 import SearchSidebar from './SearchSidebar';
 import TrendingView from './TrendingView';
 import ListPreviewView from './ListPreviewView';
 import ThemesView from './ThemesView';
 import CreatorsView from './CreatorsView';
-import { categories, uiElements, flows, trendingScreens, themes } from '../data/mockSearchData';
+import { categories, uiElements, trendingScreens, themes } from '../data/mockSearchData';
 import { topCreators, mostActiveCreators } from '../../Creators/data/mockCreators';
 
 interface SearchModalProps {

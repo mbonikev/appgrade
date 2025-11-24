@@ -3,7 +3,7 @@ import Navbar from '../../../components/layout/Navbar';
 import ProfileHeader from '../components/ProfileHeader';
 import SettingsModal from '../components/SettingsModal';
 import { topCreators, mostActiveCreators } from '../../Creators/data/mockCreators';
-import AppGrid, { apps } from '../../Home/components/AppGrid';
+import AppGrid from '../../Home/components/AppGrid';
 
 interface ProfilePageProps {
     profileId?: string;
@@ -64,7 +64,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
                 <div className="min-h-[400px]">
                     {activeTab === 'work' && (
                         <div className="animate-fade-in">
-                            <AppGrid items={apps.slice(0, 4)} />
+                            <AppGrid />
                         </div>
                     )}
                     {activeTab === 'reviewed' && (

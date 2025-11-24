@@ -7,7 +7,7 @@ interface ListPreviewViewProps {
     title: string;
 }
 
-const ListPreviewView: React.FC<ListPreviewViewProps> = ({ items, title }) => {
+const ListPreviewView: React.FC<ListPreviewViewProps> = ({ items }) => {
     const [hoveredItem, setHoveredItem] = useState<SearchItem | null>(null);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
