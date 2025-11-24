@@ -161,7 +161,7 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={handleClose}
+            // onClick={handleClose}
             className="fixed h-svh w-full inset-0 bg-black/40 backdrop-blur-"
           />
 

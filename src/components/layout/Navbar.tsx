@@ -12,6 +12,7 @@ import {
 import { useRouter, Link } from "@tanstack/react-router";
 import SearchModal from "../../features/Search/components/SearchModal";
 import SubmitProjectModal from "../../features/Submit/components/SubmitProjectModal";
+import { Logo } from "../../assets";
 
 const themes = ["light", "dark", "system"] as const;
 type Theme = (typeof themes)[number];
@@ -121,7 +122,7 @@ function Navbar() {
             >
               <RiMenu2Fill />
             </button>
-            <img src="./logo.svg" className="h-8 mr-5" />
+            <img src={Logo} className="h-8 mr-5" />
           </div>
 
           <div id="menu" className="hidden md:flex items-center gap-0">
