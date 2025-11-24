@@ -22,7 +22,7 @@ const PreviewPage: React.FC = () => {
             <header className="h-14 bg-cardBg border-b border-linesColor flex items-center justify-between px-6 z-10 shadow-sm">
                 <div className="flex items-center gap-4">
                     <button
-                        onClick={() => navigate({ to: '..' })}
+                        onClick={() => navigate({ to: '/' })}
                         className="p-2 hover:bg-cardItemBg rounded-full text-textColor transition-colors"
                     >
                         <RiArrowLeftLine className="text-xl" />
