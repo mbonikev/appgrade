@@ -31,7 +31,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
     return (
         <div className="min-h-screen bg-bodyBg">
             <Navbar />
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+            <div className="w-full h-fit px-10 md:px-10 max-md:px-4">
                 <ProfileHeader
                     name={creator?.name}
                     handle={creator?.username}
