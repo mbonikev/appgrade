@@ -3,13 +3,13 @@ import type { Creator } from '../../Creators/data/types';
 import { RiVerifiedBadgeFill } from 'react-icons/ri';
 import { Link } from '@tanstack/react-router';
 
-interface DesignersViewProps {
+interface CreatorsViewProps {
     items: Creator[];
     searchQuery: string;
     onClose: () => void;
 }
 
-const DesignersView: React.FC<DesignersViewProps> = ({ items, searchQuery, onClose }) => {
+const CreatorsView: React.FC<CreatorsViewProps> = ({ items, searchQuery, onClose }) => {
     const filteredItems = useMemo(() => {
         if (!searchQuery) return items;
         const query = searchQuery.toLowerCase();
@@ -20,18 +20,18 @@ const DesignersView: React.FC<DesignersViewProps> = ({ items, searchQuery, onClo
     }, [items, searchQuery]);
 
     return (
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto px-6 py-2">
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-textColor">Designers</h2>
                 <span className="text-sm text-textColorWeak">{filteredItems.length} results</span>
             </div>
 
-            <div className="w-full overflow-hidden rounded-2xl border border-linesColor bg-cardBg">
+            <div className="w-full overflow-hidden rounded-2xl border border-linesColor ">
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-linesColor bg-cardItemBg/50">
                             <th className="p-4 font-medium text-textColorWeak text-sm">Designer</th>
-                            <th className="p-4 font-medium text-textColorWeak text-sm">Bio</th>
+                           
                             <th className="p-4 font-medium text-textColorWeak text-sm text-right">Followers</th>
                             <th className="p-4 font-medium text-textColorWeak text-sm text-right">Apps</th>
                         </tr>
@@ -42,7 +42,7 @@ const DesignersView: React.FC<DesignersViewProps> = ({ items, searchQuery, onClo
                                 key={creator.id}
                                 className="border-b border-linesColor last:border-none hover:bg-cardItemBg transition-colors group"
                             >
-                                <td className="p-4">
+                                <td className="px-4 py-3">
                                     <Link
                                         to="/profile/$profileId"
                                         params={{ profileId: creator.id }}
@@ -64,9 +64,6 @@ const DesignersView: React.FC<DesignersViewProps> = ({ items, searchQuery, onClo
                                             <p className="text-xs text-textColorWeak">{creator.username}</p>
                                         </div>
                                     </Link>
-                                </td>
-                                <td className="p-4 max-w-xs">
-                                    <p className="text-sm text-textColorWeak truncate">{creator.bio}</p>
                                 </td>
                                 <td className="p-4 text-right">
                                     <span className="text-sm font-medium text-textColor">
@@ -92,4 +89,4 @@ const DesignersView: React.FC<DesignersViewProps> = ({ items, searchQuery, onClo
     );
 };
 
-export default DesignersView;
+export default CreatorsView;
