@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import Navbar from '../../../components/layout/Navbar'
 import FilterBar from '../components/FilterBar'
-import ProBanner from '../components/ProBanner'
+import AwardsSection from '../components/AwardsSection'
 import AppGrid from '../components/AppGrid'
 
 function Home() {
@@ -21,7 +21,7 @@ function Home() {
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
         />
-        <ProBanner />
+        <AwardsSection />
         <AppGrid activeView={activeView} selectedCategory={selectedCategory} />
       </div>
     </div>
