@@ -9,17 +9,19 @@ import { useRouter, Link } from "@tanstack/react-router";
 import SearchModal from "../../features/Search/components/SearchModal";
 import SubmitProjectModal from "../../features/Submit/components/SubmitProjectModal";
 import { Logo } from "../../assets";
+import SettingsModal from "../../features/Profile/components/SettingsModal";
 
 const themes = ["light", "dark", "system"] as const;
 type Theme = (typeof themes)[number];
 
 function Navbar() {
-  const [openSearch, setOpenSearch] = useState(false);
   const [openSearchModal, setOpenSearchModal] = useState(false);
   const [openSubmitModal, setOpenSubmitModal] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState(false);
+      const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  
 
   const router = useRouter();
   const currentPath = router.state.location.pathname; // current URL
@@ -111,6 +113,11 @@ function Navbar() {
       <SubmitProjectModal
         isOpen={openSubmitModal}
         onClose={() => setOpenSubmitModal(false)}
+      />
+
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
       />
 
       <div className="w-full flex items-center justify-between sticky top-0 z-40 py-4 px-4 md:px-10 gap-2 bg-bodyBgWeak backdrop-blur-xl">
@@ -227,7 +234,13 @@ function Navbar() {
                     </div>
                   </div>
                   <div className="flex flex-col gap- border-t border-b border-cardItemBg px-2 py-2">
-                    <button className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between">
+                    <button
+                      onClick={() => {
+                        setIsSettingsOpen(true)
+                        setOpenProfile(false);
+                      }}
+                      className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between"
+                    >
                       Settings
                     </button>
                     <button className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between">

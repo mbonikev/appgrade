@@ -1,4 +1,3 @@
-import React from 'react';
 import Navbar from '../../../components/layout/Navbar';
 import AwardHero from '../components/AwardHero';
 import { appOfTheDay, honorableMentions, bestDesign, bestUX } from '../data/mockAwards';

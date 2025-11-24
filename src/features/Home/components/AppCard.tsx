@@ -1,6 +1,6 @@
 import React from "react";
 import { HiStar } from "react-icons/hi";
-import { RiPlayFill, RiLockFill } from "react-icons/ri";
+// import { RiPlayFill, RiLockFill } from "react-icons/ri";
 
 interface AppCardProps {
   title: string;
@@ -18,8 +18,8 @@ const AppCard: React.FC<AppCardProps> = ({
   image,
   icon,
   badge,
-  isLocked,
-  hasVideo,
+  // isLocked,
+  // hasVideo,
 }) => {
   return (
     <div className="group cursor-pointer relative flex flex-col">

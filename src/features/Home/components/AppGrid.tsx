@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AppCard from "./AppCard";
 import { AnimatePresence, motion } from "framer-motion";
-import Button from "../../../components/ui/Button";
-import { MdArrowOutward } from "react-icons/md";
+// import Button from "../../../components/ui/Button";
+// import { MdArrowOutward } from "react-icons/md";
 import { HiCursorClick, HiStar } from "react-icons/hi";
 import { HiOutlineBookmark } from "react-icons/hi2";
 import { Link } from '@tanstack/react-router';
@@ -171,7 +171,7 @@ const AppGrid = () => {
                 </div>
                 <p className="text-textColor text-lg font-medium">UserName</p>
                 <p className="text-textColor">🇳🇬 Nigeria</p>
-                <p className="text-textColor line-clamp-2 max-w-[280px] text-textColorWeak text-center">
+                <p className="line-clamp-2 max-w-[280px] text-textColorWeak text-center">
                   Lorem ipsum dolor sit amet consectetur adipisicing elit.
                   Aperiam eos sit nostrum totam temporibus iusto illo
                   praesentium sed veniam! Deserunt ab rem minima suscipit
