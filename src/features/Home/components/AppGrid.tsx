@@ -1,22 +1,13 @@
 import { useEffect, useState } from "react";
 import AppCard from "./AppCard";
 import { AnimatePresence, motion } from "framer-motion";
+import Button from "../../../components/ui/Button";
+import { MdArrowOutward } from "react-icons/md";
 import { HiCursorClick, HiStar } from "react-icons/hi";
 import { HiOutlineBookmark } from "react-icons/hi2";
 
 // Mock Data based on the image
-export interface App {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
-  icon: string;
-  badge?: "New" | "Updated";
-  isLocked?: boolean;
-  hasVideo?: boolean;
-}
-
-export const apps: App[] = [
+export const apps = [
   {
     id: 1,
     title: "Acctual",
@@ -24,7 +15,7 @@ export const apps: App[] = [
     image:
       "https://htmlburger.com/blog/wp-content/uploads/2024/10/Web-App-Design-Example-Learnify-Online-Courses-Platform.webp", // Placeholder
     icon: "https://pub-static.fotor.com/assets/projects/pages/d5bdd0513a0740a8a38752dbc32586d0/fotor-03d1a91a0cec4542927f53c87e0599f6.jpg", // Placeholder
-    badge: "New",
+    badge: "New" as const,
     hasVideo: true,
   },
   {
@@ -34,7 +25,7 @@ export const apps: App[] = [
     image:
       "https://saaslandingpage.com/wp-content/uploads/2023/09/3-mobbin@2x-680x510.png", // Placeholder
     icon: "https://i.pinimg.com/564x/86/c9/7d/86c97d86681b9fedbf23a61a00c0f566.jpg", // Placeholder
-    badge: "New",
+    badge: "New" as const,
   },
   {
     id: 3,
@@ -43,7 +34,7 @@ export const apps: App[] = [
     image:
       "https://i.pinimg.com/1200x/f4/17/c1/f417c18098a0f16de8046d8ac8ff855a.jpg", // Placeholder
     icon: "https://storage.pixteller.com/designs/designs-images/2017-09-21/09/twitter-profile-picture-avatar-1-59c3626d82bb3.png", // Placeholder
-    badge: "Updated",
+    badge: "Updated" as const,
   },
   {
     id: 4,
@@ -71,14 +62,8 @@ export const apps: App[] = [
     isLocked: true,
   },
 ];
-
-interface AppGridProps {
-  items?: App[];
-}
-
-const AppGrid: React.FC<AppGridProps> = ({ items }) => {
-  const [selectedApp, setSelectedApp] = useState<App | null>(null);
-  const displayApps = items || apps;
+const AppGrid = () => {
+  const [selectedApp, setSelectedApp] = useState<any | null>(null);
 
   useEffect(() => {
     if (selectedApp) {
@@ -95,7 +80,7 @@ const AppGrid: React.FC<AppGridProps> = ({ items }) => {
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8 pb-10">
-        {displayApps.map((app) => (
+        {apps.map((app) => (
           <div key={app.id} onClick={() => setSelectedApp(app)}>
             <AppCard {...app} />
           </div>
