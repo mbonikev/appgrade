@@ -10,10 +10,10 @@ const FilterBar = () => {
     <div className="flex items-center justify-between py-4 px-4 max-md:px-0 gap-6 md:px-0 text-textColor border-b border-linesColor mb-6">
       <div className="flex items-center space-x-1 bg-cardBg p-1 rounded-full">
         <button className="px-3.5 py-1.5 text-base font-medium rounded-full bg-bodyBg shadow-sm text-textColor">
-          Testing
+          Following
         </button>
         <button className="px-3.5 py-1.5 text-base font-medium rounded-full text-textColorWeak hover:text-textColor">
-          Ready
+          Discover
         </button>
       </div>
 
@@ -23,8 +23,8 @@ const FilterBar = () => {
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`font-medium transition-colors duration-200 pt-2 pb-1 border-b-2 ${activeTab === tab
-                ? "text-textColor border-textColor"
-                : "text-textColorWeak border-transparent hover:text-textColor"
+              ? "text-textColor border-textColor"
+              : "text-textColorWeak border-transparent hover:text-textColor"
               }`}
           >
             {tab}
