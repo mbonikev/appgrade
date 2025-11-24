@@ -13,8 +13,8 @@ export const appOfTheDay: AwardApp = {
     id: 'aod1',
     name: 'Zenith',
     tagline: 'Elevate your daily productivity flow',
-    image: 'https://cdn.dribbble.com/userupload/13004323/file/original-50950330691232840902890409038902.png?resize=1504x1128',
-    logo: 'https://cdn.dribbble.com/users/1233499/screenshots/16384873/media/4166258076632085732098234.png?resize=400x300&vertical=center',
+    image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1974&auto=format&fit=crop',
+    logo: 'https://images.unsplash.com/photo-1633409361618-c73427e4120b?w=800&auto=format&fit=crop&q=60',
     developer: 'Zenith Team',
     category: 'Productivity'
 };
@@ -24,8 +24,8 @@ export const honorableMentions: AwardApp[] = [
         id: 'hm1',
         name: 'FlowState',
         tagline: 'Focus on what matters',
-        image: 'https://cdn.dribbble.com/userupload/12975878/file/original-123908123098123.png?resize=1200x900',
-        logo: 'https://cdn.dribbble.com/users/418188/screenshots/16384873/media/4166258076632085732098234.png?resize=400x300&vertical=center',
+        image: 'https://images.unsplash.com/photo-1481487484168-9b930d5b7d9f?w=800&auto=format&fit=crop&q=60',
+        logo: 'https://images.unsplash.com/photo-1614680376593-902f74cf0d41?w=800&auto=format&fit=crop&q=60',
         developer: 'Flow Inc.',
         category: 'Productivity'
     },
@@ -33,8 +33,8 @@ export const honorableMentions: AwardApp[] = [
         id: 'hm2',
         name: 'Lumina',
         tagline: 'Brighten your photos instantly',
-        image: 'https://cdn.dribbble.com/userupload/12975879/file/original-987987987987.png?resize=1200x900',
-        logo: 'https://cdn.dribbble.com/users/418188/screenshots/16384873/media/4166258076632085732098234.png?resize=400x300&vertical=center',
+        image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&auto=format&fit=crop&q=60',
+        logo: 'https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?w=800&auto=format&fit=crop&q=60',
         developer: 'Lumina Labs',
         category: 'Photo & Video'
     },
@@ -42,8 +42,8 @@ export const honorableMentions: AwardApp[] = [
         id: 'hm3',
         name: 'Pulse',
         tagline: 'Track your health metrics',
-        image: 'https://cdn.dribbble.com/userupload/12975880/file/original-456456456456.png?resize=1200x900',
-        logo: 'https://cdn.dribbble.com/users/418188/screenshots/16384873/media/4166258076632085732098234.png?resize=400x300&vertical=center',
+        image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=60',
+        logo: 'https://images.unsplash.com/photo-1614680376408-81e91ffe3db7?w=800&auto=format&fit=crop&q=60',
         developer: 'HealthFirst',
         category: 'Health'
     }
@@ -54,8 +54,8 @@ export const bestDesign: AwardApp[] = [
         id: 'bd1',
         name: 'Aether',
         tagline: 'Atmospheric audio experience',
-        image: 'https://cdn.dribbble.com/userupload/12975881/file/original-123123123123.png?resize=1200x900',
-        logo: 'https://cdn.dribbble.com/users/418188/screenshots/16384873/media/4166258076632085732098234.png?resize=400x300&vertical=center',
+        image: 'https://images.unsplash.com/photo-1614680376593-902f74cf0d41?w=800&auto=format&fit=crop&q=60',
+        logo: 'https://images.unsplash.com/photo-1614680376593-902f74cf0d41?w=800&auto=format&fit=crop&q=60',
         developer: 'AudioCraft',
         category: 'Music'
     },
@@ -63,8 +63,8 @@ export const bestDesign: AwardApp[] = [
         id: 'bd2',
         name: 'Prism',
         tagline: 'Refract your workflow',
-        image: 'https://cdn.dribbble.com/userupload/12975882/file/original-789789789789.png?resize=1200x900',
-        logo: 'https://cdn.dribbble.com/users/418188/screenshots/16384873/media/4166258076632085732098234.png?resize=400x300&vertical=center',
+        image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=60',
+        logo: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=60',
         developer: 'Prism Co.',
         category: 'Utilities'
     },
@@ -72,8 +72,8 @@ export const bestDesign: AwardApp[] = [
         id: 'bd3',
         name: 'Velvet',
         tagline: 'Smooth social interactions',
-        image: 'https://cdn.dribbble.com/userupload/12975883/file/original-456456456456.png?resize=1200x900',
-        logo: 'https://cdn.dribbble.com/users/418188/screenshots/16384873/media/4166258076632085732098234.png?resize=400x300&vertical=center',
+        image: 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&auto=format&fit=crop&q=60',
+        logo: 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&auto=format&fit=crop&q=60',
         developer: 'Velvet Social',
         category: 'Social'
     },
@@ -81,8 +81,8 @@ export const bestDesign: AwardApp[] = [
         id: 'bd4',
         name: 'Oasis',
         tagline: 'Find your calm',
-        image: 'https://cdn.dribbble.com/userupload/12975884/file/original-123123123123.png?resize=1200x900',
-        logo: 'https://cdn.dribbble.com/users/418188/screenshots/16384873/media/4166258076632085732098234.png?resize=400x300&vertical=center',
+        image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&auto=format&fit=crop&q=60',
+        logo: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&auto=format&fit=crop&q=60',
         developer: 'Mindful',
         category: 'Health'
     }
@@ -93,8 +93,8 @@ export const bestUX: AwardApp[] = [
         id: 'bux1',
         name: 'Navigate',
         tagline: 'Never get lost again',
-        image: 'https://cdn.dribbble.com/userupload/12975885/file/original-789789789789.png?resize=1200x900',
-        logo: 'https://cdn.dribbble.com/users/418188/screenshots/16384873/media/4166258076632085732098234.png?resize=400x300&vertical=center',
+        image: 'https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?w=800&auto=format&fit=crop&q=60',
+        logo: 'https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?w=800&auto=format&fit=crop&q=60',
         developer: 'MapMasters',
         category: 'Navigation'
     },
@@ -102,8 +102,8 @@ export const bestUX: AwardApp[] = [
         id: 'bux2',
         name: 'Chef',
         tagline: 'Cook like a pro',
-        image: 'https://cdn.dribbble.com/userupload/12975886/file/original-456456456456.png?resize=1200x900',
-        logo: 'https://cdn.dribbble.com/users/418188/screenshots/16384873/media/4166258076632085732098234.png?resize=400x300&vertical=center',
+        image: 'https://images.unsplash.com/photo-1556910103-1c02745a30bf?w=800&auto=format&fit=crop&q=60',
+        logo: 'https://images.unsplash.com/photo-1556910103-1c02745a30bf?w=800&auto=format&fit=crop&q=60',
         developer: 'Culinary Arts',
         category: 'Food'
     },
@@ -111,8 +111,8 @@ export const bestUX: AwardApp[] = [
         id: 'bux3',
         name: 'Wallet',
         tagline: 'Manage finances easily',
-        image: 'https://cdn.dribbble.com/userupload/12975887/file/original-123123123123.png?resize=1200x900',
-        logo: 'https://cdn.dribbble.com/users/418188/screenshots/16384873/media/4166258076632085732098234.png?resize=400x300&vertical=center',
+        image: 'https://images.unsplash.com/photo-1616077168079-7e09a677fb2c?w=800&auto=format&fit=crop&q=60',
+        logo: 'https://images.unsplash.com/photo-1616077168079-7e09a677fb2c?w=800&auto=format&fit=crop&q=60',
         developer: 'FinTech',
         category: 'Finance'
     },
@@ -120,8 +120,8 @@ export const bestUX: AwardApp[] = [
         id: 'bux4',
         name: 'Learn',
         tagline: 'Master new skills',
-        image: 'https://cdn.dribbble.com/userupload/12975888/file/original-789789789789.png?resize=1200x900',
-        logo: 'https://cdn.dribbble.com/users/418188/screenshots/16384873/media/4166258076632085732098234.png?resize=400x300&vertical=center',
+        image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&auto=format&fit=crop&q=60',
+        logo: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&auto=format&fit=crop&q=60',
         developer: 'EduTech',
         category: 'Education'
     }
