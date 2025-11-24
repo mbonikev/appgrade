@@ -51,7 +51,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                         <div className="w-64 bg-cardBg border-r border-linesColor flex flex-col">
                             <div className="p-6 flex items-center gap-3 border-b border-linesColor">
                                 <div className="w-8 h-8 rounded-full bg-cardItemBg overflow-hidden">
-                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Profile" className="w-full h-full object-cover" />
+                                    <img src="https://i.pinimg.com/736x/a9/70/8f/a9708f9840565fc2aae91b5847fcceab.jpg" alt="Profile" className="w-full h-full object-cover" />
                                 </div>
                                 <span className="font-semibold text-textColor">Thierry Gusenga</span>
                             </div>
@@ -63,8 +63,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                                             key={item.id}
                                             onClick={() => setActiveTab(item.id)}
                                             className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === item.id
-                                                    ? 'bg-cardItemBg text-white'
-                                                    : 'text-textColorWeak hover:text-textColor hover:bg-bodyBg'
+                                                ? 'bg-cardItemBg text-white'
+                                                : 'text-textColorWeak hover:text-textColor hover:bg-bodyBg'
                                                 }`}
                                         >
                                             <item.icon className="text-lg" />
@@ -101,7 +101,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                                             <h3 className="text-textColor font-medium mb-4">Profile</h3>
                                             <div className="flex items-center gap-6 mb-6">
                                                 <div className="w-20 h-20 rounded-full bg-cardBg border-2 border-linesColor overflow-hidden">
-                                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Profile" className="w-full h-full object-cover" />
+                                                    <img src="https://i.pinimg.com/736x/a9/70/8f/a9708f9840565fc2aae91b5847fcceab.jpg" alt="Profile" className="w-full h-full object-cover" />
                                                 </div>
                                             </div>
 

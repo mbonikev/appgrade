@@ -13,7 +13,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     name = "Thierry Gusenga",
     handle = "@strixx_legacy",
     role = "Product designer",
-    avatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix",
+    avatar = "https://i.pinimg.com/736x/a9/70/8f/a9708f9840565fc2aae91b5847fcceab.jpg",
     isOwnProfile = true,
     onEditClick
 }) => {
