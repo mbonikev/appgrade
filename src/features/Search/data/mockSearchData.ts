@@ -7,7 +7,6 @@ export interface SearchItem {
     group?: string;
     font?: string;
     colors?: string[];
-    gradient?: string;
     type: 'app' | 'screen' | 'ui_element' | 'flow' | 'category' | 'theme';
 }
 
@@ -55,14 +54,12 @@ export const flows: SearchItem[] = [
 ];
 
 export const categories: SearchItem[] = [
-    { id: 'c1', name: 'Entertainment', count: 450, type: 'category', gradient: 'from-orange-400 to-red-500', image: 'https://cdn3d.iconscout.com/3d/premium/thumb/popcorn-5354256-4476634.png' },
-    { id: 'c2', name: 'Productivity', count: 320, type: 'category', gradient: 'from-blue-400 to-cyan-300', image: 'https://cdn3d.iconscout.com/3d/premium/thumb/task-management-4896066-4081284.png' },
-    { id: 'c3', name: 'Social Networking', count: 280, type: 'category', gradient: 'from-purple-500 to-indigo-500', image: 'https://cdn3d.iconscout.com/3d/premium/thumb/chat-bubbles-4965393-4128682.png' },
-    { id: 'c4', name: 'Lifestyle', count: 250, type: 'category', gradient: 'from-rose-400 to-orange-300', image: 'https://cdn3d.iconscout.com/3d/premium/thumb/sofa-4034237-3336764.png' },
-    { id: 'c5', name: 'Photo & Video', count: 200, type: 'category', gradient: 'from-yellow-400 to-orange-400', image: 'https://cdn3d.iconscout.com/3d/premium/thumb/camera-4034227-3336754.png' },
-    { id: 'c6', name: 'Education', count: 180, type: 'category', gradient: 'from-green-400 to-emerald-600', image: 'https://cdn3d.iconscout.com/3d/premium/thumb/graduation-cap-5650228-4708027.png' },
-    { id: 'c7', name: 'Finance', count: 450, type: 'category', gradient: 'from-emerald-400 to-teal-500', image: 'https://cdn3d.iconscout.com/3d/premium/thumb/wallet-4034238-3336765.png' },
-    { id: 'c8', name: 'Health & Fitness', count: 320, type: 'category', gradient: 'from-red-400 to-pink-500', image: 'https://cdn3d.iconscout.com/3d/premium/thumb/dumbell-4034230-3336757.png' },
+    { id: 'c1', name: 'Finance', count: 450, type: 'category', image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=500' },
+    { id: 'c2', name: 'B2B', count: 320, type: 'category', image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=500' },
+    { id: 'c3', name: 'Dashboard', count: 280, type: 'category', image: 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?auto=format&fit=crop&q=80&w=500' },
+    { id: 'c4', name: 'SaaS', count: 250, type: 'category', image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=500' },
+    { id: 'c5', name: 'Agency', count: 200, type: 'category', image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=500' },
+    { id: 'c6', name: 'Education', count: 180, type: 'category', image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=500' },
 ];
 
 export const themes: SearchItem[] = [
