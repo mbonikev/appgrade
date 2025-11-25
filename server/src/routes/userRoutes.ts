@@ -5,5 +5,6 @@ const router = Router();
 
 router.put('/:id', updateUser);
 router.get('/all', getAllUsers);
+router.get('/creators', getCreators)
 
 export default router;
