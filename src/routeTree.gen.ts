@@ -9,7 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UserAgreementRouteImport } from './routes/user-agreement'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as CreatorsRouteImport } from './routes/creators'
 import { Route as AwardsRouteImport } from './routes/awards'
 import { Route as AboutRouteImport } from './routes/about'
@@ -17,9 +19,19 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfileProfileIdRouteImport } from './routes/profile.$profileId'
 import { Route as PreviewProjectIdRouteImport } from './routes/preview.$projectId'
 
+const UserAgreementRoute = UserAgreementRouteImport.update({
+  id: '/user-agreement',
+  path: '/user-agreement',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CreatorsRoute = CreatorsRouteImport.update({
@@ -58,7 +70,9 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/awards': typeof AwardsRoute
   '/creators': typeof CreatorsRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/profile': typeof ProfileRouteWithChildren
+  '/user-agreement': typeof UserAgreementRoute
   '/preview/$projectId': typeof PreviewProjectIdRoute
   '/profile/$profileId': typeof ProfileProfileIdRoute
 }
@@ -67,7 +81,9 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/awards': typeof AwardsRoute
   '/creators': typeof CreatorsRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/profile': typeof ProfileRouteWithChildren
+  '/user-agreement': typeof UserAgreementRoute
   '/preview/$projectId': typeof PreviewProjectIdRoute
   '/profile/$profileId': typeof ProfileProfileIdRoute
 }
@@ -77,7 +93,9 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/awards': typeof AwardsRoute
   '/creators': typeof CreatorsRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/profile': typeof ProfileRouteWithChildren
+  '/user-agreement': typeof UserAgreementRoute
   '/preview/$projectId': typeof PreviewProjectIdRoute
   '/profile/$profileId': typeof ProfileProfileIdRoute
 }
@@ -88,7 +106,9 @@ export interface FileRouteTypes {
     | '/about'
     | '/awards'
     | '/creators'
+    | '/privacy-policy'
     | '/profile'
+    | '/user-agreement'
     | '/preview/$projectId'
     | '/profile/$profileId'
   fileRoutesByTo: FileRoutesByTo
@@ -97,7 +117,9 @@ export interface FileRouteTypes {
     | '/about'
     | '/awards'
     | '/creators'
+    | '/privacy-policy'
     | '/profile'
+    | '/user-agreement'
     | '/preview/$projectId'
     | '/profile/$profileId'
   id:
@@ -106,7 +128,9 @@ export interface FileRouteTypes {
     | '/about'
     | '/awards'
     | '/creators'
+    | '/privacy-policy'
     | '/profile'
+    | '/user-agreement'
     | '/preview/$projectId'
     | '/profile/$profileId'
   fileRoutesById: FileRoutesById
@@ -116,17 +140,33 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AwardsRoute: typeof AwardsRoute
   CreatorsRoute: typeof CreatorsRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   ProfileRoute: typeof ProfileRouteWithChildren
+  UserAgreementRoute: typeof UserAgreementRoute
   PreviewProjectIdRoute: typeof PreviewProjectIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/user-agreement': {
+      id: '/user-agreement'
+      path: '/user-agreement'
+      fullPath: '/user-agreement'
+      preLoaderRoute: typeof UserAgreementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile': {
       id: '/profile'
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/creators': {
@@ -190,7 +230,9 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AwardsRoute: AwardsRoute,
   CreatorsRoute: CreatorsRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
   ProfileRoute: ProfileRouteWithChildren,
+  UserAgreementRoute: UserAgreementRoute,
   PreviewProjectIdRoute: PreviewProjectIdRoute,
 }
 export const routeTree = rootRouteImport

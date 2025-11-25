@@ -10,6 +10,7 @@ import SearchModal from "../../features/Search/components/SearchModal";
 import SubmitProjectModal from "../../features/Submit/components/SubmitProjectModal";
 import { Logo } from "../../assets";
 import SettingsModal from "../../features/Profile/components/SettingsModal";
+import SignInModal from "../auth/SignInModal";
 
 const themes = ["light", "dark", "system"] as const;
 type Theme = (typeof themes)[number];
@@ -20,8 +21,11 @@ function Navbar() {
   const [openProfile, setOpenProfile] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState(false);
-      const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [openSignInModal, setOpenSignInModal] = useState(false);
+
+  // TODO: Replace with actual authentication state management
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const router = useRouter();
   const currentPath = router.state.location.pathname; // current URL
@@ -120,6 +124,11 @@ function Navbar() {
         onClose={() => setIsSettingsOpen(false)}
       />
 
+      <SignInModal
+        isOpen={openSignInModal}
+        onClose={() => setOpenSignInModal(false)}
+      />
+
       <div className="w-full flex items-center justify-between sticky top-0 z-40 py-4 px-4 md:px-10 gap-2 bg-bodyBgWeak backdrop-blur-xl">
         {/* Left */}
         <div className="flex items-center">
@@ -178,88 +187,101 @@ function Navbar() {
             className="text-white hover:text-white px-5 hidden md:block"
             onClick={() => setOpenSubmitModal(true)}
           />
-          <div className="relative" ref={profileRef}>
-            <div
-              className="size-10 md:size-11 rounded-full bg-cardBg shadow-md ml-2 overflow-hidden cursor-pointer"
-              onClick={() => setOpenProfile((prev) => !prev)}
-            >
-              <img
-                src="https://i.pinimg.com/736x/a9/70/8f/a9708f9840565fc2aae91b5847fcceab.jpg"
-                className="w-full h-full object-cover"
-              />
-            </div>
 
-            <AnimatePresence>
-              {openProfile && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.17 }}
-                  className="absolute right-0 mt-3 max-md:max-h-[70vh] overflow-y-auto w-64 bg-modalBg border border-cardItemBg rounded-2xl shadow-xl z-50"
-                >
-                  <div className="flex flex-col p-4">
-                    <p className="font-semibold text-textColor">
-                      Thierry Gusenga
-                    </p>
-                    <p className="text-sm text-textColorWeak mb-4 mt-0.5 font-medium">
-                      tgusenga2003@gmail.com
-                    </p>
+          {/* Conditional Auth/Profile Section */}
+          {isAuthenticated ? (
+            <div className="relative" ref={profileRef}>
+              <div
+                className="size-10 md:size-11 rounded-full bg-cardBg shadow-md ml-2 overflow-hidden cursor-pointer"
+                onClick={() => setOpenProfile((prev) => !prev)}
+              >
+                <img
+                  src="https://i.pinimg.com/736x/a9/70/8f/a9708f9840565fc2aae91b5847fcceab.jpg"
+                  className="w-full h-full object-cover"
+                />
+              </div>
 
-                    <Link
-                      to="/profile"
-                      className="w-full block text-center px-4 py-2 bg-cardItemBg font-semibold rounded-full text-textColor hover:bg-mainColor hover:text-white hover:transition"
-                      onClick={() => setOpenProfile(false)}
-                    >
-                      View profile
-                    </Link>
-                  </div>
-                  <div className="flex flex-col gap- border-t border-b border-cardItemBg px-2 py-2">
-                    <div className="text-left py-0.5 text-textColor pl-3 pr-2 font-medium flex items-center justify-between">
-                      Theme
-                      <div className="w-fit flex items-center justify-center gap-1 bg-cardItemBg p-1 rounded-full">
-                        <LuSunMedium
-                          onClick={() => handleThemeChange("light")}
-                          className={`text-3xl rounded-2xl p-1 cursor-pointer ${theme === "light" ? "bg-mainColor text-white" : "text-textColorWeak"}`}
-                        />
-                        <LuMoon
-                          onClick={() => handleThemeChange("dark")}
-                          className={`text-3xl rounded-2xl p-1 cursor-pointer ${theme === "dark" ? "bg-mainColor text-white" : "text-textColorWeak"}`}
-                        />
-                        <LuLaptopMinimal
-                          onClick={() => handleThemeChange("system")}
-                          className={`text-3xl rounded-2xl p-1 cursor-pointer ${theme === "system" ? "bg-mainColor text-white" : "text-textColorWeak"}`}
-                        />
+              <AnimatePresence>
+                {openProfile && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.17 }}
+                    className="absolute right-0 mt-3 max-md:max-h-[70vh] overflow-y-auto w-64 bg-modalBg border border-cardItemBg rounded-2xl shadow-xl z-50"
+                  >
+                    <div className="flex flex-col p-4">
+                      <p className="font-semibold text-textColor">
+                        Thierry Gusenga
+                      </p>
+                      <p className="text-sm text-textColorWeak mb-4 mt-0.5 font-medium">
+                        tgusenga2003@gmail.com
+                      </p>
+
+                      <Link
+                        to="/profile"
+                        className="w-full block text-center px-4 py-2 bg-cardItemBg font-semibold rounded-full text-textColor hover:bg-mainColor hover:text-white hover:transition"
+                        onClick={() => setOpenProfile(false)}
+                      >
+                        View profile
+                      </Link>
+                    </div>
+                    <div className="flex flex-col gap- border-t border-b border-cardItemBg px-2 py-2">
+                      <div className="text-left py-0.5 text-textColor pl-3 pr-2 font-medium flex items-center justify-between">
+                        Theme
+                        <div className="w-fit flex items-center justify-center gap-1 bg-cardItemBg p-1 rounded-full">
+                          <LuSunMedium
+                            onClick={() => handleThemeChange("light")}
+                            className={`text-3xl rounded-2xl p-1 cursor-pointer ${theme === "light" ? "bg-mainColor text-white" : "text-textColorWeak"}`}
+                          />
+                          <LuMoon
+                            onClick={() => handleThemeChange("dark")}
+                            className={`text-3xl rounded-2xl p-1 cursor-pointer ${theme === "dark" ? "bg-mainColor text-white" : "text-textColorWeak"}`}
+                          />
+                          <LuLaptopMinimal
+                            onClick={() => handleThemeChange("system")}
+                            className={`text-3xl rounded-2xl p-1 cursor-pointer ${theme === "system" ? "bg-mainColor text-white" : "text-textColorWeak"}`}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex flex-col gap- border-t border-b border-cardItemBg px-2 py-2">
-                    <button
-                      onClick={() => {
-                        setIsSettingsOpen(true)
-                        setOpenProfile(false);
-                      }}
-                      className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between"
-                    >
-                      Settings
-                    </button>
-                    <button className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between">
-                      Changelog
-                    </button>
-                    <button className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between">
-                      Support
-                      <MdArrowOutward className="text-xl text-textColorWeak" />
-                    </button>
-                  </div>
-                  <div className="flex flex-col border-cardItemBg px-2 py-2">
-                    <button className="text-left py-1.5 text-red-400 hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between">
-                      Log Out
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+                    <div className="flex flex-col gap- border-t border-b border-cardItemBg px-2 py-2">
+                      <button
+                        onClick={() => {
+                          setIsSettingsOpen(true)
+                          setOpenProfile(false);
+                        }}
+                        className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between"
+                      >
+                        Settings
+                      </button>
+                      <button className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between">
+                        Changelog
+                      </button>
+                      <button className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between">
+                        Support
+                        <MdArrowOutward className="text-xl text-textColorWeak" />
+                      </button>
+                    </div>
+                    <div className="flex flex-col border-cardItemBg px-2 py-2">
+                      <button
+                        onClick={() => setIsAuthenticated(false)}
+                        className="text-left py-1.5 text-red-400 hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between"
+                      >
+                        Log Out
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ) : (
+            <Button
+              label="Sign In"
+              onClick={() => setOpenSignInModal(true)}
+              className="text-textColor hover:text-white hover:bg-mainColor ml-2 px-5"
+            />
+          )}
         </div>
       </div>
 
