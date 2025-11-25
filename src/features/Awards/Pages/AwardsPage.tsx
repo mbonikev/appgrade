@@ -1,28 +1,20 @@
 import Navbar from '../../../components/layout/Navbar';
-import AwardHero from '../components/AwardHero';
+import AwardsShowcase from '../components/AwardsShowcase';
 import { appOfTheDay, honorableMentions, bestDesign, bestUX } from '../data/mockAwards';
 import { RiMedalFill, RiPaletteFill, RiUserSmileFill } from 'react-icons/ri';
 
 const AwardsPage = () => {
+    // Combine awards for the showcase
+    const featuredAwards = [appOfTheDay, ...honorableMentions, ...bestDesign.slice(0, 2)];
+
     return (
         <div className="min-h-screen bg-bodyBg">
             <Navbar />
 
-            <div className="max-w-[1600px] mx-auto px-4 md:px-10 pb-20">
-                {/* Header */}
-                <div className="py-12 md:py-16 text-center max-w-3xl mx-auto">
-                    <h1 className="text-4xl md:text-6xl font-bold text-textColor mb-6">
-                        AppGrade Awards
-                    </h1>
-                    <p className="text-textColorWeak text-lg md:text-xl">
-                        Celebrating the most innovative, beautiful, and user-friendly applications built by our community.
-                    </p>
-                </div>
+            {/* New Awards Showcase Section */}
+            <AwardsShowcase awards={featuredAwards} />
 
-                {/* Hero Section - App of the Day */}
-                <div className="mb-20">
-                    <AwardHero app={appOfTheDay} />
-                </div>
+            <div className="max-w-[1600px] mx-auto px-4 md:px-10 pb-20 mt-20">
 
                 {/* Honorable Mentions */}
                 <div className="mb-20">
@@ -35,11 +27,6 @@ const AwardsPage = () => {
                             <p className="text-textColorWeak text-sm">Runner-ups that deserve spotlight</p>
                         </div>
                     </div>
-                    {/* Reusing AppGrid logic but manually mapping for custom award card style if needed, 
-                        or just using AppGrid if it fits. For now, let's use a simple grid to match the mock data structure 
-                        which is slightly different from AppGrid's expected input, or we can adapt.
-                        Actually, let's create a simple card grid here for flexibility.
-                    */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {honorableMentions.map(app => (
                             <div key={app.id} className="group cursor-pointer">
