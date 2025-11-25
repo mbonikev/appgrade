@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { RiCloseLine, RiCheckLine } from "react-icons/ri";
+import { RiCloseLine } from "react-icons/ri";
 import StepEssentials from "../../Submit/components/StepEssentials";
 import StepVisuals from "../../Submit/components/StepVisuals";
 
@@ -12,6 +12,7 @@ interface EditProjectModalProps {
 
 // Mock data fetcher - in real app this would come from API
 const getProjectData = (id: string) => ({
+    id: id,
     name: "Dashboard UI Kit",
     tagline: "Modern dashboard screens",
     description: "A set of clean and modern dashboard screens for SaaS apps.",
