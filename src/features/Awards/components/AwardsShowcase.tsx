@@ -10,6 +10,7 @@ import type { AwardApp } from "../data/mockAwards";
 import Button from "../../../components/ui/Button";
 import { RiArrowRightUpLine } from "react-icons/ri";
 import Navbar from "../../../components/layout/Navbar";
+import { LogoWhite } from "../../../assets";
 
 interface AwardsShowcaseProps {
   awards: AwardApp[];
@@ -43,29 +44,29 @@ const AwardsShowcase: React.FC<AwardsShowcaseProps> = ({ awards }) => {
     <div ref={containerRef} className="relative h-[300vh] bg-bodyBg">
       <div className="sticky top-0 h-screen w-full flex flex-col  overflow-hidden">
         <Navbar />
-        <div className="sticky top-0 h-screen w-full flex flex-col md:flex-row overflow-hidden">
+        <div className="sticky top-0 h-screen w-full max-w-[1300px] mx-auto flex flex-col md:flex-row overflow-hidden">
           {/* Section 1: Title */}
-          <div className="w-full md:w-1/4 h-[20vh] md:h-full flex flex-col justify-center p-8 md:p-12 z-10 bg-black/50 backdrop-blur-sm md:bg-transparent">
+          <div className="w-full md:w-1/4 h-[20vh] md:h-full flex flex-col justify-center z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h2 className="text-white/60 text-sm font-bold uppercase tracking-widest mb-4">
-                World's Most Prestigious
-              </h2>
-              <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight">
+              <h1 className="text-4xl md:text-6xl font-bold text-textColor leading-tight">
                 Awards <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-mainColor">
                   & Honors
                 </span>
               </h1>
+              <h2 className="text-textColorWeak text-sm font-medium uppercase tracking-widest mt-4">
+                In Last 7 Days
+              </h2>
             </motion.div>
           </div>
 
           {/* Section 2: Stacked Cards */}
           <div className="w-full md:w-1/2 h-[50vh] md:h-full flex items-center justify-center relative perspective-1000">
-            <div className="relative w-[370px] h-[460px]">
+            <div className="relative w-[370px] h-[460px] max-xl:w-[350px] max-xl:h-[80%]">
               {awards.map((award, index) => {
                 // Calculate visual stacking
                 // We want the active card to be front and center
@@ -98,31 +99,31 @@ const AwardsShowcase: React.FC<AwardsShowcaseProps> = ({ awards }) => {
                     x: index === activeIndex ? 0 : 20,
                     pointerEvents: index === activeIndex ? "auto" : "none",
                   }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ duration: 0.0 }}
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-white font-bold uppercase tracking-wider text-sm">
+                    <span className=" font-bold uppercase tracking-wider text-sm">
                       APPGRADE
                     </span>
-                    <span className="text-white/40">•</span>
-                    <span className="text-white/60 text-sm">
+                    <span className="text-textColorWeak">•</span>
+                    <span className="text-textColorWeak text-sm whitespace-nowrap">
                       {award.category} Award
                     </span>
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-1">
+                  <h3 className="text-2xl font-bold text-textColor mb-1">
                     {award.developer}
                   </h3>
                   <a
                     href="#"
-                    className="text-white/60 hover:text-white text-sm mb-6 block transition-colors"
+                    className="text-textColorWeak hover:text-textColor text-sm mb-6 block transition-colors"
                   >
                     {award.name}.com
                   </a>
 
                   <Button
                     label="Visit Site"
-                    icon={<RiArrowRightUpLine />}
-                    className="bg-white text-black hover:bg-white/90 rounded-full px-6 py-3 w-max font-bold"
+                    icon={<RiArrowRightUpLine className="min-w-fit" />}
+                    className="bg-cardBg rounded-full pr-8 pl-4 py-3 w-max font-bold"
                   />
                 </motion.div>
               ))}
@@ -177,26 +178,10 @@ const Card = ({
     return 1 - diff * 0.05;
   });
 
-  //   const opacity = useTransform(cardProgress, (v) => {
-  //     const diff = index - v;
-  //     if (diff < -0.5) return 0; // Fade out passed cards
-  //     if (diff > 5) return 0; // Show more cards in stack (was 3)
-  //     return 1;
-  //   });
-
   const opacity = useTransform(cardProgress, (v) => {
     const diff = index - v;
-
-    // Passed cards fade between diff=-0.5 to diff=-1.5
-    if (diff < -1.5) return 0;
-    if (diff < -0.5) {
-      // Smooth fade from 1 to 0
-      return 1 - Math.abs(diff + 0.5) / 1;
-    }
-
-    // Far stack cards fade out too
-    if (diff > 5) return 0;
-
+    if (diff < -0.5) return 0; // Fade out passed cards
+    if (diff > 5) return 0; // Show more cards in stack (was 3)
     return 1;
   });
 
@@ -212,7 +197,7 @@ const Card = ({
         opacity,
         zIndex: total - index,
       }}
-      className="absolute inset-0 rounded-[36px] overflow-hidden shadow-2xl origin-bottom"
+      className="absolute inset-0 rounded-[36px] transition-opacity duration-300 overflow-hidden shadow-2xl origin-bottom"
     >
       <div
         className={`w-full h-full relative p-6 flex flex-col justify-between`}
@@ -220,42 +205,38 @@ const Card = ({
       >
         {/* Header on Card */}
         <div className="flex justify-between items-start z-10">
-          <span className="font-bold text-white text-xl">W.</span>
-          <div className="flex gap-1">
-            <div className="w-1 h-1 bg-white/50 rounded-full"></div>
-            <div className="w-1 h-1 bg-white/50 rounded-full"></div>
-            <div className="w-1 h-1 bg-white/50 rounded-full"></div>
-          </div>
+          <img src={LogoWhite} className="h-6 font-bold text-white text-xl" />
         </div>
 
         {/* Content on Card */}
-        <div className="z-10 mt-auto">
-          <h2 className="text-3xl font-bold text-white mb-2 leading-tight">
-            {award.category} Award.
-            <br />
-            <span className="opacity-80">2024</span>
-          </h2>
-          <h3 className="text-2xl font-bold text-white mb-4">{award.name}.</h3>
-
-          <div className="flex flex-col gap-1 text-white/70 text-xs">
-            <span>By {award.developer}</span>
-            <span>{award.tagline}</span>
+        <div className="z-10 pt-10 pb-2 flex-1 flex flex-col">
+          <div className="flex-1">
+            <h2 className="text-3xl font-bold text-white/80 mb-3 leading-tight">
+              {award.category} Award.
+              <br />
+              <div className="flex flex-col gap-1 mt-2 text-white/70 text-sm font-medium">
+                12 June, 2025
+              </div>
+            </h2>
           </div>
+          <h3 className="text-3xl font-bold text-white mb-2">{award.name}.</h3>
 
-          <div className="mt-8 pt-4 border-t border-white/20 flex justify-between items-end">
-            <img
-              src={award.logo}
-              alt="logo"
-              className="w-8 h-8 rounded-full bg-white/10"
-            />
-            <div className="text-[10px] uppercase tracking-widest text-white/60 rotate-[-90deg] origin-bottom-right translate-x-2">
-              Dev Award
+          <div className="flex flex-col gap-1 text-white/70 text-sm font-medium">
+            <div className="flex items-center gap-2">
+              By:
+              <div className="flex items-center gap-2">
+                <img
+                  src={award.logo}
+                  alt="logo"
+                  className="size-6 rounded-full bg-white/10"
+                />
+                {award.developer}
+              </div>
             </div>
           </div>
         </div>
-
         {/* Background Image Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/60 z-0" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent dark:from-black/10 to-black/30 dark:to-black/60 z-0" />
         {/* We can use the actual image as a subtle texture or background if desired, but the reference has a solid color card look.
                     Let's mix it: Solid color card with subtle image blend.
                 */}

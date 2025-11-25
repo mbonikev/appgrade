@@ -16,7 +16,7 @@ export const appOfTheDay: AwardApp = {
     image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1974&auto=format&fit=crop',
     logo: 'https://images.unsplash.com/photo-1633409361618-c73427e4120b?w=800&auto=format&fit=crop&q=60',
     developer: 'Zenith Team',
-    category: 'Productivity'
+    category: 'Site of the Week'
 };
 
 export const honorableMentions: AwardApp[] = [
