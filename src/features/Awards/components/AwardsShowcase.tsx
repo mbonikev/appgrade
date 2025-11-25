@@ -144,8 +144,6 @@ const Card = ({ award, index, total, progress }: {
     const y = useTransform(cardProgress, (v) => {
         const diff = index - v;
         // If diff is 0, it's the active card -> y=0
-        // If diff is 1, it's the next card -> y should be slightly visible behind (negative y or positive y depending on stack direction)
-        // Let's stack them "behind" and slightly above visually like the reference
 
         if (diff < 0) {
             // Card has passed, move it up and out
@@ -153,21 +151,22 @@ const Card = ({ award, index, total, progress }: {
         }
 
         // Cards waiting in the stack
-        return diff * -15; // Stack them slightly offset upwards
+        // Make them peek out more visibly from behind
+        return diff * -40; // Increased from -15 to -40
     });
 
     const scale = useTransform(cardProgress, (v) => {
         const diff = index - v;
         if (diff < 0) return 1; // Passed cards stay scale 1 (but move away)
 
-        // Waiting cards get smaller
+        // Waiting cards get smaller but not too small so we can see them
         return 1 - (diff * 0.05);
     });
 
     const opacity = useTransform(cardProgress, (v) => {
         const diff = index - v;
         if (diff < -0.5) return 0; // Fade out passed cards
-        if (diff > 3) return 0; // Hide cards too far back in stack
+        if (diff > 5) return 0; // Show more cards in stack (was 3)
         return 1;
     });
 
