@@ -3,6 +3,7 @@ import passport from 'passport';
 import { handleOAuthCallback, getCurrentUser, logout } from '../controllers/authController';
 import { authenticateToken } from '../middleware/auth';
 
+
 const router = Router();
 
 console.log(">>> authRoutes FILE LOADED");

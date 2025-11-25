@@ -11,6 +11,7 @@ import SubmitProjectModal from "../../features/Submit/components/SubmitProjectMo
 import { Logo } from "../../assets";
 import SettingsModal from "../../features/Profile/components/SettingsModal";
 import SignInModal from "../auth/SignInModal";
+import { useAuth } from "../../contexts/AuthContext";
 
 const themes = ["light", "dark", "system"] as const;
 type Theme = (typeof themes)[number];
@@ -24,8 +25,7 @@ function Navbar() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [openSignInModal, setOpenSignInModal] = useState(false);
 
-  // TODO: Replace with actual authentication state management
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { user, loading, logout } = useAuth();
 
   const router = useRouter();
   const currentPath = router.state.location.pathname; // current URL
@@ -189,15 +189,15 @@ function Navbar() {
           />
 
           {/* Conditional Auth/Profile Section */}
-          {isAuthenticated ? (
+          {user ? (
             <div className="relative" ref={profileRef}>
               <div
                 className="size-10 md:size-11 rounded-full bg-cardBg shadow-md ml-2 overflow-hidden cursor-pointer"
                 onClick={() => setOpenProfile((prev) => !prev)}
               >
                 <img
-                  src="https://i.pinimg.com/736x/a9/70/8f/a9708f9840565fc2aae91b5847fcceab.jpg"
-                  className="w-full h-full object-cover"
+                  src={user.avatar}
+                  className="w-full h-full object-cover bg-cardBg"
                 />
               </div>
 
@@ -212,10 +212,10 @@ function Navbar() {
                   >
                     <div className="flex flex-col p-4">
                       <p className="font-semibold text-textColor">
-                        Thierry Gusenga
+                        {user.name}
                       </p>
                       <p className="text-sm text-textColorWeak mb-4 mt-0.5 font-medium">
-                        tgusenga2003@gmail.com
+                        {user.email}
                       </p>
 
                       <Link
@@ -265,7 +265,7 @@ function Navbar() {
                     </div>
                     <div className="flex flex-col border-cardItemBg px-2 py-2">
                       <button
-                        onClick={() => setIsAuthenticated(false)}
+                        onClick={() => logout()}
                         className="text-left py-1.5 text-red-400 hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between"
                       >
                         Log Out
