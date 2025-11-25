@@ -7,6 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Node junk
 node_modules
 dist
 dist-ssr
@@ -23,11 +24,23 @@ dist-ssr
 *.sln
 *.sw?
 
-# Environment variables
+# Root environment files
 .env
 .env.*
 
-# Dependencies
+# TanStack plugin stuff
 .tanstack
 
-/server/.env
+# Server
+server/node_modules
+server/dist
+server/.env
+server/.env.*
+
+# Client
+client/node_modules
+client/dist
+client/dist-ssr
+client/.env
+client/.env.*
+
