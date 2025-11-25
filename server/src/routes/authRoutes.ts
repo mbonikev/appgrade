@@ -5,6 +5,8 @@ import { authenticateToken } from '../middleware/auth';
 
 const router = Router();
 
+console.log(">>> authRoutes FILE LOADED");
+
 // Google OAuth routes
 router.get(
     '/google',
@@ -38,6 +40,11 @@ router.get(
     }),
     handleOAuthCallback
 );
+
+router.get("/test", (req, res) => {
+  res.json({ working: true });
+});
+
 
 // Get current user (protected route)
 router.get('/user', authenticateToken as any, getCurrentUser);

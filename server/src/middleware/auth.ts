@@ -7,7 +7,7 @@ export interface AuthRequest extends Request {
 }
 
 export const authenticateToken = async (
-    req: AuthRequest,
+    req: Request,
     res: Response,
     next: NextFunction
 ): Promise<void> => {
