@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { RiCloseLine, RiArrowLeftLine } from "react-icons/ri";
-import { FaGoogle, FaGithub } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 
 interface SignInModalProps {
