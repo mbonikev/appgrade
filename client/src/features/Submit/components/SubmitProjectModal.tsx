@@ -168,9 +168,7 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
               <div className="flex items-center gap-3">
                 {view !== "selection" && (
                   <button
-                    onClick={() =>
-                      view !== "selection" ? handleBack() : setView("selection")
-                    }
+                    onClick={handleBack}
                     className="p-1 rounded-full hover:bg-cardItemBg text-textColor transition-colors"
                   >
                     <RiArrowLeftLine className="text-xl" />
