@@ -18,6 +18,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfileProfileIdRouteImport } from './routes/profile.$profileId'
 import { Route as PreviewProjectIdRouteImport } from './routes/preview.$projectId'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 
 const UserAgreementRoute = UserAgreementRouteImport.update({
   id: '/user-agreement',
@@ -64,6 +65,11 @@ const PreviewProjectIdRoute = PreviewProjectIdRouteImport.update({
   path: '/preview/$projectId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/profile': typeof ProfileRouteWithChildren
   '/user-agreement': typeof UserAgreementRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/preview/$projectId': typeof PreviewProjectIdRoute
   '/profile/$profileId': typeof ProfileProfileIdRoute
 }
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/profile': typeof ProfileRouteWithChildren
   '/user-agreement': typeof UserAgreementRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/preview/$projectId': typeof PreviewProjectIdRoute
   '/profile/$profileId': typeof ProfileProfileIdRoute
 }
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/profile': typeof ProfileRouteWithChildren
   '/user-agreement': typeof UserAgreementRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/preview/$projectId': typeof PreviewProjectIdRoute
   '/profile/$profileId': typeof ProfileProfileIdRoute
 }
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/profile'
     | '/user-agreement'
+    | '/auth/callback'
     | '/preview/$projectId'
     | '/profile/$profileId'
   fileRoutesByTo: FileRoutesByTo
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/profile'
     | '/user-agreement'
+    | '/auth/callback'
     | '/preview/$projectId'
     | '/profile/$profileId'
   id:
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/profile'
     | '/user-agreement'
+    | '/auth/callback'
     | '/preview/$projectId'
     | '/profile/$profileId'
   fileRoutesById: FileRoutesById
@@ -143,6 +155,7 @@ export interface RootRouteChildren {
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   ProfileRoute: typeof ProfileRouteWithChildren
   UserAgreementRoute: typeof UserAgreementRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
   PreviewProjectIdRoute: typeof PreviewProjectIdRoute
 }
 
@@ -211,6 +224,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PreviewProjectIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -233,6 +253,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   ProfileRoute: ProfileRouteWithChildren,
   UserAgreementRoute: UserAgreementRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
   PreviewProjectIdRoute: PreviewProjectIdRoute,
 }
 export const routeTree = rootRouteImport

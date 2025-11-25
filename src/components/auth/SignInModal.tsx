@@ -15,13 +15,13 @@ const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose }) => {
     const [currentView, setCurrentView] = useState<ViewState>("signin");
 
     const handleGoogleSignIn = () => {
-        // TODO: Implement Google OAuth flow
-        console.log("Google sign-in clicked");
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        window.location.href = `${API_URL}/auth/google`;
     };
 
     const handleGithubSignIn = () => {
-        // TODO: Implement GitHub OAuth flow
-        console.log("GitHub sign-in clicked");
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        window.location.href = `${API_URL}/auth/github`;
     };
 
     const handleClose = () => {
