@@ -44,15 +44,15 @@ const AwardsShowcase: React.FC<AwardsShowcaseProps> = ({ awards }) => {
     <div ref={containerRef} className="relative h-[300vh] bg-bodyBg">
       <div className="sticky top-0 h-screen w-full flex flex-col  overflow-hidden">
         <Navbar />
-        <div className="sticky top-0 h-screen w-full max-w-[1300px] mx-auto flex flex-col md:flex-row overflow-hidden">
+        <div className="sticky top-0 h-screen w-full max-w-[1300px] mx-auto flex flex-col md:flex-row md:items-center overflow-hidden">
           {/* Section 1: Title */}
-          <div className="w-full md:w-1/4 h-[20vh] md:h-full flex flex-col justify-center z-10">
+          <div className="w-full md:w-1/4 h-[20vh] max-md:h-fit px-5 pt-8 pb-5 flex flex-col justify-center z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 className="text-4xl md:text-6xl font-bold text-textColor leading-tight">
+              <h1 className="text-4xl md:text-4xl xl:text-6xl lg:text-5xl font-bold text-textColor leading-tight">
                 Awards <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-mainColor">
                   & Honors
@@ -65,8 +65,8 @@ const AwardsShowcase: React.FC<AwardsShowcaseProps> = ({ awards }) => {
           </div>
 
           {/* Section 2: Stacked Cards */}
-          <div className="w-full md:w-1/2 h-[50vh] md:h-full flex items-center justify-center relative perspective-1000">
-            <div className="relative w-[370px] h-[460px] max-xl:w-[350px] max-xl:h-[80%]">
+          <div className="max-md:flex-1 w-full md:w-1/2 h-[50vh] md:h-full max-md:px-6 flex items-center justify-center relative perspective-1000">
+            <div className="relative w-[370px] h-[460px] max-lg:w-[330px] max-lg:h-[400px] max-md:w-[360px] max-md:h-[430px]">
               {awards.map((award, index) => {
                 // Calculate visual stacking
                 // We want the active card to be front and center
@@ -87,7 +87,7 @@ const AwardsShowcase: React.FC<AwardsShowcaseProps> = ({ awards }) => {
           </div>
 
           {/* Section 3: Project Info */}
-          <div className="w-full md:w-1/4 h-[30vh] md:h-full flex flex-col justify-center p-8 md:p-12 z-10 bg-black/50 backdrop-blur-sm md:bg-transparent">
+          <div className="w-full md:w-1/4 h-[30vh] max-md:h-[200px] p-5 flex flex-col justify-center z-10 bg-black max-md:text-white md:bg-transparent">
             <div className="relative h-40">
               {awards.map((award, index) => (
                 <motion.div
@@ -105,17 +105,17 @@ const AwardsShowcase: React.FC<AwardsShowcaseProps> = ({ awards }) => {
                     <span className=" font-bold uppercase tracking-wider text-sm">
                       APPGRADE
                     </span>
-                    <span className="text-textColorWeak">•</span>
-                    <span className="text-textColorWeak text-sm whitespace-nowrap">
+                    <span className="opacity-70">•</span>
+                    <span className="opacity-70 text-sm ">
                       {award.category} Award
                     </span>
                   </div>
-                  <h3 className="text-2xl font-bold text-textColor mb-1">
+                  <h3 className="text-2xl font-bold mb-1">
                     {award.developer}
                   </h3>
                   <a
                     href="#"
-                    className="text-textColorWeak hover:text-textColor text-sm mb-6 block transition-colors"
+                    className="text-sm mb-6 opacity-70 block transition-colors"
                   >
                     {award.name}.com
                   </a>
@@ -123,7 +123,7 @@ const AwardsShowcase: React.FC<AwardsShowcaseProps> = ({ awards }) => {
                   <Button
                     label="Visit Site"
                     icon={<RiArrowRightUpLine className="min-w-fit" />}
-                    className="bg-cardBg rounded-full pr-8 pl-4 py-3 w-max font-bold"
+                    className="bg-cardBg pr-8 pl-4 py-3 font-bold"
                   />
                 </motion.div>
               ))}
