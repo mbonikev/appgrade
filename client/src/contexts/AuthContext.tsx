@@ -5,9 +5,21 @@ import api from "../lib/api";
 interface User {
   id: string;
   email: string;
-  bio?: string;
+  name: string;
+  username?: string;
   avatar?: string;
+  bio?: string;
+  website?: string;
+  role: "user" | "creator" | "admin";
+  followers: number;
+  following: number;
+  appsCount: number;
+  isVerified: boolean;
+  coverImage?: string;
   provider: "google" | "github";
+  providerId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface AuthContextType {
@@ -81,7 +93,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(null);
 
       // Redirect to login or homepage
-      window.location.reload()
+      window.location.reload();
     } catch (error) {
       console.error("Logout failed:", error);
     }
