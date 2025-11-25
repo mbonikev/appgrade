@@ -10,6 +10,7 @@ import {
   RiEqualizerLine,
   RiLogoutBoxRLine,
 } from "react-icons/ri";
+import { useAuth } from "../../../contexts/AuthContext";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -18,6 +19,8 @@ interface SettingsModalProps {
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState("general");
+  const { user, logout } = useAuth();
+  const [bio, setBio] = useState("");
 
   // Close on Escape key
   useEffect(() => {
@@ -57,18 +60,17 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             transition={{ duration: 0.17 }}
             className="relative w-full max-w-5xl h-[80vh] bg-modalBg rounded-2xl shadow-2xl overflow-hidden flex border border-linesColor"
           >
-            {/* Sidebar */}
             <div className="w-64 bg-cardBg border-r border-linesColor flex flex-col">
               <div className="p-6 flex items-center gap-3 border-b border-linesColor">
                 <div className="w-8 h-8 rounded-full bg-cardItemBg overflow-hidden">
                   <img
-                    src="https://i.pinimg.com/736x/a9/70/8f/a9708f9840565fc2aae91b5847fcceab.jpg"
+                    src={user?.avatar || "https://i.pinimg.com/736x/a9/70/8f/a9708f9840565fc2aae91b5847fcceab.jpg"}
                     alt="Profile"
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <span className="font-semibold text-textColor">
-                  Thierry Gusenga
+                  {user?.name || "User"}
                 </span>
               </div>
 
@@ -78,11 +80,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                     <button
                       key={item.id}
                       onClick={() => setActiveTab(item.id)}
-                      className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                        activeTab === item.id
-                          ? "bg-cardItemBg text-white"
-                          : "text-textColorWeak hover:text-textColor hover:bg-bodyBg"
-                      }`}
+                      className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === item.id
+                        ? "bg-cardItemBg text-white"
+                        : "text-textColorWeak hover:text-textColor hover:bg-bodyBg"
+                        }`}
                     >
                       <item.icon className="text-lg" />
                       {item.label}
@@ -92,7 +93,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
               </div>
 
               <div className="p-3 border-t border-linesColor">
-                <button className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-400/10 transition-colors w-full">
+                <button
+                  onClick={logout}
+                  className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-400/10 transition-colors w-full"
+                >
                   <RiLogoutBoxRLine className="text-lg" />
                   Sign Out
                 </button>
@@ -126,7 +130,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                       <div className="flex items-center gap-6 mb-6">
                         <div className="w-20 h-20 rounded-full bg-cardBg border-2 border-linesColor overflow-hidden">
                           <img
-                            src="https://i.pinimg.com/736x/a9/70/8f/a9708f9840565fc2aae91b5847fcceab.jpg"
+                            src={user?.avatar || "https://i.pinimg.com/736x/a9/70/8f/a9708f9840565fc2aae91b5847fcceab.jpg"}
                             alt="Profile"
                             className="w-full h-full object-cover"
                           />
@@ -136,75 +140,51 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                       <div className="grid gap-6">
                         <div className="grid grid-cols-[120px_1fr] items-center gap-4">
                           <label className="text-textColorWeak text-sm font-medium">
-                            Your Name
+                            Name
                           </label>
                           <input
                             type="text"
-                            defaultValue="Thierry Gusenga"
-                            className="bg-cardBg border border-linesColor rounded-lg px-4 py-2.5 text-textColor outline-none focus:border-mainColor transition-colors"
+                            value={user?.name || ""}
+                            disabled
+                            className="bg-cardBg border border-linesColor rounded-lg px-4 py-2.5 text-textColorWeak outline-none cursor-not-allowed opacity-60"
                           />
                         </div>
-                      </div>
-                    </div>
 
-                    <div className="h-px bg-linesColor" />
-
-                    {/* Account Section */}
-                    <div>
-                      <h3 className="text-textColor font-medium mb-4">
-                        Account
-                      </h3>
-                      <div className="grid gap-4">
                         <div className="grid grid-cols-[120px_1fr] items-center gap-4">
                           <label className="text-textColorWeak text-sm font-medium">
-                            Your Email
+                            Email
                           </label>
                           <input
                             type="email"
-                            defaultValue="tgusenga2003@gmail.com"
-                            className="bg-cardBg border border-linesColor rounded-lg px-4 py-2.5 text-textColor outline-none focus:border-mainColor transition-colors"
+                            value={user?.email || ""}
+                            disabled
+                            className="bg-cardBg border border-linesColor rounded-lg px-4 py-2.5 text-textColorWeak outline-none cursor-not-allowed opacity-60"
                           />
                         </div>
 
-                        <button className="flex items-center justify-between py-2 text-textColor hover:text-mainColor transition-colors group">
-                          <span className="text-sm font-medium">
-                            Change Password
-                          </span>
-                          <span className="text-xl">›</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="h-px bg-linesColor" />
-
-                    {/* Security Section */}
-                    <div>
-                      <h3 className="text-textColor font-medium mb-4">
-                        Security
-                      </h3>
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <span className="text-textColorWeak text-sm font-medium">
-                            2 Step Verification
-                          </span>
-                          <div className="w-11 h-6 bg-cardItemBg rounded-full relative cursor-pointer">
-                            <div className="w-4 h-4 bg-textColorWeak rounded-full absolute top-1 left-1" />
+                        <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+                          <label className="text-textColorWeak text-sm font-medium">
+                            Provider
+                          </label>
+                          <div className="flex items-center gap-2 bg-cardBg border border-linesColor rounded-lg px-4 py-2.5">
+                            <span className="text-textColorWeak capitalize">
+                              {user?.provider || "N/A"}
+                            </span>
                           </div>
                         </div>
 
-                        <button className="flex items-center justify-between w-full py-2 text-textColor hover:text-mainColor transition-colors">
-                          <span className="text-sm font-medium">
-                            Log out of all devices
-                          </span>
-                          <span className="text-xl">›</span>
-                        </button>
-
-                        <button className="flex items-center justify-between w-full py-2 text-red-400 hover:text-red-300 transition-colors">
-                          <span className="text-sm font-medium">
-                            Delete Account
-                          </span>
-                          <span className="text-xl">›</span>
-                        </button>
+                        <div className="grid grid-cols-[120px_1fr] items-start gap-4">
+                          <label className="text-textColorWeak text-sm font-medium pt-2.5">
+                            Bio
+                          </label>
+                          <textarea
+                            value={bio}
+                            onChange={(e) => setBio(e.target.value)}
+                            placeholder="Tell us about yourself..."
+                            rows={4}
+                            className="bg-cardBg border border-linesColor rounded-lg px-4 py-2.5 text-textColor outline-none focus:border-mainColor transition-colors resize-none"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
