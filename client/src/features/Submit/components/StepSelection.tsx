@@ -2,30 +2,30 @@ import React from 'react';
 import { RiLayoutGridFill, RiPriceTag3Fill, RiFileCodeFill } from 'react-icons/ri';
 
 interface StepSelectionProps {
-    onSelect: (type: 'project' | 'category' | 'template') => void;
+    onSelect: (type: 'screens' | 'ui_elements' | 'themes') => void;
 }
 
 const StepSelection: React.FC<StepSelectionProps> = ({ onSelect }) => {
     const options = [
         {
-            id: 'project',
-            title: 'New Project',
-            description: 'Submit a new application or tool to the directory.',
+            id: 'screens',
+            title: 'Screens',
+            description: 'Upload screens for UI/UX testing and feedback.',
             icon: RiLayoutGridFill,
             color: 'bg-blue-500',
         },
         {
-            id: 'category',
-            title: 'New Category',
-            description: 'Propose a new category for organizing projects.',
-            icon: RiPriceTag3Fill,
+            id: 'ui_elements',
+            title: 'UI Elements',
+            description: 'Share components with code and previews.',
+            icon: RiFileCodeFill,
             color: 'bg-purple-500',
         },
         {
-            id: 'template',
-            title: 'New Template',
-            description: 'Share a project template for others to use.',
-            icon: RiFileCodeFill,
+            id: 'themes',
+            title: 'Themes',
+            description: 'Share Tailwind CSS themes and styles.',
+            icon: RiPriceTag3Fill,
             color: 'bg-orange-500',
         },
     ] as const;

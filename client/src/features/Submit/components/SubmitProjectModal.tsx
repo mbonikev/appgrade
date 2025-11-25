@@ -2,17 +2,15 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { RiCloseLine, RiCheckLine, RiArrowLeftLine } from "react-icons/ri";
 import StepEssentials from "./StepEssentials";
-import StepCategorization from "./StepCategorization";
 import StepVisuals from "./StepVisuals";
 import StepSelection from "./StepSelection";
-import StepCategoryForm from "./StepCategoryForm";
 
 interface SubmitProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-type ViewState = "selection" | "project" | "category" | "template";
+type ViewState = "selection" | "screens" | "ui_elements" | "themes";
 
 const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
   isOpen,
@@ -33,9 +31,10 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
     coverImage: null as File | null,
     gallery: [] as File[],
     videoUrl: "",
+    codeSnippet: "",
   });
 
-  const totalProjectSteps = 4;
+  const totalProjectSteps = 3;
 
   const handleNext = () => {
     if (currentStep < totalProjectSteps) {
@@ -72,6 +71,7 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
         coverImage: null,
         gallery: [],
         videoUrl: "",
+        codeSnippet: "",
       });
     }, 300);
   };
@@ -80,13 +80,7 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
     setProjectData((prev) => ({ ...prev, ...data }));
   };
 
-  const handleCategorySubmit = (data: {
-    name: string;
-    description: string;
-  }) => {
-    console.log("Submitting Category:", data);
-    handleClose();
-  };
+
 
   const renderProjectStep = () => {
     switch (currentStep) {
@@ -96,16 +90,13 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
         );
       case 2:
         return (
-          <StepCategorization
+          <StepVisuals
             data={projectData}
             updateData={updateProjectData}
+            type={view as 'screens' | 'ui_elements' | 'themes'}
           />
         );
       case 3:
-        return (
-          <StepVisuals data={projectData} updateData={updateProjectData} />
-        );
-      case 4:
         return (
           <div className="flex flex-col gap-4 text-center py-8">
             <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -143,12 +134,12 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
     switch (view) {
       case "selection":
         return "Submit Content";
-      case "project":
-        return "Submit Project";
-      case "category":
-        return "Suggest Category";
-      case "template":
-        return "Submit Template";
+      case "screens":
+        return "Submit Screens";
+      case "ui_elements":
+        return "Submit UI Element";
+      case "themes":
+        return "Submit Theme";
     }
   };
 
@@ -178,7 +169,7 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
                 {view !== "selection" && (
                   <button
                     onClick={() =>
-                      view === "project" ? handleBack() : setView("selection")
+                      view !== "selection" ? handleBack() : setView("selection")
                     }
                     className="p-1 rounded-full hover:bg-cardItemBg text-textColor transition-colors"
                   >
@@ -189,7 +180,7 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
                   <h2 className="text-xl font-bold text-textColor">
                     {getTitle()}
                   </h2>
-                  {view === "project" && (
+                  {view !== "selection" && (
                     <p className="text-sm text-textColorWeak">
                       Step {currentStep} of {totalProjectSteps}
                     </p>
@@ -204,8 +195,8 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
               </button>
             </div>
 
-            {/* Progress Bar (Project Only) */}
-            {view === "project" && (
+            {/* Progress Bar */}
+            {view !== "selection" && (
               <div className="w-full h-1 bg-cardItemBg">
                 <motion.div
                   className="h-full bg-mainColor"
@@ -223,19 +214,11 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
             {/* Content */}
             <div className="p-6 overflow-y-auto flex-1">
               {view === "selection" && <StepSelection onSelect={setView} />}
-              {view === "project" && renderProjectStep()}
-              {view === "category" && (
-                <StepCategoryForm onSubmit={handleCategorySubmit} />
-              )}
-              {view === "template" && (
-                <div className="text-center py-12 text-textColorWeak">
-                  Template submission coming soon!
-                </div>
-              )}
+              {view !== "selection" && renderProjectStep()}
             </div>
 
-            {/* Footer (Project Only) */}
-            {view === "project" && (
+            {/* Footer */}
+            {view !== "selection" && (
               <div className="p-6 border-t border-linesColor flex justify-between items-center bg-bodyBg">
                 <button
                   onClick={handleBack}
