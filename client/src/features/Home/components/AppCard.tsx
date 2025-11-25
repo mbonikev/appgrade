@@ -4,7 +4,7 @@ import { RiMore2Fill, RiPencilLine, RiDeleteBinLine, RiBookmarkLine, RiBookmarkF
 import { motion, AnimatePresence } from "framer-motion";
 
 interface AppCardProps {
-  id?: string;
+  id?: number;
   title: string;
   description: string;
   image: string;
