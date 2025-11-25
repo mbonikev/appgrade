@@ -5,7 +5,7 @@ import api from "../lib/api";
 interface User {
   id: string;
   email: string;
-  name: string;
+  bio?: string;
   avatar?: string;
   provider: "google" | "github";
 }
