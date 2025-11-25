@@ -73,7 +73,7 @@ export const apps = [
   },
 ];
 
-const AppGrid = ({ activeView, selectedCategory = 'All' }: AppGridProps) => {
+const AppGrid = ({ selectedCategory = 'All' }: AppGridProps) => {
   const [selectedApp, setSelectedApp] = useState<any | null>(null);
 
   useEffect(() => {

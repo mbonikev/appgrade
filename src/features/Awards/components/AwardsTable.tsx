@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AwardApp, honorableMentions, bestDesign, bestUX } from '../data/mockAwards';
+import { honorableMentions, bestDesign, bestUX } from '../data/mockAwards';
 import Button from '../../../components/ui/Button';
 import { RiAddLine, RiGlobalLine, RiMapPin2Line, RiEarthLine } from 'react-icons/ri';
 
