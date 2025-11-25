@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import passport from "./config/passport";
 import { connectDatabase } from "./config/database";
 import authRoutes from "./routes/authRoutes";
+import userRoutes from "./routes/userRoutes";
 
 // Load environment variables
 dotenv.config();
@@ -18,7 +19,7 @@ app.use(
   cors({
     origin:
       process.env.CLIENT_URL ||
-      "[http://localhost:5173](http://localhost:5173)",
+      "http://localhost:5173",
     credentials: true,
   })
 );
@@ -48,6 +49,7 @@ app.use(passport.session());
 
 // Routes
 app.use("/auth", authRoutes);
+app.use("/api/users", userRoutes);
 
 // Health check
 app.get("/health", (req, res) => {

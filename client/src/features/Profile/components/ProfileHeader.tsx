@@ -7,6 +7,14 @@ interface ProfileHeaderProps {
     avatar?: string;
     isOwnProfile?: boolean;
     onEditClick?: () => void;
+    stats?: {
+        projects: number;
+        views: number;
+        upvotes: number;
+        awards: number;
+        followers: number;
+        following: number;
+    };
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
@@ -15,7 +23,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     role = "Product designer",
     avatar = "https://i.pinimg.com/736x/a9/70/8f/a9708f9840565fc2aae91b5847fcceab.jpg",
     isOwnProfile = true,
-    onEditClick
+    onEditClick,
+    stats
 }) => {
     return (
         <div className="flex flex-col items-center justify-center py-12">
@@ -32,16 +41,35 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 <span>·</span>
                 <span>{role}</span>
             </div>
-            {isOwnProfile ? (
+
+            {/* Stats Grid */}
+            {stats && (
+                <div className="flex items-center gap-8 mb-8 text-center">
+                    <div>
+                        <div className="text-lg font-bold text-textColor">{stats.projects}</div>
+                        <div className="text-xs text-textColorWeak">Projects</div>
+                    </div>
+                    <div>
+                        <div className="text-lg font-bold text-textColor">{stats.views}</div>
+                        <div className="text-xs text-textColorWeak">Views</div>
+                    </div>
+                    <div>
+                        <div className="text-lg font-bold text-textColor">{stats.followers}</div>
+                        <div className="text-xs text-textColorWeak">Followers</div>
+                    </div>
+                    <div>
+                        <div className="text-lg font-bold text-textColor">{stats.following}</div>
+                        <div className="text-xs text-textColorWeak">Following</div>
+                    </div>
+                </div>
+            )}
+
+            {isOwnProfile && onEditClick && (
                 <button
                     onClick={onEditClick}
                     className="px-6 py-2 rounded-full border border-linesColor text-textColor font-medium hover:bg-cardBg transition-colors"
                 >
                     Edit profile
-                </button>
-            ) : (
-                <button className="px-6 py-2 rounded-full bg-mainColor text-white font-medium hover:bg-mainColorHover transition-colors">
-                    Follow
                 </button>
             )}
         </div>

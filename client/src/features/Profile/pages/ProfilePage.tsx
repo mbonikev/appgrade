@@ -1,91 +1,174 @@
 import React, { useState, useMemo } from 'react';
 import Navbar from '../../../components/layout/Navbar';
 import ProfileHeader from '../components/ProfileHeader';
+import ProfileTabs from '../components/ProfileTabs';
+import ProjectsGrid from '../components/ProjectsGrid';
 import SettingsModal from '../components/SettingsModal';
-import { topCreators, mostActiveCreators } from '../../Creators/data/mockCreators';
-import AppGrid from '../../Home/components/AppGrid';
+import SubmitProjectModal from '../../Submit/components/SubmitProjectModal';
+import EditProjectModal from '../components/EditProjectModal';
+import DeleteConfirmDialog from '../components/DeleteConfirmDialog';
+import ScreensViewPage from '../components/ScreensViewPage';
+import { mockUser, mockProjects, mockStats } from '../data/mockProfile';
+import { useAuth } from '../../../contexts/AuthContext';
 
 interface ProfilePageProps {
     profileId?: string;
 }
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
+    const { user: authUser } = useAuth();
     const [activeTab, setActiveTab] = useState('work');
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [isSubmitOpen, setIsSubmitOpen] = useState(false);
 
-    const tabs = [
-        { id: 'work', label: 'Work' },
-        { id: 'reviewed', label: 'Reviewed' },
-        { id: 'collections', label: 'Collections' },
-        { id: 'about', label: 'About' },
-    ];
+    // Management Modals State
+    const [editProjectId, setEditProjectId] = useState<string | null>(null);
+    const [deleteProjectId, setDeleteProjectId] = useState<string | null>(null);
+    const [viewScreensProject, setViewScreensProject] = useState<any | null>(null);
 
-    const creator = useMemo(() => {
-        if (!profileId) return null;
-        const allCreators = [...topCreators, ...mostActiveCreators];
-        return allCreators.find(c => c.id === profileId);
-    }, [profileId]);
-
+    // Determine if viewing own profile
     const isOwnProfile = !profileId;
+
+    // Merge auth data with mock data if viewing own profile
+    const user = isOwnProfile && authUser ? {
+        ...mockUser,
+        display_name: authUser.name,
+        username: authUser.email.split('@')[0], // Derive username from email if needed
+        avatar_url: authUser.avatar || mockUser.avatar_url,
+        email: authUser.email,
+    } : mockUser;
+
+    // Filter projects based on active tab
+    const displayedProjects = useMemo(() => {
+        if (activeTab === 'saved') {
+            return mockProjects.filter(p => p.is_bookmarked); // Mock bookmark filter
+        }
+        return mockProjects; // Default to all projects for 'work'
+    }, [activeTab]);
+
+    const handleEditProject = (id: string) => {
+        setEditProjectId(id);
+    };
+
+    const handleDeleteProject = (id: string) => {
+        setDeleteProjectId(id);
+    };
+
+    const handleConfirmDelete = () => {
+        console.log('Deleting project:', deleteProjectId);
+        setDeleteProjectId(null);
+        // In real app: call API and refresh list
+    };
+
+    const handleBookmarkProject = (id: string) => {
+        console.log('Bookmark project:', id);
+    };
+
+    // Mock function to handle clicking on a project card
+    const handleProjectClick = (project: any) => {
+        if (project.type === 'screens') {
+            setViewScreensProject(project);
+        } else {
+            console.log('Navigate to project:', project.id);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-bodyBg">
             <Navbar />
             <div className="w-full h-fit px-10 md:px-10 max-md:px-4">
                 <ProfileHeader
-                    name={creator?.name}
-                    handle={creator?.username}
-                    role={creator ? "Creator" : undefined}
-                    avatar={creator?.avatar}
+                    name={user.display_name}
+                    handle={`@${user.username}`}
+                    role={user.role === 'creator' ? "Creator" : "User"}
+                    avatar={user.avatar_url}
                     isOwnProfile={isOwnProfile}
                     onEditClick={() => setIsSettingsOpen(true)}
+                    stats={mockStats}
                 />
 
-                {/* Tabs */}
-                <div className="flex items-center justify-center gap-8 border-b border-linesColor mb-8">
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            className={`pb-4 text-sm font-medium transition-colors relative ${activeTab === tab.id
-                                ? 'text-textColor'
-                                : 'text-textColorWeak hover:text-textColor'
-                                }`}
-                        >
-                            {tab.label}
-                            {activeTab === tab.id && (
-                                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-textColor rounded-t-full" />
-                            )}
-                        </button>
-                    ))}
-                </div>
+                <ProfileTabs
+                    activeTab={activeTab}
+                    onTabChange={setActiveTab}
+                    isOwnProfile={isOwnProfile}
+                />
 
-                {/* Tab Content Placeholder */}
-                <div className="min-h-[400px]">
+                {/* Tab Content */}
+                <div className="min-h-[400px] pb-20">
                     {activeTab === 'work' && (
                         <div className="animate-fade-in">
-                            <AppGrid />
+                            <ProjectsGrid
+                                projects={displayedProjects}
+                                isOwnProfile={isOwnProfile}
+                                onEdit={handleEditProject}
+                                onDelete={handleDeleteProject}
+                                onBookmark={handleBookmarkProject}
+                                onClick={handleProjectClick}
+                            />
                         </div>
                     )}
-                    {activeTab === 'reviewed' && (
-                        <div className="flex items-center justify-center h-[400px] text-textColorWeak">
-                            <p>Reviewed content goes here</p>
+                    {activeTab === 'saved' && (
+                        <div className="animate-fade-in">
+                            <ProjectsGrid
+                                projects={[]} // Empty for now to test empty state
+                                isOwnProfile={isOwnProfile}
+                                onBookmark={handleBookmarkProject}
+                                onClick={handleProjectClick}
+                            />
                         </div>
                     )}
-                    {activeTab === 'collections' && (
+                    {activeTab === 'awards' && (
                         <div className="flex items-center justify-center h-[400px] text-textColorWeak">
-                            <p>Collections content goes here</p>
+                            <p>No awards won yet.</p>
                         </div>
                     )}
                     {activeTab === 'about' && (
-                        <div className="flex items-center justify-center h-[400px] text-textColorWeak">
-                            <p>About content goes here</p>
+                        <div className="max-w-2xl mx-auto text-center text-textColorWeak">
+                            <p className="text-lg">{user.bio}</p>
+                            <a href={user.website} target="_blank" rel="noreferrer" className="text-mainColor hover:underline mt-4 block">
+                                {user.website}
+                            </a>
                         </div>
                     )}
                 </div>
             </div>
 
-            <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+            {/* Modals */}
+            <SettingsModal
+                isOpen={isSettingsOpen}
+                onClose={() => setIsSettingsOpen(false)}
+            />
+
+            <SubmitProjectModal
+                isOpen={isSubmitOpen}
+                onClose={() => setIsSubmitOpen(false)}
+            />
+
+            {editProjectId && (
+                <EditProjectModal
+                    isOpen={!!editProjectId}
+                    onClose={() => setEditProjectId(null)}
+                    projectId={editProjectId}
+                />
+            )}
+
+            {deleteProjectId && (
+                <DeleteConfirmDialog
+                    isOpen={!!deleteProjectId}
+                    onClose={() => setDeleteProjectId(null)}
+                    onConfirm={handleConfirmDelete}
+                    projectName={mockProjects.find(p => p.id === deleteProjectId)?.name || 'Project'}
+                />
+            )}
+
+            {viewScreensProject && (
+                <ScreensViewPage
+                    isOpen={!!viewScreensProject}
+                    onClose={() => setViewScreensProject(null)}
+                    images={[viewScreensProject.cover_image_url, viewScreensProject.cover_image_url, viewScreensProject.cover_image_url]} // Mock multiple images
+                    title={viewScreensProject.name}
+                />
+            )}
         </div>
     );
 };

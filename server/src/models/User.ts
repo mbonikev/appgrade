@@ -3,7 +3,16 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IUser extends Document {
     email: string;
     name: string;
+    username?: string;
     avatar?: string;
+    bio?: string;
+    website?: string;
+    role: 'user' | 'creator' | 'admin';
+    followers: number;
+    following: number;
+    appsCount: number;
+    isVerified: boolean;
+    coverImage?: string;
     provider: 'google' | 'github';
     providerId: string;
     createdAt: Date;
@@ -24,7 +33,45 @@ const UserSchema = new Schema<IUser>(
             required: true,
             trim: true,
         },
+        username: {
+            type: String,
+            unique: true,
+            sparse: true, // Allows null/undefined to not conflict
+            trim: true,
+        },
         avatar: {
+            type: String,
+        },
+        bio: {
+            type: String,
+            default: '',
+        },
+        website: {
+            type: String,
+            default: '',
+        },
+        role: {
+            type: String,
+            enum: ['user', 'creator', 'admin'],
+            default: 'user',
+        },
+        followers: {
+            type: Number,
+            default: 0,
+        },
+        following: {
+            type: Number,
+            default: 0,
+        },
+        appsCount: {
+            type: Number,
+            default: 0,
+        },
+        isVerified: {
+            type: Boolean,
+            default: false,
+        },
+        coverImage: {
             type: String,
         },
         provider: {
