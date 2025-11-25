@@ -12,7 +12,7 @@ const CreatorsPage: React.FC = () => {
     useEffect(() => {
         const fetchCreators = async () => {
             try {
-                const response = await api.get('/users/creators');
+                const response = await api.get('/api/users/creators');
                 setCreators(response.data);
             } catch (err) {
                 console.error('Failed to fetch creators:', err);

@@ -25,3 +25,13 @@ export const getCreators = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'Server error fetching creators' });
     }
 };
+
+export const getAllUsers = async (req: Request, res: Response) => {
+    try {
+        const users = await User.find().sort({ createdAt: -1 });
+        res.status(200).json(users);
+    } catch (error) {
+        console.error('Error fetching all users:', error);
+        res.status(500).json({ message: 'Server error fetching all users' });
+    }
+};
