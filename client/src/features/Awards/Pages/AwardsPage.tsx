@@ -1,16 +1,24 @@
 import AwardsShowcase from '../components/AwardsShowcase';
-import { appOfTheDay, honorableMentions, bestDesign} from '../data/mockAwards';
+import NomineesCarousel from '../components/NomineesCarousel';
+import { awardCategories } from '../data/mockAwards';
+
 const AwardsPage = () => {
-    // Combine awards for the showcase
-    const featuredAwards = [appOfTheDay, ...honorableMentions, ...bestDesign.slice(0, 2)];
+    // Get all winners for the showcase
+    const featuredAwards = awardCategories.map(cat => cat.winner);
 
     return (
         <div className="min-h-screen bg-bodyBg">
-            {/* <Navbar /> */}
-
-            {/* New Awards Showcase Section */}
+            {/* Awards Showcase Section */}
             <AwardsShowcase awards={featuredAwards} />
 
+            {/* Nominees Sections - One for each award category */}
+            {awardCategories.map((category) => (
+                <NomineesCarousel
+                    key={category.id}
+                    category={category.title}
+                    nominees={category.nominees}
+                />
+            ))}
         </div>
     );
 };
