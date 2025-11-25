@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { RiCloseLine, RiArrowLeftLine } from "react-icons/ri";
 import { FaGoogle, FaGithub } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 
 interface SignInModalProps {
     isOpen: boolean;
@@ -36,7 +37,7 @@ const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose }) => {
     const renderSignInView = () => (
         <>
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-linesColor">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-linesColor">
                 <h2 className="text-2xl font-bold text-textColor">Sign In</h2>
                 <button
                     onClick={handleClose}
@@ -59,7 +60,7 @@ const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose }) => {
                         onClick={handleGoogleSignIn}
                         className="w-full flex items-center justify-center gap-3 px-6 py-3.5 bg-white hover:bg-gray-50 text-gray-800 rounded-full font-semibold transition-all shadow-md hover:shadow-lg border border-gray-200"
                     >
-                        <FaGoogle className="text-xl text-[#4285F4]" />
+                        <FcGoogle className="text-2xl text-[#4285F4]" />
                         <span>Continue with Google</span>
                     </button>
 
@@ -108,7 +109,7 @@ const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose }) => {
     const renderUserAgreement = () => (
         <>
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-linesColor">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-linesColor">
                 <div className="flex items-center gap-3">
                     <button
                         onClick={handleBack}
@@ -216,7 +217,7 @@ const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose }) => {
     const renderPrivacyPolicy = () => (
         <>
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-linesColor">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-linesColor">
                 <div className="flex items-center gap-3">
                     <button
                         onClick={handleBack}
@@ -332,7 +333,7 @@ const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose }) => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        onClick={handleClose}
+                        // onClick={handleClose}
                         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
                     />
 
