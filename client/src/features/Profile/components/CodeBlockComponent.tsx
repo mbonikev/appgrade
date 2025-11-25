@@ -10,7 +10,7 @@ interface CodeBlockComponentProps {
 const CodeBlockComponent: React.FC<CodeBlockComponentProps> = ({
     code,
     language = 'javascript',
-    title = 'Code Snippet'
+    // title = 'Code Snippet'
 }) => {
     const [copied, setCopied] = useState(false);
 

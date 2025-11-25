@@ -26,8 +26,8 @@ const CreatorsPage: React.FC = () => {
     }, []);
 
     // Derived lists (mock logic for now, can be refined with backend filters later)
-    const topCreators = creators.slice(0, 4);
-    const mostActiveCreators = creators.slice(0, 4); // Just showing same/subset for now
+    // const topCreators = creators.slice(0, 4);
+    // const mostActiveCreators = creators.slice(0, 4); // Just showing same/subset for now
 
     return (
         <div className="min-h-screen bg-bodyBg text-textColor">

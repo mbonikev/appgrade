@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RiCloseLine, RiArrowLeftLine, RiArrowRightLine, RiFullscreenLine } from 'react-icons/ri';
+import { RiCloseLine, RiArrowLeftLine, RiArrowRightLine } from 'react-icons/ri';
 
 interface ScreensViewPageProps {
     isOpen: boolean;
