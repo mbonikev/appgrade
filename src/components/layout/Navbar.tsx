@@ -177,10 +177,7 @@ function Navbar() {
             <RiSearch2Line />
           </button>
 
-          <button
-            onClick={() => setOpenSubmitModal(true)}
-            className="md:hidden text-white bg-mainColor text-2xl p-2 rounded-full ml-2"
-          >
+          <button className="md:hidden text-white bg-mainColor text-2xl p-2 rounded-full ml-2">
             <RiAddFill />
           </button>
 
@@ -251,7 +248,7 @@ function Navbar() {
                     <div className="flex flex-col gap- border-t border-b border-cardItemBg px-2 py-2">
                       <button
                         onClick={() => {
-                          setIsSettingsOpen(true);
+                          setIsSettingsOpen(true)
                           setOpenProfile(false);
                         }}
                         className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between"
@@ -282,7 +279,7 @@ function Navbar() {
             <Button
               label="Sign In"
               onClick={() => setOpenSignInModal(true)}
-              className="ml-2 px-5"
+              className="text-textColor hover:text-white hover:bg-mainColor ml-2 px-5"
             />
           )}
         </div>
