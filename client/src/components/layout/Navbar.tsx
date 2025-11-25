@@ -25,7 +25,7 @@ function Navbar() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [openSignInModal, setOpenSignInModal] = useState(false);
 
-  const { user, loading, logout } = useAuth();
+  const { user, logout } = useAuth();
 
   const router = useRouter();
   const currentPath = router.state.location.pathname; // current URL
