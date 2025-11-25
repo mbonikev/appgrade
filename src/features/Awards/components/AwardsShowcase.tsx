@@ -33,7 +33,7 @@ const AwardsShowcase: React.FC<AwardsShowcaseProps> = ({ awards }) => {
     });
 
     return (
-        <div ref={containerRef} className="relative h-[300vh] bg-black">
+        <div ref={containerRef} className="relative h-[300vh] bg-bodyBg">
             <div className="sticky top-0 h-screen w-full flex flex-col md:flex-row overflow-hidden">
 
                 {/* Section 1: Title */}

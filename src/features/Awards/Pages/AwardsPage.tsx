@@ -17,7 +17,7 @@ const AwardsPage = () => {
             <div className="max-w-[1600px] mx-auto px-4 md:px-10 pb-20 mt-20">
 
                 {/* Honorable Mentions */}
-                <div className="mb-20">
+                {/* <div className="mb-20">
                     <div className="flex items-center gap-3 mb-8">
                         <div className="p-3 rounded-2xl bg-blue-500/10 text-blue-500">
                             <RiMedalFill className="text-2xl" />
@@ -47,10 +47,10 @@ const AwardsPage = () => {
                             </div>
                         ))}
                     </div>
-                </div>
+                </div> */}
 
                 {/* Best Design */}
-                <div className="mb-20">
+                {/* <div className="mb-20">
                     <div className="flex items-center gap-3 mb-8">
                         <div className="p-3 rounded-2xl bg-purple-500/10 text-purple-500">
                             <RiPaletteFill className="text-2xl" />
@@ -77,10 +77,10 @@ const AwardsPage = () => {
                             </div>
                         ))}
                     </div>
-                </div>
+                </div> */}
 
                 {/* Best UX */}
-                <div className="mb-10">
+                {/* <div className="mb-10">
                     <div className="flex items-center gap-3 mb-8">
                         <div className="p-3 rounded-2xl bg-green-500/10 text-green-500">
                             <RiUserSmileFill className="text-2xl" />
@@ -107,7 +107,7 @@ const AwardsPage = () => {
                             </div>
                         ))}
                     </div>
-                </div>
+                </div> */}
 
             </div>
         </div>
