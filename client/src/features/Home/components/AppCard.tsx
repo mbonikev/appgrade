@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { HiStar } from "react-icons/hi";
-import { RiMore2Fill, RiPencilLine, RiDeleteBinLine, RiBookmarkLine, RiBookmarkFill, RiCodeSSlashLine, RiLayoutMasonryLine, RiPaletteLine, RiChatSmile2Line } from "react-icons/ri";
+import { RiMore2Fill, RiPencilLine, RiDeleteBinLine, RiBookmarkLine, RiBookmarkFill, RiCodeSSlashLine, RiLayoutMasonryLine, RiPaletteLine } from "react-icons/ri";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface AppCardProps {
@@ -46,10 +46,7 @@ const AppCard: React.FC<AppCardProps> = ({
     }
   };
 
-  // Determine if we should show the review button on the card
-  // "3 of them have the review btn on the home preview not the page"
-  // Assuming 'project' (developed) does NOT show it here, but others do.
-  const showReviewButton = !isOwnProject && type !== 'project' && onReview;
+
 
   return (
     <div

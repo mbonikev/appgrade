@@ -8,7 +8,6 @@ import {
   RiAppsLine,
   RiNotification3Line,
   RiEqualizerLine,
-  RiLogoutBoxRLine,
 } from "react-icons/ri";
 import { useAuth } from "../../../contexts/AuthContext";
 import api from "../../../lib/api";
@@ -20,7 +19,7 @@ interface SettingsModalProps {
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState("general");
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [bio, setBio] = useState("");
 
   // Initialize bio when modal opens

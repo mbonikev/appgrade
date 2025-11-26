@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
-import { RiArrowLeftLine, RiBookmarkLine, RiBookmarkFill, RiChatSmile2Line, RiExternalLinkLine, RiStarFill } from 'react-icons/ri';
+import { RiBookmarkLine, RiBookmarkFill, RiChatSmile2Line, RiExternalLinkLine, RiStarFill } from 'react-icons/ri';
 import ReviewModal from '../components/ReviewModal';
 import Navbar from '../../../components/layout/Navbar';
 
 const PreviewPage: React.FC = () => {
     // const { projectId } = useParams({ from: '/preview/$projectId' });
-    const navigate = useNavigate();
     const [isReviewOpen, setIsReviewOpen] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
 
@@ -17,7 +15,8 @@ const PreviewPage: React.FC = () => {
         url: "https://itk-equity.vercel.app/",
         type: "project",
         submissionType: "developed",
-        initials: "IE"
+        initials: "IE",
+        images: [] as string[]
     };
 
     // Scenario 2: Design UI / Theme / UI Element

@@ -1,4 +1,3 @@
-import React from 'react';
 import Navbar from '../../../components/layout/Navbar';
 import { RiMailSendLine, RiQuestionAnswerLine, RiBookOpenLine } from 'react-icons/ri';
 

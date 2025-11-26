@@ -3,7 +3,7 @@ import AppCard from "./AppCard";
 import { AnimatePresence, motion } from "framer-motion";
 import { HiStar, HiCursorClick, HiOutlineBookmark } from "react-icons/hi";
 import { RiChatSmile2Line } from "react-icons/ri";
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import ReviewModal from '../../Preview/components/ReviewModal';
 
 interface AppGridProps {
@@ -84,7 +84,6 @@ const AppGrid = ({ selectedCategory = 'All' }: AppGridProps) => {
   const [selectedApp, setSelectedApp] = useState<any | null>(null);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [selectedProjectForReview, setSelectedProjectForReview] = useState<any>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (selectedApp) {

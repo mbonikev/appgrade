@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from '@tanstack/react-router';
 import { RiHome4Line, RiArrowLeftLine } from 'react-icons/ri';
 import { motion } from 'framer-motion';

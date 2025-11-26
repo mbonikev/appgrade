@@ -1,5 +1,5 @@
 import React from 'react';
-import { RiImageAddLine, RiVideoAddLine, RiCodeSSlashLine, RiGalleryUploadLine } from 'react-icons/ri';
+import { RiImageAddLine, RiCodeSSlashLine, RiGalleryUploadLine } from 'react-icons/ri';
 
 interface StepVisualsProps {
     data: {

@@ -1,4 +1,3 @@
-import React from 'react';
 import Navbar from '../../../components/layout/Navbar';
 import { RiMapPinTimeLine, RiCheckboxCircleLine } from 'react-icons/ri';
 
