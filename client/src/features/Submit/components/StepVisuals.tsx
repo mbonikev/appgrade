@@ -1,18 +1,20 @@
 import React from 'react';
-import { RiImageAddLine, RiVideoAddLine, RiCodeSSlashLine } from 'react-icons/ri';
+import { RiImageAddLine, RiVideoAddLine, RiCodeSSlashLine, RiGalleryUploadLine } from 'react-icons/ri';
 
 interface StepVisualsProps {
     data: {
         logo: File | null;
         coverImage: File | null;
+        gallery: File[];
         videoUrl: string;
         codeSnippet?: string;
     };
     updateData: (data: any) => void;
     type: 'screens' | 'ui_elements' | 'themes';
+    isDeveloped?: boolean;
 }
 
-const StepVisuals: React.FC<StepVisualsProps> = ({ data, updateData, type }) => {
+const StepVisuals: React.FC<StepVisualsProps> = ({ data, updateData, type, isDeveloped }) => {
     // Mock file upload handlers
     const handleLogoUpload = () => {
         console.log("Logo upload clicked");
@@ -20,6 +22,10 @@ const StepVisuals: React.FC<StepVisualsProps> = ({ data, updateData, type }) => 
 
     const handleCoverUpload = () => {
         console.log("Cover upload clicked");
+    };
+
+    const handleGalleryUpload = () => {
+        console.log("Gallery upload clicked");
     };
 
     return (
@@ -48,11 +54,31 @@ const StepVisuals: React.FC<StepVisualsProps> = ({ data, updateData, type }) => 
                     >
                         <RiImageAddLine className="text-2xl text-textColorWeak group-hover:text-mainColor transition-colors" />
                         <span className="text-xs text-textColorWeak mt-1">
-                            Upload {type === 'screens' ? 'Screen (16:9)' : 'Preview'}
+                            Upload {type === 'screens' ? 'Screen (16:10)' : 'Preview'}
                         </span>
                     </div>
                 </div>
             </div>
+
+            {/* Gallery Upload - Only for Design UI Screens */}
+            {type === 'screens' && !isDeveloped && (
+                <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium text-textColor">Project Screens (Gallery)</label>
+                    <div
+                        onClick={handleGalleryUpload}
+                        className="w-full h-32 rounded-2xl border-2 border-dashed border-linesColor bg-cardItemBg flex flex-col items-center justify-center cursor-pointer hover:border-mainColor transition-colors group"
+                    >
+                        <RiGalleryUploadLine className="text-3xl text-textColorWeak group-hover:text-mainColor transition-colors" />
+                        <span className="text-sm text-textColorWeak mt-2">Upload multiple screens</span>
+                        <span className="text-xs text-textColorWeak opacity-60">Supports PNG, JPG</span>
+                    </div>
+                    {data.gallery.length > 0 && (
+                        <div className="text-sm text-textColorWeak mt-1">
+                            {data.gallery.length} screens selected
+                        </div>
+                    )}
+                </div>
+            )}
 
             {/* Code Snippet - Only for UI Elements and Themes */}
             {(type === 'ui_elements' || type === 'themes') && (
@@ -72,20 +98,7 @@ const StepVisuals: React.FC<StepVisualsProps> = ({ data, updateData, type }) => 
                 </div>
             )}
 
-            {/* Video URL - Always visible but optional */}
-            <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-textColor">Video Demo URL (Optional)</label>
-                <div className="relative">
-                    <RiVideoAddLine className="absolute left-4 top-1/2 -translate-y-1/2 text-textColorWeak text-xl" />
-                    <input
-                        type="url"
-                        value={data.videoUrl}
-                        onChange={(e) => updateData({ videoUrl: e.target.value })}
-                        placeholder="https://youtube.com/watch?v=..."
-                        className="w-full bg-cardItemBg border border-linesColor rounded-xl pl-12 pr-4 py-3 text-textColor placeholder-textColorWeak focus:outline-none focus:border-mainColor transition-colors"
-                    />
-                </div>
-            </div>
+
         </div>
     );
 };

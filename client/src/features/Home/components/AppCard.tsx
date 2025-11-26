@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { HiStar } from "react-icons/hi";
-import { RiMore2Fill, RiPencilLine, RiDeleteBinLine, RiBookmarkLine, RiBookmarkFill, RiCodeSSlashLine, RiLayoutMasonryLine, RiPaletteLine } from "react-icons/ri";
+import { RiMore2Fill, RiPencilLine, RiDeleteBinLine, RiBookmarkLine, RiBookmarkFill, RiCodeSSlashLine, RiLayoutMasonryLine, RiPaletteLine, RiChatSmile2Line } from "react-icons/ri";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface AppCardProps {
@@ -16,6 +16,7 @@ interface AppCardProps {
   onEdit?: () => void;
   onDelete?: () => void;
   onBookmark?: () => void;
+  onReview?: () => void;
   onClick?: () => void;
 }
 
@@ -31,6 +32,7 @@ const AppCard: React.FC<AppCardProps> = ({
   onEdit,
   onDelete,
   onBookmark,
+  onReview,
   onClick
 }) => {
   const [showMenu, setShowMenu] = useState(false);
@@ -43,6 +45,11 @@ const AppCard: React.FC<AppCardProps> = ({
       default: return null;
     }
   };
+
+  // Determine if we should show the review button on the card
+  // "3 of them have the review btn on the home preview not the page"
+  // Assuming 'project' (developed) does NOT show it here, but others do.
+  const showReviewButton = !isOwnProject && type !== 'project' && onReview;
 
   return (
     <div
@@ -110,6 +117,19 @@ const AppCard: React.FC<AppCardProps> = ({
             </div>
           )}
         </div>
+
+        {/* Review Button Overlay (Hover) */}
+        {showReviewButton && (
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <button
+              onClick={(e) => { e.stopPropagation(); onReview?.(); }}
+              className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-full font-bold text-sm shadow-lg hover:scale-105 transition-transform"
+            >
+              <RiChatSmile2Line className="text-lg" />
+              Review
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Content Section */}

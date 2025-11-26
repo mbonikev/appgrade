@@ -3,7 +3,8 @@ import AppCard from "./AppCard";
 import { AnimatePresence, motion } from "framer-motion";
 import { HiCursorClick, HiStar } from "react-icons/hi";
 import { HiOutlineBookmark } from "react-icons/hi2";
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
+import ReviewModal from '../../Preview/components/ReviewModal';
 
 interface AppGridProps {
   activeView?: "Following" | "Discover";
@@ -21,7 +22,8 @@ export const apps = [
     icon: "https://pub-static.fotor.com/assets/projects/pages/d5bdd0513a0740a8a38752dbc32586d0/fotor-03d1a91a0cec4542927f53c87e0599f6.jpg", // Placeholder
     badge: "New" as const,
     hasVideo: true,
-    category: "SaaS"
+    category: "SaaS",
+    type: 'project' as const
   },
   {
     id: 2,
@@ -31,7 +33,8 @@ export const apps = [
       "https://saaslandingpage.com/wp-content/uploads/2023/09/3-mobbin@2x-680x510.png", // Placeholder
     icon: "https://i.pinimg.com/564x/86/c9/7d/86c97d86681b9fedbf23a61a00c0f566.jpg", // Placeholder
     badge: "New" as const,
-    category: "Productivity"
+    category: "Productivity",
+    type: 'project' as const
   },
   {
     id: 3,
@@ -41,7 +44,8 @@ export const apps = [
       "https://i.pinimg.com/1200x/f4/17/c1/f417c18098a0f16de8046d8ac8ff855a.jpg", // Placeholder
     icon: "https://storage.pixteller.com/designs/designs-images/2017-09-21/09/twitter-profile-picture-avatar-1-59c3626d82bb3.png", // Placeholder
     badge: "Updated" as const,
-    category: "Productivity"
+    category: "Productivity",
+    type: 'project' as const
   },
   {
     id: 4,
@@ -49,7 +53,8 @@ export const apps = [
     description: "End-to-end AI agent platform",
     image: "https://budibase.com/web-app-design/intercom.png", // Placeholder
     icon: "https://img.freepik.com/premium-vector/dog-illustration-cute-style_1130875-2027.jpg?semt=ais_hybrid&w=740&q=80", // Placeholder
-    category: "Design"
+    category: "Design",
+    type: 'screens' as const // Assuming Design category implies screens/UI
   },
   {
     id: 5,
@@ -60,7 +65,8 @@ export const apps = [
     icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmJOBtmsTg3eCaFRGi3z1l7e3SGQEDe9u7WA&s", // Placeholder
     isLocked: true,
     hasVideo: true,
-    category: "SaaS"
+    category: "SaaS",
+    type: 'project' as const
   },
   {
     id: 6,
@@ -69,12 +75,16 @@ export const apps = [
     image: "https://appshots.design/images/landing/img1.webp", // Placeholder
     icon: "https://m.gjcdn.net/fireside-post-image/900/23034951-5jh9fjqx-v4.webp", // Placeholder
     isLocked: true,
-    category: "Education"
+    category: "Education",
+    type: 'project' as const
   },
 ];
 
 const AppGrid = ({ selectedCategory = 'All' }: AppGridProps) => {
   const [selectedApp, setSelectedApp] = useState<any | null>(null);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [selectedProjectForReview, setSelectedProjectForReview] = useState<any>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (selectedApp) {
@@ -95,17 +105,31 @@ const AppGrid = ({ selectedCategory = 'All' }: AppGridProps) => {
     return true;
   });
 
+  const handleReviewClick = (app: any) => {
+    setSelectedProjectForReview(app);
+    setReviewModalOpen(true);
+  };
+
+  const handleReviewSubmit = () => {
+    console.log("Review submitted for:", selectedProjectForReview);
+    setReviewModalOpen(false);
+    setSelectedProjectForReview(null);
+  };
+
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8 pb-10">
         {filteredApps.map((app) => (
           <div key={app.id} onClick={() => setSelectedApp(app)}>
-            <AppCard {...app} />
+            <AppCard
+              {...app}
+              onReview={() => handleReviewClick(app)}
+            />
           </div>
         ))}
       </div>
 
-      {/* Modal */}
+      {/* App Details Modal */}
       <AnimatePresence mode="wait">
         {selectedApp && (
           <motion.div
@@ -204,6 +228,13 @@ const AppGrid = ({ selectedCategory = 'All' }: AppGridProps) => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Review Modal */}
+      <ReviewModal
+        isOpen={reviewModalOpen}
+        onClose={() => setReviewModalOpen(false)}
+        onSubmit={handleReviewSubmit}
+      />
     </div>
   );
 };

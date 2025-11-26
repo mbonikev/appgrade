@@ -4,13 +4,14 @@ import { RiCloseLine, RiCheckLine, RiArrowLeftLine } from "react-icons/ri";
 import StepEssentials from "./StepEssentials";
 import StepVisuals from "./StepVisuals";
 import StepSelection from "./StepSelection";
+import StepSubmissionType from "./StepSubmissionType";
 
 interface SubmitProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-type ViewState = "selection" | "screens" | "ui_elements" | "themes";
+type ViewState = "selection" | "submission_type" | "screens" | "ui_elements" | "themes";
 
 const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
   isOpen,
@@ -32,6 +33,8 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
     gallery: [] as File[],
     videoUrl: "",
     codeSnippet: "",
+    submissionType: "design" as "design" | "developed",
+    link: "",
   });
 
   const totalProjectSteps = 3;
@@ -50,8 +53,35 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
     if (currentStep > 1) {
       setCurrentStep((prev) => prev - 1);
     } else {
-      setView("selection");
+      if (view === "submission_type") {
+        setView("selection");
+      } else if (view === "screens" && projectData.submissionType) {
+        // If we are in screens view and came from submission_type (implied by having a submission type set, though we might want a better check)
+        // Actually, if we are in 'screens' view, back should go to 'submission_type' if it was a screens flow, or 'selection' otherwise?
+        // Let's simplify: if view is screens, check if we want to go back to submission_type
+        setView("submission_type");
+      } else {
+        setView("selection");
+      }
     }
+  };
+
+  const handleSelection = (type: 'screens' | 'ui_elements' | 'themes') => {
+    if (type === 'screens') {
+      setView('submission_type');
+    } else {
+      setView(type);
+      // Default submission type for others? Or maybe they are always 'developed' or 'design'?
+      // For now let's assume they follow the standard flow or we can set a default.
+      // The user said "3 of them have the review btn on the home preview not the page", implying UI elements and themes are like "Design UI" in some way or just handled differently.
+      // But for "Developed", we need a link.
+      // Let's keep it simple.
+    }
+  };
+
+  const handleSubmissionTypeSelect = (type: 'design' | 'developed') => {
+    setProjectData(prev => ({ ...prev, submissionType: type }));
+    setView('screens'); // We reuse 'screens' view for the form steps, but we'll conditionally render inside
   };
 
   const handleClose = () => {
@@ -72,6 +102,8 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
         gallery: [],
         videoUrl: "",
         codeSnippet: "",
+        submissionType: "design",
+        link: "",
       });
     }, 300);
   };
@@ -80,13 +112,15 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
     setProjectData((prev) => ({ ...prev, ...data }));
   };
 
-
-
   const renderProjectStep = () => {
     switch (currentStep) {
       case 1:
         return (
-          <StepEssentials data={projectData} updateData={updateProjectData} />
+          <StepEssentials
+            data={projectData}
+            updateData={updateProjectData}
+            showLinkInput={projectData.submissionType === 'developed' && view === 'screens'}
+          />
         );
       case 2:
         return (
@@ -94,6 +128,7 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
             data={projectData}
             updateData={updateProjectData}
             type={view as 'screens' | 'ui_elements' | 'themes'}
+            isDeveloped={projectData.submissionType === 'developed' && view === 'screens'}
           />
         );
       case 3:
@@ -119,8 +154,8 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
                 {projectData.tagline}
               </p>
               <p>
-                <strong className="text-textColor">Categories:</strong>{" "}
-                {projectData.categories.join(", ")}
+                <strong className="text-textColor">Type:</strong>{" "}
+                {view === 'screens' ? (projectData.submissionType === 'developed' ? 'Developed App' : 'UI Design') : view}
               </p>
             </div>
           </div>
@@ -134,14 +169,18 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
     switch (view) {
       case "selection":
         return "Submit Content";
+      case "submission_type":
+        return "Submission Type";
       case "screens":
-        return "Submit Screens";
+        return projectData.submissionType === 'developed' ? "Submit App" : "Submit Design";
       case "ui_elements":
         return "Submit UI Element";
       case "themes":
         return "Submit Theme";
     }
   };
+
+  const isFlowView = view !== "selection" && view !== "submission_type";
 
   return (
     <AnimatePresence>
@@ -178,7 +217,7 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
                   <h2 className="text-xl font-bold text-textColor">
                     {getTitle()}
                   </h2>
-                  {view !== "selection" && (
+                  {isFlowView && (
                     <p className="text-sm text-textColorWeak">
                       Step {currentStep} of {totalProjectSteps}
                     </p>
@@ -194,7 +233,7 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
             </div>
 
             {/* Progress Bar */}
-            {view !== "selection" && (
+            {isFlowView && (
               <div className="w-full h-1 bg-cardItemBg">
                 <motion.div
                   className="h-full bg-mainColor"
@@ -211,12 +250,13 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
 
             {/* Content */}
             <div className="p-6 overflow-y-auto flex-1">
-              {view === "selection" && <StepSelection onSelect={setView} />}
-              {view !== "selection" && renderProjectStep()}
+              {view === "selection" && <StepSelection onSelect={handleSelection} />}
+              {view === "submission_type" && <StepSubmissionType onSelect={handleSubmissionTypeSelect} />}
+              {isFlowView && renderProjectStep()}
             </div>
 
             {/* Footer */}
-            {view !== "selection" && (
+            {isFlowView && (
               <div className="p-6 border-t border-linesColor flex justify-between items-center bg-bodyBg">
                 <button
                   onClick={handleBack}

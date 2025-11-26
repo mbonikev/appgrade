@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { RiArrowLeftLine, RiBookmarkLine, RiBookmarkFill, RiChatSmile2Line, RiExternalLinkLine } from 'react-icons/ri';
+import { RiArrowLeftLine, RiBookmarkLine, RiBookmarkFill, RiChatSmile2Line, RiExternalLinkLine, RiStarFill } from 'react-icons/ri';
 import ReviewModal from '../components/ReviewModal';
 import Navbar from '../../../components/layout/Navbar';
 
@@ -10,10 +10,30 @@ const PreviewPage: React.FC = () => {
     const [isReviewOpen, setIsReviewOpen] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
 
-    // In a real app, we would fetch project details using projectId
-    // For now, we'll use the demo URL as requested
-    const projectUrl = "https://itk-equity.vercel.app/";
-    const projectName = "ITK Equity";
+    // Mock Data - In real app, fetch based on ID
+    // Scenario 1: Developed App
+    // const project = {
+    //     name: "ITK Equity",
+    //     url: "https://itk-equity.vercel.app/",
+    //     type: "project",
+    //     submissionType: "developed",
+    //     initials: "IE"
+    // };
+
+    // Scenario 2: Design UI / Theme / UI Element
+    const project = {
+        name: "Modern Dashboard UI",
+        url: "", // No live URL for designs usually, or maybe a link to Figma?
+        type: "screens", // or 'ui_elements', 'themes'
+        submissionType: "design",
+        initials: "MD",
+        images: [
+            "https://cdn.dribbble.com/userupload/13004326/file/original-4e650352497645068962638848805626.png?resize=1504x1128",
+            "https://cdn.dribbble.com/userupload/13004327/file/original-4e650352497645068962638848805626.png?resize=1504x1128" // Mock images
+        ]
+    };
+
+    const isDeveloped = project.submissionType === 'developed';
 
     return (
         <div className="flex flex-col h-screen bg-bodyBg">
@@ -30,18 +50,25 @@ const PreviewPage: React.FC = () => {
                     <div className="h-6 w-px bg-linesColor" />
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-mainColor flex items-center justify-center text-white font-bold text-sm">
-                            IE
+                            {project.initials}
                         </div>
                         <div>
-                            <h1 className="font-bold text-textColor text-sm">{projectName}</h1>
-                            <a
-                                href={projectUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-xs text-textColorWeak hover:text-mainColor flex items-center gap-1 transition-colors"
-                            >
-                                {projectUrl} <RiExternalLinkLine />
-                            </a>
+                            <h1 className="font-bold text-textColor text-sm">{project.name}</h1>
+                            {isDeveloped && project.url && (
+                                <a
+                                    href={project.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-xs text-textColorWeak hover:text-mainColor flex items-center gap-1 transition-colors"
+                                >
+                                    {project.url} <RiExternalLinkLine />
+                                </a>
+                            )}
+                            {!isDeveloped && (
+                                <span className="text-xs text-textColorWeak">
+                                    {project.type === 'screens' ? 'UI Design' : project.type === 'themes' ? 'Theme' : 'UI Element'}
+                                </span>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -58,26 +85,47 @@ const PreviewPage: React.FC = () => {
                             <RiBookmarkLine className="text-xl" />
                         )}
                     </button>
+
+                    {/* Review Button - Prominent for all types now as requested, but maybe different text? */}
                     <button
                         onClick={() => setIsReviewOpen(true)}
                         className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-full font-medium hover:bg-gray-200 transition-colors text-sm"
                     >
-                        <RiChatSmile2Line className="text-lg" />
-                        Write a Review
+                        {isDeveloped ? <RiStarFill className="text-lg text-orange-500" /> : <RiChatSmile2Line className="text-lg" />}
+                        {isDeveloped ? "Rate & Review" : "Review Design"}
                     </button>
                 </div>
             </header>
 
             {/* Content */}
-            <div className="flex-1 bg-bodyBgWeak relative p-4 md:p-6 lg:p-8">
+            <div className="flex-1 bg-bodyBgWeak relative p-4 md:p-6 lg:p-8 overflow-y-auto">
                 <div className="w-full h-full rounded-2xl overflow-hidden shadow-2xl border border-linesColor bg-cardBg">
-                    <iframe
-                        src={projectUrl}
-                        className="w-full h-full border-none"
-                        title="Project Preview"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                    />
+                    {isDeveloped ? (
+                        <iframe
+                            src={project.url}
+                            className="w-full h-full border-none"
+                            title="Project Preview"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                        />
+                    ) : (
+                        <div className="w-full h-full overflow-y-auto p-8 flex flex-col items-center gap-8">
+                            {/* Display Images for Design/Themes */}
+                            {project.images?.map((img, index) => (
+                                <img
+                                    key={index}
+                                    src={img}
+                                    alt={`Preview ${index + 1}`}
+                                    className="max-w-full rounded-xl shadow-lg border border-linesColor"
+                                />
+                            ))}
+                            {(!project.images || project.images.length === 0) && (
+                                <div className="flex flex-col items-center justify-center h-full text-textColorWeak">
+                                    <p>No preview images available.</p>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
 
