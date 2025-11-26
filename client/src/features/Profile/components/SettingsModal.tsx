@@ -81,7 +81,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
           >
             {/* Sidebar */}
             <div className="w-64 bg-cardBg border-r border-linesColor flex flex-col">
-              <div className="p-6 flex items-center gap-3 border-b border-linesColor">
+              <div className="px-6 py-4 flex items-center gap-3 border-b border-linesColor">
                 <div className="w-8 h-8 rounded-full bg-cardItemBg overflow-hidden">
                   <img
                     src={user?.avatar || "https://i.pinimg.com/736x/a9/70/8f/a9708f9840565fc2aae91b5847fcceab.jpg"}
@@ -101,8 +101,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                       key={item.id}
                       onClick={() => setActiveTab(item.id)}
                       className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === item.id
-                          ? "bg-cardItemBg text-white"
-                          : "text-textColorWeak hover:text-textColor hover:bg-bodyBg"
+                        ? "bg-cardItemBg text-white"
+                        : "text-textColorWeak hover:text-textColor hover:bg-bodyBg"
                         }`}
                     >
                       <item.icon className="text-lg" />
@@ -112,7 +112,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                 </div>
               </div>
 
-              <div className="p-3 border-t border-linesColor">
+              {/* <div className="p-3 border-t border-linesColor">
                 <button
                   onClick={logout}
                   className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-400/10 transition-colors w-full"
@@ -120,7 +120,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                   <RiLogoutBoxRLine className="text-lg" />
                   Sign Out
                 </button>
-              </div>
+              </div> */}
             </div>
 
             {/* Main Content */}
@@ -140,7 +140,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                   <div className="max-w-2xl space-y-8">
                     <div>
                       <h3 className="text-textColor font-medium mb-4">Profile</h3>
-                      <div className="flex items-center gap-6 mb-6">
+                      {/* <div className="flex items-center gap-6 mb-6">
                         <div className="w-20 h-20 rounded-full bg-cardBg border-2 border-linesColor overflow-hidden">
                           <img
                             src={user?.avatar || "https://i.pinimg.com/736x/a9/70/8f/a9708f9840565fc2aae91b5847fcceab.jpg"}
@@ -148,7 +148,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                             className="w-full h-full object-cover"
                           />
                         </div>
-                      </div>
+                      </div> */}
 
                       <div className="grid gap-6">
                         <div className="grid grid-cols-[120px_1fr] items-center gap-4">
@@ -190,7 +190,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                         <div className="flex justify-end">
                           <button
                             onClick={handleSaveBio}
-                            className="mt-4 px-4 py-2 bg-mainColor text-white rounded hover:bg-mainColorHover transition-colors"
+                            className="mt-4 px-4 py-2 bg-mainColor text-white rounded-full hover:bg-mainColorHover transition-colors"
                           >
                             Save Bio
                           </button>
