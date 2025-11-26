@@ -9,6 +9,8 @@ import { useRouter, Link } from "@tanstack/react-router";
 import SearchModal from "../../features/Search/components/SearchModal";
 import SubmitProjectModal from "../../features/Submit/components/SubmitProjectModal";
 import { Logo } from "../../assets";
+import ChangelogModal from "../../features/Changelog/components/ChangelogModal";
+
 import SettingsModal from "../../features/Profile/components/SettingsModal";
 import SignInModal from "../auth/SignInModal";
 import { useAuth } from "../../contexts/AuthContext";
@@ -23,6 +25,7 @@ function Navbar() {
   const profileRef = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isChangelogOpen, setIsChangelogOpen] = useState(false);
   const [openSignInModal, setOpenSignInModal] = useState(false);
 
   const { user, logout } = useAuth();
@@ -122,6 +125,11 @@ function Navbar() {
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
+      />
+
+      <ChangelogModal
+        isOpen={isChangelogOpen}
+        onClose={() => setIsChangelogOpen(false)}
       />
 
       <SignInModal
@@ -255,13 +263,15 @@ function Navbar() {
                       >
                         Settings
                       </button>
-                      <Link
-                        to="/changelog"
+                      <button
+                        onClick={() => {
+                          setIsChangelogOpen(true);
+                          setOpenProfile(false);
+                        }}
                         className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between"
-                        onClick={() => setOpenProfile(false)}
                       >
                         Changelog
-                      </Link>
+                      </button>
                       <Link
                         to="/support"
                         className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between"
