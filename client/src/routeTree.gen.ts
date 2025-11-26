@@ -10,9 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UserAgreementRouteImport } from './routes/user-agreement'
+import { Route as SupportRouteImport } from './routes/support'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as CreatorsRouteImport } from './routes/creators'
+import { Route as ChangelogRouteImport } from './routes/changelog'
 import { Route as AwardsRouteImport } from './routes/awards'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -23,6 +25,11 @@ import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 const UserAgreementRoute = UserAgreementRouteImport.update({
   id: '/user-agreement',
   path: '/user-agreement',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileRoute = ProfileRouteImport.update({
@@ -38,6 +45,11 @@ const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
 const CreatorsRoute = CreatorsRouteImport.update({
   id: '/creators',
   path: '/creators',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChangelogRoute = ChangelogRouteImport.update({
+  id: '/changelog',
+  path: '/changelog',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AwardsRoute = AwardsRouteImport.update({
@@ -75,9 +87,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/awards': typeof AwardsRoute
+  '/changelog': typeof ChangelogRoute
   '/creators': typeof CreatorsRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/profile': typeof ProfileRouteWithChildren
+  '/support': typeof SupportRoute
   '/user-agreement': typeof UserAgreementRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/preview/$projectId': typeof PreviewProjectIdRoute
@@ -87,9 +101,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/awards': typeof AwardsRoute
+  '/changelog': typeof ChangelogRoute
   '/creators': typeof CreatorsRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/profile': typeof ProfileRouteWithChildren
+  '/support': typeof SupportRoute
   '/user-agreement': typeof UserAgreementRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/preview/$projectId': typeof PreviewProjectIdRoute
@@ -100,9 +116,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/awards': typeof AwardsRoute
+  '/changelog': typeof ChangelogRoute
   '/creators': typeof CreatorsRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/profile': typeof ProfileRouteWithChildren
+  '/support': typeof SupportRoute
   '/user-agreement': typeof UserAgreementRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/preview/$projectId': typeof PreviewProjectIdRoute
@@ -114,9 +132,11 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/awards'
+    | '/changelog'
     | '/creators'
     | '/privacy-policy'
     | '/profile'
+    | '/support'
     | '/user-agreement'
     | '/auth/callback'
     | '/preview/$projectId'
@@ -126,9 +146,11 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/awards'
+    | '/changelog'
     | '/creators'
     | '/privacy-policy'
     | '/profile'
+    | '/support'
     | '/user-agreement'
     | '/auth/callback'
     | '/preview/$projectId'
@@ -138,9 +160,11 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/awards'
+    | '/changelog'
     | '/creators'
     | '/privacy-policy'
     | '/profile'
+    | '/support'
     | '/user-agreement'
     | '/auth/callback'
     | '/preview/$projectId'
@@ -151,9 +175,11 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AwardsRoute: typeof AwardsRoute
+  ChangelogRoute: typeof ChangelogRoute
   CreatorsRoute: typeof CreatorsRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   ProfileRoute: typeof ProfileRouteWithChildren
+  SupportRoute: typeof SupportRoute
   UserAgreementRoute: typeof UserAgreementRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   PreviewProjectIdRoute: typeof PreviewProjectIdRoute
@@ -166,6 +192,13 @@ declare module '@tanstack/react-router' {
       path: '/user-agreement'
       fullPath: '/user-agreement'
       preLoaderRoute: typeof UserAgreementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -187,6 +220,13 @@ declare module '@tanstack/react-router' {
       path: '/creators'
       fullPath: '/creators'
       preLoaderRoute: typeof CreatorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/changelog': {
+      id: '/changelog'
+      path: '/changelog'
+      fullPath: '/changelog'
+      preLoaderRoute: typeof ChangelogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/awards': {
@@ -249,9 +289,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AwardsRoute: AwardsRoute,
+  ChangelogRoute: ChangelogRoute,
   CreatorsRoute: CreatorsRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   ProfileRoute: ProfileRouteWithChildren,
+  SupportRoute: SupportRoute,
   UserAgreementRoute: UserAgreementRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   PreviewProjectIdRoute: PreviewProjectIdRoute,

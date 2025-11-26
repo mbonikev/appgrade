@@ -39,15 +39,9 @@ const PreviewPage: React.FC = () => {
         <div className="flex flex-col h-screen bg-bodyBg">
             <Navbar />
             {/* Toolbar */}
-            <header className="h-14 bg-cardBg border-b border-linesColor flex items-center justify-between px-6 z-10 shadow-sm">
-                <div className="flex items-center gap-4">
-                    <button
-                        onClick={() => navigate({ to: '/' })}
-                        className="p-2 hover:bg-cardItemBg rounded-full text-textColor transition-colors"
-                    >
-                        <RiArrowLeftLine className="text-xl" />
-                    </button>
-                    <div className="h-6 w-px bg-linesColor" />
+            <header className="h-14 bg-red-500  mx-2 bg-cardBg border-b border-linesColor flex items-center justify-between px-6 z-10 shadow-sm">
+                <div className="flex  items-center gap-4">
+
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-mainColor flex items-center justify-center text-white font-bold text-sm">
                             {project.initials}

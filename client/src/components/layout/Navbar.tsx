@@ -255,13 +255,21 @@ function Navbar() {
                       >
                         Settings
                       </button>
-                      <button className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between">
+                      <Link
+                        to="/changelog"
+                        className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between"
+                        onClick={() => setOpenProfile(false)}
+                      >
                         Changelog
-                      </button>
-                      <button className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between">
+                      </Link>
+                      <Link
+                        to="/support"
+                        className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between"
+                        onClick={() => setOpenProfile(false)}
+                      >
                         Support
                         <MdArrowOutward className="text-xl text-textColorWeak" />
-                      </button>
+                      </Link>
                     </div>
                     <div className="flex flex-col border-cardItemBg px-2 py-2">
                       <button

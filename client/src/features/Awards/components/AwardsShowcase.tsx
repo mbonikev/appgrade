@@ -42,9 +42,9 @@ const AwardsShowcase: React.FC<AwardsShowcaseProps> = ({ awards }) => {
 
   return (
     <div ref={containerRef} className="relative h-[300vh] bg-bodyBg">
-      <div className="sticky top-0 h-screen w-full flex flex-col  overflow-hidden">
+      <div className="sticky top-0 h-screen w-full flex flex-col">
         <Navbar />
-        <div className="sticky top-0 h-screen w-full max-w-[1300px] mx-auto flex flex-col md:flex-row md:items-center overflow-hidden">
+        <div className="h-full w-full max-w-[1300px] mx-auto flex flex-col md:flex-row md:items-center overflow-hidden">
           {/* Section 1: Title */}
           <div className="w-full md:w-1/4 h-[20vh] max-md:h-fit px-5 pt-8 pb-5 flex flex-col justify-center z-10">
             <motion.div
