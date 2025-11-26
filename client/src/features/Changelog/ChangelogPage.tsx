@@ -1,4 +1,4 @@
-import Navbar from '../../../components/layout/Navbar';
+import Navbar from '../../components/layout/Navbar';
 import { RiMapPinTimeLine, RiCheckboxCircleLine } from 'react-icons/ri';
 
 const ChangelogPage = () => {

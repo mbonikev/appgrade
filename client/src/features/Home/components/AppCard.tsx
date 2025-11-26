@@ -32,7 +32,6 @@ const AppCard: React.FC<AppCardProps> = ({
   onEdit,
   onDelete,
   onBookmark,
-  onReview,
   onClick
 }) => {
   const [showMenu, setShowMenu] = useState(false);
