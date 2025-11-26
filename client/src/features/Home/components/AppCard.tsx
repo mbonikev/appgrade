@@ -117,19 +117,6 @@ const AppCard: React.FC<AppCardProps> = ({
             </div>
           )}
         </div>
-
-        {/* Review Button Overlay (Hover) */}
-        {showReviewButton && (
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <button
-              onClick={(e) => { e.stopPropagation(); onReview?.(); }}
-              className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-full font-bold text-sm shadow-lg hover:scale-105 transition-transform"
-            >
-              <RiChatSmile2Line className="text-lg" />
-              Review
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Content Section */}

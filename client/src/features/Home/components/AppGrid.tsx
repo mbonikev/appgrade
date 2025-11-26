@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import AppCard from "./AppCard";
 import { AnimatePresence, motion } from "framer-motion";
-import { HiCursorClick, HiStar } from "react-icons/hi";
-import { HiOutlineBookmark } from "react-icons/hi2";
+import { HiStar, HiCursorClick, HiOutlineBookmark } from "react-icons/hi";
+import { RiChatSmile2Line } from "react-icons/ri";
 import { Link, useNavigate } from '@tanstack/react-router';
 import ReviewModal from '../../Preview/components/ReviewModal';
 
@@ -151,7 +151,7 @@ const AppGrid = ({ selectedCategory = 'All' }: AppGridProps) => {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex flex-col max-w-[88%] mx-auto p-10 max-xl:px-10 max-lg:py-6 max-lg:px-0">
-                <div className="w-full flex items-start justify-between max-md:flex-col max-md:items-start gap-3 max-md:gap-0">
+                <div className="w-full sticky top-0 z-10 bg-modalBg pb-4 flex items-start justify-between max-md:flex-col max-md:items-start gap-3 max-md:gap-0">
                   <div className="flex gap-4 items-start mb-6 min-w-fit">
                     <img
                       src={selectedApp.icon}
@@ -160,7 +160,9 @@ const AppGrid = ({ selectedCategory = 'All' }: AppGridProps) => {
                     />
                     <div>
                       <h2 className="text-3xl font-bold text-textColor">
-                        {selectedApp.title}
+                        {selectedApp.title} {selectedApp.type && selectedApp.type !== 'project' && (
+                          <span className="text-textColorWeak">({selectedApp.type === 'ui_element' ? 'UI Element' : selectedApp.type === 'screens' ? 'Screen' : 'Theme'})</span>
+                        )}
                       </h2>
                       <p className="text-textColor">
                         {selectedApp.description}
@@ -184,14 +186,24 @@ const AppGrid = ({ selectedCategory = 'All' }: AppGridProps) => {
                     <button className="text-textColor h-[48px] aspect-square flex items-center justify-center text-2xl rounded-full bg-cardItemBg">
                       <HiOutlineBookmark />
                     </button>
-                    <Link
-                      to="/preview/$projectId"
-                      params={{ projectId: selectedApp.id.toString() }}
-                      className="text-left text-white h-[48px] max-md:flex-1 max-md:justify-center bg-mainColor pl-4 pr-5 whitespace-nowrap rounded-full font-medium flex items-center justify-start gap-2 hover:bg-mainColorHover transition-colors"
-                    >
-                      <HiCursorClick className="text-xl" />
-                      Start Testing
-                    </Link>
+                    {selectedApp.type === 'project' || selectedApp.submissionType === 'developed' ? (
+                      <Link
+                        to="/preview/$projectId"
+                        params={{ projectId: selectedApp.id.toString() }}
+                        className="text-left text-white h-[48px] max-md:flex-1 max-md:justify-center bg-mainColor pl-4 pr-5 whitespace-nowrap rounded-full font-medium flex items-center justify-start gap-2 hover:bg-mainColorHover transition-colors"
+                      >
+                        <HiCursorClick className="text-xl" />
+                        Start Testing
+                      </Link>
+                    ) : (
+                      <button
+                        onClick={() => handleReviewClick(selectedApp)}
+                        className="text-left text-white h-[48px] max-md:flex-1 max-md:justify-center bg-mainColor pl-4 pr-5 whitespace-nowrap rounded-full font-medium flex items-center justify-start gap-2 hover:bg-mainColorHover transition-colors"
+                      >
+                        <RiChatSmile2Line className="text-xl" />
+                        Review
+                      </button>
+                    )}
                   </div>
                 </div>
                 {selectedApp.image && (
