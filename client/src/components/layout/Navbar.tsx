@@ -34,7 +34,7 @@ function Navbar() {
   const currentPath = router.state.location.pathname; // current URL
 
   const menuItems = [
-    { label: "Sites", to: "/" },
+    { label: "Apps", to: "/" },
     { label: "Creators", to: "/creators" },
     { label: "Awards", to: "/awards" },
   ];
