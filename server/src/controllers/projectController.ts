@@ -214,9 +214,12 @@ export const updateProject = async (req: Request, res: Response) => {
 
         // Upload gallery images if provided
         if (files?.gallery && files.gallery.length > 0) {
-            const galleryBuffers = files.gallery.map(file => file.buffer);
+            const galleryFiles = files.gallery.map((file, index) => ({
+                buffer: file.buffer,
+                filename: `gallery-${Date.now()}-${index}`
+            }));
             const galleryResults = await uploadMultipleBuffersToCloudinary(
-                galleryBuffers,
+                galleryFiles,
                 'appgrade/gallery'
             );
             const galleryUrls = galleryResults.map(result => result.url);
