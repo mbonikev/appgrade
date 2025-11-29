@@ -1,16 +1,18 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useParams } from '@tanstack/react-router'; // Kept for potential future use or remove if strictly unused
 import Navbar from '../../../components/layout/Navbar';
-import ProfileHeader from '../components/ProfileHeader';
+import ProfileBanner from '../components/ProfileBanner';
+import ProfileSidebar from '../components/ProfileSidebar';
 import ProfileTabs from '../components/ProfileTabs';
-import api from '../../../lib/api';
 import ProjectsGrid from '../components/ProjectsGrid';
 import SettingsModal from '../components/SettingsModal';
 import SubmitProjectModal from '../../Submit/components/SubmitProjectModal';
 import EditProjectModal from '../components/EditProjectModal';
 import DeleteConfirmDialog from '../components/DeleteConfirmDialog';
 import ScreensViewPage from '../components/ScreensViewPage';
-import { mockUser, mockProjects, mockStats } from '../data/mockProfile';
+import api from '../../../lib/api';
 import { useAuth } from '../../../contexts/AuthContext';
+import { mockStats } from '../data/mockProfile'; // Keep mock stats for now if backend doesn't provide all
 
 interface ProfilePageProps {
     profileId?: string;
@@ -22,58 +24,79 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isSubmitOpen, setIsSubmitOpen] = useState(false);
 
+    // Data State
+    const [profileUser, setProfileUser] = useState<any>(null);
+    const [projects, setProjects] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
     // Management Modals State
     const [editProjectId, setEditProjectId] = useState<string | null>(null);
     const [deleteProjectId, setDeleteProjectId] = useState<string | null>(null);
     const [viewScreensProject, setViewScreensProject] = useState<any | null>(null);
 
-    const [profileUser, setProfileUser] = useState<any>(null);
-    const [loading, setLoading] = useState(!!profileId);
+    // Determine effective profile ID and ownership
+    // If profileId is passed, use it. Otherwise, if authUser exists, use their ID.
+    const effectiveProfileId = profileId || authUser?.id || (authUser as any)?._id;
+    const isOwnProfile = !profileId || (!!authUser && (authUser.id === profileId || (authUser as any)._id === profileId));
 
     useEffect(() => {
-        if (profileId) {
+        const fetchData = async () => {
+            if (!effectiveProfileId) {
+                setLoading(false);
+                return;
+            }
+
             setLoading(true);
-            api.get(`/api/users/${profileId}`)
-                .then(response => {
-                    const data = response.data;
-                    setProfileUser({
-                        ...data,
-                        display_name: data.name,
-                        avatar_url: data.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}`,
-                        followers_count: data.followers,
-                        following_count: data.following,
-                    });
-                })
-                .catch(error => {
-                    console.error('Failed to fetch profile:', error);
-                })
-                .finally(() => {
-                    setLoading(false);
-                });
-        } else {
-            setProfileUser(null);
+            try {
+                // Fetch User
+                // If it's own profile and we have authUser, we might skip fetching user if authUser has everything
+                // But fetching ensures fresh data.
+                const userRes = await api.get(`/api/users/${effectiveProfileId}`);
+                setProfileUser(userRes.data);
+
+                // Fetch Projects
+                const projectsRes = await api.get(`/api/projects/user/${effectiveProfileId}`);
+                // Map backend project to frontend expected shape
+                const mappedProjects = projectsRes.data.map((p: any) => ({
+                    id: p._id,
+                    name: p.title,
+                    tagline: p.tagline,
+                    description: p.description,
+                    cover_image_url: p.images?.[0] || 'https://via.placeholder.com/800x600', // Fallback
+                    logo_url: p.logo || '', // Assuming logo might be added later or mapped
+                    type: p.type,
+                    is_bookmarked: false, // Need bookmark logic later
+                    ...p
+                }));
+                setProjects(mappedProjects);
+
+            } catch (error) {
+                console.error('Error fetching profile data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [effectiveProfileId]);
+
+    // Derived User Object for Display
+    const displayUser = useMemo(() => {
+        if (isOwnProfile && authUser) {
+            // Merge authUser with fetched profileUser to get latest updates but keep auth context if needed
+            // Actually, fetched profileUser is best source of truth for profile page
+            return profileUser || authUser;
         }
-    }, [profileId]);
-
-    // Determine if viewing own profile
-    const isOwnProfile = !profileId || (authUser?.id === profileId);
-
-    // Merge auth data with mock data if viewing own profile
-    const user = isOwnProfile && authUser ? {
-        ...mockUser,
-        display_name: authUser.name,
-        username: authUser.email.split('@')[0], // Derive username from email if needed
-        avatar_url: authUser.avatar || mockUser.avatar_url,
-        email: authUser.email,
-    } : (profileUser || mockUser);
+        return profileUser;
+    }, [isOwnProfile, authUser, profileUser]);
 
     // Filter projects based on active tab
     const displayedProjects = useMemo(() => {
         if (activeTab === 'saved') {
-            return mockProjects.filter(p => p.is_bookmarked); // Mock bookmark filter
+            return []; // Implement saved projects fetching later
         }
-        return mockProjects; // Default to all projects for 'work'
-    }, [activeTab]);
+        return projects;
+    }, [activeTab, projects]);
 
     const handleEditProject = (id: string) => {
         setEditProjectId(id);
@@ -93,7 +116,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
         console.log('Bookmark project:', id);
     };
 
-    // Mock function to handle clicking on a project card
     const handleProjectClick = (project: any) => {
         if (project.type === 'screens') {
             setViewScreensProject(project);
@@ -102,76 +124,111 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
         }
     };
 
-    return (
-        <div className="min-h-screen bg-bodyBg">
-            <Navbar />
-            {loading ? (
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-bodyBg">
+                <Navbar />
                 <div className="flex justify-center items-center h-[calc(100vh-64px)]">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-mainColor"></div>
                 </div>
-            ) : (
-                <div className="w-full h-fit px-10 md:px-10 max-md:px-4">
-                    <ProfileHeader
-                        name={user.display_name}
-                        handle={`@${user.username}`}
-                        role={user.role === 'creator' ? "Creator" : "User"}
-                        avatar={user.avatar_url}
-                        isOwnProfile={isOwnProfile}
-                        onEditClick={() => setIsSettingsOpen(true)}
-                        stats={{
-                            ...mockStats,
-                            followers: user.followers_count || 0,
-                            following: user.following_count || 0,
-                            projects: user.appsCount || 0
-                        }}
-                    />
+            </div>
+        );
+    }
 
-                    <ProfileTabs
-                        activeTab={activeTab}
-                        onTabChange={setActiveTab}
-                        isOwnProfile={isOwnProfile}
-                    />
+    if (!displayUser) {
+        return (
+            <div className="min-h-screen bg-bodyBg">
+                <Navbar />
+                <div className="flex justify-center items-center h-[calc(100vh-64px)] text-textColor">
+                    User not found.
+                </div>
+            </div>
+        );
+    }
 
-                    {/* Tab Content */}
-                    <div className="min-h-[400px] pb-20">
-                        {activeTab === 'work' && (
-                            <div className="animate-fade-in">
-                                <ProjectsGrid
-                                    projects={displayedProjects}
-                                    isOwnProfile={isOwnProfile}
-                                    onEdit={handleEditProject}
-                                    onDelete={handleDeleteProject}
-                                    onBookmark={handleBookmarkProject}
-                                    onClick={handleProjectClick}
-                                />
-                            </div>
-                        )}
-                        {activeTab === 'saved' && (
-                            <div className="animate-fade-in">
-                                <ProjectsGrid
-                                    projects={[]} // Empty for now to test empty state
-                                    isOwnProfile={isOwnProfile}
-                                    onBookmark={handleBookmarkProject}
-                                    onClick={handleProjectClick}
-                                />
-                            </div>
-                        )}
-                        {activeTab === 'awards' && (
-                            <div className="flex items-center justify-center h-[400px] text-textColorWeak">
-                                <p>No awards won yet.</p>
-                            </div>
-                        )}
-                        {activeTab === 'about' && (
-                            <div className="max-w-2xl mx-auto text-center text-textColorWeak">
-                                <p className="text-lg">{user.bio}</p>
-                                <a href={user.website} target="_blank" rel="noreferrer" className="text-mainColor hover:underline mt-4 block">
-                                    {user.website}
-                                </a>
-                            </div>
-                        )}
+    return (
+        <div className="min-h-screen bg-bodyBg">
+            <Navbar />
+
+            <ProfileBanner />
+
+            <div className="w-full max-w-[1600px] mx-auto px-4 md:px-10 pb-20">
+                <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 lg:gap-12">
+                    {/* Left Sidebar */}
+                    <div className="relative">
+                        <ProfileSidebar
+                            user={{
+                                name: displayUser.name,
+                                username: displayUser.username || displayUser.email?.split('@')[0],
+                                role: displayUser.role === 'creator' ? "Creator" : "User",
+                                avatar: displayUser.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayUser.name)}`,
+                                bio: displayUser.bio,
+                                website: displayUser.website,
+                                location: "San Francisco, CA", // Mock location for now
+                                joinedDate: "Dec 2023", // Mock date
+                                isVerified: true // Mock verified
+                            }}
+                            stats={{
+                                followers: displayUser.followers || mockStats.followers,
+                                following: displayUser.following || mockStats.following,
+                                projects: displayUser.appsCount || projects.length,
+                                likes: 11200 // Mock likes
+                            }}
+                            isOwnProfile={isOwnProfile}
+                            onEditClick={() => setIsSettingsOpen(true)}
+                        />
+                    </div>
+
+                    {/* Right Content */}
+                    <div className="pt-8">
+                        <ProfileTabs
+                            activeTab={activeTab}
+                            onTabChange={setActiveTab}
+                            isOwnProfile={isOwnProfile}
+                        />
+
+                        <div className="mt-6">
+                            {activeTab === 'work' && (
+                                <div className="animate-fade-in">
+                                    <ProjectsGrid
+                                        projects={displayedProjects}
+                                        isOwnProfile={!!isOwnProfile}
+                                        onEdit={handleEditProject}
+                                        onDelete={handleDeleteProject}
+                                        onBookmark={handleBookmarkProject}
+                                        onClick={handleProjectClick}
+                                    />
+                                </div>
+                            )}
+                            {activeTab === 'saved' && (
+                                <div className="animate-fade-in">
+                                    <ProjectsGrid
+                                        projects={[]}
+                                        isOwnProfile={!!isOwnProfile}
+                                        onBookmark={handleBookmarkProject}
+                                        onClick={handleProjectClick}
+                                    />
+                                </div>
+                            )}
+                            {activeTab === 'awards' && (
+                                <div className="flex items-center justify-center h-[400px] text-textColorWeak">
+                                    <p>No awards won yet.</p>
+                                </div>
+                            )}
+                            {activeTab === 'about' && (
+                                <div className="text-textColorWeak">
+                                    <p className="text-lg">{displayUser.bio || "No bio yet."}</p>
+                                    {displayUser.website && (
+                                        <a href={displayUser.website} target="_blank" rel="noreferrer" className="text-mainColor hover:underline mt-4 block">
+                                            {displayUser.website}
+                                        </a>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
-            )}
+            </div>
 
             {/* Modals */}
             <SettingsModal
@@ -197,7 +254,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
                     isOpen={!!deleteProjectId}
                     onClose={() => setDeleteProjectId(null)}
                     onConfirm={handleConfirmDelete}
-                    projectName={mockProjects.find(p => p.id === deleteProjectId)?.name || 'Project'}
+                    projectName={projects.find(p => p.id === deleteProjectId)?.name || 'Project'}
                 />
             )}
 
@@ -205,7 +262,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
                 <ScreensViewPage
                     isOpen={!!viewScreensProject}
                     onClose={() => setViewScreensProject(null)}
-                    images={[viewScreensProject.cover_image_url, viewScreensProject.cover_image_url, viewScreensProject.cover_image_url]} // Mock multiple images
+                    images={viewScreensProject.images || [viewScreensProject.cover_image_url]}
                     title={viewScreensProject.name}
                 />
             )}
