@@ -222,7 +222,8 @@ function Navbar() {
                       </p>
 
                       <Link
-                        to="/profile"
+                        to="/profile/$profileId"
+                        params={{ profileId: user.id || (user as any)._id }}
                         className="w-full block text-center px-4 py-2 bg-cardItemBg font-semibold rounded-full text-textColor hover:bg-mainColor hover:text-white hover:transition"
                         onClick={() => setOpenProfile(false)}
                       >
