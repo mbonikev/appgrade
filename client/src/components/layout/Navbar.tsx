@@ -25,7 +25,6 @@ function Navbar() {
   const profileRef = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isChangelogOpen, setIsChangelogOpen] = useState(false);
   const [openSignInModal, setOpenSignInModal] = useState(false);
 
   const { user, logout } = useAuth();
@@ -263,15 +262,13 @@ function Navbar() {
                       >
                         Settings
                       </button>
-                      <button
-                        onClick={() => {
-                          setIsChangelogOpen(true);
-                          setOpenProfile(false);
-                        }}
+                      <Link
+                        to="/changelog"
                         className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between"
+                        onClick={() => setOpenProfile(false)}
                       >
                         Changelog
-                      </button>
+                      </Link>
                       <Link
                         to="/support"
                         className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between"
