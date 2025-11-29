@@ -13,6 +13,7 @@ import { Logo } from "../../assets";
 import SettingsModal from "../../features/Profile/components/SettingsModal";
 import SignInModal from "../auth/SignInModal";
 import { useAuth } from "../../contexts/AuthContext";
+import api from "../../lib/api";
 
 const themes = ["light", "dark", "system"] as const;
 type Theme = (typeof themes)[number];
@@ -38,6 +39,27 @@ function Navbar() {
   ];
 
   const [theme, setTheme] = useState<Theme>("system");
+
+  const [projects, setProjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      setLoading(true);
+      try {
+        // Fetch all projects
+        const response = await api.get("/api/projects");
+        setProjects(response.data.projects || []);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+        setProjects([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   // Initialize theme from localStorage or system
   useEffect(() => {
@@ -124,8 +146,6 @@ function Navbar() {
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
       />
-
-
 
       <SignInModal
         isOpen={openSignInModal}
@@ -252,7 +272,7 @@ function Navbar() {
                     <div className="flex flex-col gap- border-t border-b border-cardItemBg px-2 py-2">
                       <button
                         onClick={() => {
-                          setIsSettingsOpen(true)
+                          setIsSettingsOpen(true);
                           setOpenProfile(false);
                         }}
                         className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between"
@@ -357,6 +377,8 @@ function Navbar() {
       <SearchModal
         isOpen={openSearchModal}
         onClose={() => setOpenSearchModal(false)}
+        projects={projects}
+        loading={loading}
       />
     </>
   );
