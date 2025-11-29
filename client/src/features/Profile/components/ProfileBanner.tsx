@@ -6,7 +6,7 @@ interface ProfileBannerProps {
 
 const ProfileBanner: React.FC<ProfileBannerProps> = ({ bannerUrl }) => {
     return (
-        <div className="w-full px-8 rounded-sm h-64 md:h-80 relative overflow-hidden">
+        <div className="w-full px-8 bg-bodyBg rounded-sm h-64 md:h-80 relative overflow-hidden">
             <img
                 src={bannerUrl || "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=2070&auto=format&fit=crop"}
                 alt="Profile Banner"

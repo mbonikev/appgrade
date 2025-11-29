@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../../components/layout/Navbar';
 import ChangelogTimelineItem from './components/ChangelogTimelineItem';
-import { RiRssLine, RiMailLine, RiCloseLine } from 'react-icons/ri';
+import { RiRssLine, RiMailLine } from 'react-icons/ri';
 
 const ChangelogPage = () => {
     return (
