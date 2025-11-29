@@ -150,7 +150,7 @@ const AppGrid = ({ selectedCategory = 'All' }: AppGridProps) => {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex flex-col max-w-[88%] mx-auto pb-10 max-lg:pb-6">
-                <div className="w-full sticky top-0 z-10 bg-modalBg px-10 pt-10 max-xl:px-10 max-lg:pt-6 max-lg:px-0 pb-4 flex items-start justify-between max-md:flex-col max-md:items-start gap-3 max-md:gap-0">
+                <div className="w-full sticky top-0 z-10 bg-modalBg px-10 pt-8 max-xl:px-10 max-lg:pt-6 max-lg:px-0  flex items-start justify-between max-md:flex-col max-md:items-start gap-3 max-md:gap-0">
                   <div className="flex gap-4 items-start mb-6 min-w-fit">
                     <img
                       src={selectedApp.icon}
