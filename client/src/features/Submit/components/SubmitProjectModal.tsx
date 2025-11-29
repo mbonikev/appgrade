@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { RiCloseLine, RiCheckLine, RiArrowLeftLine } from "react-icons/ri";
+import { RiCloseLine, RiCheckLine, RiArrowLeftLine, RiLoader4Line } from "react-icons/ri";
 import StepEssentials from "./StepEssentials";
 import StepVisuals from "./StepVisuals";
 import StepSelection from "./StepSelection";
+import api from "../../../lib/api";
+import { useAuth } from "../../../contexts/AuthContext";
 
 interface SubmitProjectModalProps {
   isOpen: boolean;
@@ -16,8 +18,11 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const { user } = useAuth();
   const [view, setView] = useState<ViewState>("selection");
   const [currentStep, setCurrentStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Project Form Data
   const [projectData, setProjectData] = useState({
@@ -38,13 +43,73 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
 
   const totalProjectSteps = 3;
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep < totalProjectSteps) {
       setCurrentStep((prev) => prev + 1);
     } else {
-      // Submit Project Logic
-      console.log("Submitting Project:", projectData);
+      // Submit Project
+      await handleSubmit();
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!user) {
+      setSubmitError("You must be logged in to submit a project");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      // Create FormData for file upload
+      const formData = new FormData();
+      formData.append('title', projectData.name);
+      formData.append('tagline', projectData.tagline);
+      formData.append('description', projectData.description);
+      formData.append('submissionType', projectData.submissionType);
+      formData.append('author', user.id || (user as any)._id);
+
+      // Map view to project type
+      let projectType = 'project';
+      if (view === 'screens') {
+        projectType = projectData.submissionType === 'developed' ? 'project' : 'screens';
+      } else if (view === 'ui_elements') {
+        projectType = 'ui_element';
+      } else if (view === 'themes') {
+        projectType = 'theme';
+      }
+      formData.append('type', projectType);
+
+      // Optional fields
+      if (projectData.website) formData.append('website', projectData.website);
+      if (projectData.link) formData.append('link', projectData.link);
+      if (projectData.codeSnippet) formData.append('codeSnippet', projectData.codeSnippet);
+      if (projectData.categories.length > 0) formData.append('categories', JSON.stringify(projectData.categories));
+      if (projectData.tags.length > 0) formData.append('tags', JSON.stringify(projectData.tags));
+
+      // Append files
+      if (projectData.logo) formData.append('logo', projectData.logo);
+      if (projectData.coverImage) formData.append('coverImage', projectData.coverImage);
+      projectData.gallery.forEach((file) => {
+        formData.append('gallery', file);
+      });
+
+      // Submit to API
+      const response = await api.post('/api/projects', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      console.log('Project created:', response.data);
       handleClose();
+      // TODO: Show success message or redirect to project page
+    } catch (error: any) {
+      console.error('Error submitting project:', error);
+      setSubmitError(error.response?.data?.message || 'Failed to submit project. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -240,21 +305,35 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
 
             {/* Footer */}
             {isFlowView && (
-              <div className="p-6 border-t border-linesColor flex justify-between items-center bg-bodyBg">
-                <button
-                  onClick={handleBack}
-                  className="px-6 py-2.5 rounded-full font-medium transition-colors text-textColor hover:bg-cardItemBg"
-                >
-                  Back
-                </button>
-                <button
-                  onClick={handleNext}
-                  className="px-8 py-2.5 bg-mainColor text-white rounded-full font-medium hover:bg-mainColorHover transition-colors shadow-lg shadow-mainColor/20"
-                >
-                  {currentStep === totalProjectSteps
-                    ? "Submit Project"
-                    : "Continue"}
-                </button>
+              <div className="p-6 border-t border-linesColor bg-bodyBg">
+                {submitError && (
+                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+                    {submitError}
+                  </div>
+                )}
+                <div className="flex justify-between items-center">
+                  <button
+                    onClick={handleBack}
+                    disabled={isSubmitting}
+                    className="px-6 py-2.5 rounded-full font-medium transition-colors text-textColor hover:bg-cardItemBg disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    disabled={isSubmitting}
+                    className="px-8 py-2.5 bg-mainColor text-white rounded-full font-medium hover:bg-mainColorHover transition-colors shadow-lg shadow-mainColor/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    {isSubmitting && (
+                      <RiLoader4Line className="animate-spin text-xl" />
+                    )}
+                    {isSubmitting
+                      ? "Submitting..."
+                      : currentStep === totalProjectSteps
+                        ? "Submit Project"
+                        : "Continue"}
+                  </button>
+                </div>
               </div>
             )}
           </motion.div>

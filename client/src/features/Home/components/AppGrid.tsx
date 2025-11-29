@@ -5,85 +5,46 @@ import { HiStar, HiCursorClick, HiOutlineBookmark } from "react-icons/hi";
 import { RiChatSmile2Line } from "react-icons/ri";
 import { Link } from '@tanstack/react-router';
 import ReviewModal from '../../Preview/components/ReviewModal';
+import api from '../../../lib/api';
+import { useAuth } from '../../../contexts/AuthContext';
 
 interface AppGridProps {
   activeView?: "Following" | "Discover";
   selectedCategory?: string;
 }
 
-// Mock Data based on the image
-export const apps = [
-  {
-    id: 1,
-    title: "Acctual",
-    description: "Crypto invoice & B2B payments",
-    image:
-      "https://htmlburger.com/blog/wp-content/uploads/2024/10/Web-App-Design-Example-Learnify-Online-Courses-Platform.webp", // Placeholder
-    icon: "https://pub-static.fotor.com/assets/projects/pages/d5bdd0513a0740a8a38752dbc32586d0/fotor-03d1a91a0cec4542927f53c87e0599f6.jpg", // Placeholder
-    badge: "New" as const,
-    hasVideo: true,
-    category: "SaaS",
-    type: 'project' as const
-  },
-  {
-    id: 2,
-    title: "Hers",
-    description: "Women's healthcare",
-    image:
-      "https://saaslandingpage.com/wp-content/uploads/2023/09/3-mobbin@2x-680x510.png", // Placeholder
-    icon: "https://i.pinimg.com/564x/86/c9/7d/86c97d86681b9fedbf23a61a00c0f566.jpg", // Placeholder
-    badge: "New" as const,
-    category: "Productivity",
-    type: 'project' as const
-  },
-  {
-    id: 3,
-    title: "ClickUp",
-    description: "The everything app for work",
-    image:
-      "https://i.pinimg.com/1200x/f4/17/c1/f417c18098a0f16de8046d8ac8ff855a.jpg", // Placeholder
-    icon: "https://storage.pixteller.com/designs/designs-images/2017-09-21/09/twitter-profile-picture-avatar-1-59c3626d82bb3.png", // Placeholder
-    badge: "Updated" as const,
-    category: "Productivity",
-    type: 'project' as const
-  },
-  {
-    id: 4,
-    title: "Adaline",
-    description: "End-to-end AI agent platform",
-    image: "https://budibase.com/web-app-design/intercom.png", // Placeholder
-    icon: "https://img.freepik.com/premium-vector/dog-illustration-cute-style_1130875-2027.jpg?semt=ais_hybrid&w=740&q=80", // Placeholder
-    category: "Design",
-    type: 'screens' as const // Assuming Design category implies screens/UI
-  },
-  {
-    id: 5,
-    title: "Fabric",
-    description: "AI notes, files, ideas",
-    image:
-      "https://saaslandingpage.com/wp-content/uploads/2023/09/1-saasinterface@2x-680x510.png", // Placeholder
-    icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmJOBtmsTg3eCaFRGi3z1l7e3SGQEDe9u7WA&s", // Placeholder
-    isLocked: true,
-    hasVideo: true,
-    category: "SaaS",
-    type: 'project' as const
-  },
-  {
-    id: 6,
-    title: "Babbel",
-    description: "Learn a language online",
-    image: "https://appshots.design/images/landing/img1.webp", // Placeholder
-    icon: "https://m.gjcdn.net/fireside-post-image/900/23034951-5jh9fjqx-v4.webp", // Placeholder
-    isLocked: true,
-    category: "Education",
-    type: 'project' as const
-  },
-];
-
-const AppGrid = ({ selectedCategory = 'All' }: AppGridProps) => {
+const AppGrid = ({ activeView = "Discover", selectedCategory = 'All' }: AppGridProps) => {
+  const { user } = useAuth();
   const [selectedApp, setSelectedApp] = useState<any | null>(null);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [selectedProjectForReview, setSelectedProjectForReview] = useState<any>(null);
+  const [projects, setProjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      setLoading(true);
+      try {
+        if (activeView === "Discover") {
+          // Fetch all projects
+          const response = await api.get('/api/projects');
+          setProjects(response.data.projects || []);
+        } else {
+          // Fetch projects from followed users
+          // TODO: Implement following system
+          // For now, show empty or all projects
+          setProjects([]);
+        }
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+        setProjects([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, [activeView]);
 
   useEffect(() => {
     if (selectedApp) {
@@ -96,6 +57,22 @@ const AppGrid = ({ selectedCategory = 'All' }: AppGridProps) => {
       document.body.style.overflow = "";
     };
   }, [selectedApp]);
+
+  // Map backend projects to frontend format
+  const apps = projects.map(project => ({
+    id: project._id,
+    title: project.title,
+    description: project.tagline,
+    image: project.images?.[0] || 'https://via.placeholder.com/800x600',
+    icon: project.logo || `https://ui-avatars.com/api/?name=${encodeURIComponent(project.title)}`,
+    badge: undefined,
+    hasVideo: false,
+    category: project.categories?.[0] || 'Other',
+    type: project.type,
+    submissionType: project.submissionType,
+    link: project.link,
+    isLocked: false
+  }));
 
   const filteredApps = apps.filter(app => {
     if (selectedCategory !== 'All' && app.category !== selectedCategory) {
@@ -114,6 +91,25 @@ const AppGrid = ({ selectedCategory = 'All' }: AppGridProps) => {
     setReviewModalOpen(false);
     setSelectedProjectForReview(null);
   };
+
+  if (loading) {
+    return (
+      <div className="w-full flex justify-center items-center py-20">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-mainColor"></div>
+      </div>
+    );
+  }
+
+  if (filteredApps.length === 0) {
+    return (
+      <div className="w-full flex flex-col justify-center items-center py-20 text-textColorWeak">
+        <p className="text-lg">No projects found</p>
+        {activeView === "Following" && (
+          <p className="text-sm mt-2">Follow some creators to see their projects here</p>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">

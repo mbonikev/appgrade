@@ -20,15 +20,6 @@ const FilterBar = ({ activeView, onViewChange, selectedCategory, onCategoryChang
     <div className="flex items-center justify-between py-4 px-4 max-md:px-0 gap-6 md:px-0 text-textColor border-b border-linesColor mb-6 relative">
       <div className="flex items-center space-x-1 bg-cardBg p-1 rounded-full">
         <button
-          onClick={() => onViewChange("Following")}
-          className={`px-3.5 py-1.5 text-base font-medium rounded-full transition-colors ${activeView === "Following"
-            ? "bg-bodyBg shadow-sm text-textColor"
-            : "text-textColorWeak hover:text-textColor"
-            }`}
-        >
-          Following
-        </button>
-        <button
           onClick={() => onViewChange("Discover")}
           className={`px-3.5 py-1.5 text-base font-medium rounded-full transition-colors ${activeView === "Discover"
             ? "bg-bodyBg shadow-sm text-textColor"
@@ -37,6 +28,16 @@ const FilterBar = ({ activeView, onViewChange, selectedCategory, onCategoryChang
         >
           Discover
         </button>
+        <button
+          onClick={() => onViewChange("Following")}
+          className={`px-3.5 py-1.5 text-base font-medium rounded-full transition-colors ${activeView === "Following"
+            ? "bg-bodyBg shadow-sm text-textColor"
+            : "text-textColorWeak hover:text-textColor"
+            }`}
+        >
+          Following
+        </button>
+
       </div>
 
       <div className="hidden flex-1 md:flex items-center space-x-6 border-l border-linesColor pl-5">

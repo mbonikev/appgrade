@@ -10,7 +10,9 @@ export interface IProject extends Document {
     type: 'project' | 'screens' | 'ui_element' | 'theme';
     submissionType: 'design' | 'developed';
     images: string[];
+    logo?: string; // Logo URL
     link?: string; // For developed projects
+    codeSnippet?: string; // For themes and UI elements
     author: mongoose.Types.ObjectId;
     reviews: mongoose.Types.ObjectId[];
     averageRating: number;
@@ -60,9 +62,16 @@ const ProjectSchema = new Schema<IProject>(
         images: [{
             type: String,
         }],
+        logo: {
+            type: String,
+            trim: true,
+        },
         link: {
             type: String,
             trim: true,
+        },
+        codeSnippet: {
+            type: String,
         },
         author: {
             type: Schema.Types.ObjectId,

@@ -1,14 +1,12 @@
 import { useState } from 'react';
 
-
-
 import Navbar from '../../../components/layout/Navbar'
 import FilterBar from '../components/FilterBar'
 import ProBanner from '../components/ProBanner'
 import AppGrid from '../components/AppGrid'
 
 function Home() {
-  const [activeView, setActiveView] = useState<"Following" | "Discover">("Following");
+  const [activeView, setActiveView] = useState<"Following" | "Discover">("Discover");
   const [selectedCategory, setSelectedCategory] = useState('All');
 
   return (
