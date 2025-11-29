@@ -1,25 +1,42 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { HiBadgeCheck, HiUserGroup, HiCube } from 'react-icons/hi';
 import { Link } from '@tanstack/react-router';
 import Navbar from '../../../components/layout/Navbar';
 import api from '../../../lib/api';
+import { useAuth } from '../../../contexts/AuthContext';
 import type { Creator } from '../data/types';
 
 const CreatorsPage: React.FC = () => {
+    const { user } = useAuth();
     const [creators, setCreators] = useState<Creator[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [selectedCreator, setSelectedCreator] = useState<Creator | null>(null);
+    const [followingIds, setFollowingIds] = useState<string[]>([]);
 
     // Refs for scrolling to sections
     const sectionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
+
     useEffect(() => {
-        const fetchCreators = async () => {
+        const fetchData = async () => {
             try {
-                const response = await api.get('/api/users/creators');
-                setCreators(response.data);
+                // Fetch creators first
+                const creatorsRes = await api.get('/api/users/creators');
+                setCreators(creatorsRes.data);
+
+                // Then fetch following data if user is logged in
+                if (user) {
+                    try {
+                        const userId = user.id || (user as any)._id;
+                        const followingRes = await api.get(`/api/users/${userId}/following`);
+                        if (followingRes.data) {
+                            setFollowingIds(followingRes.data.map((u: any) => u._id));
+                        }
+                    } catch (followErr) {
+                        console.error('Failed to fetch following data:', followErr);
+                        // Don't show error to user, just log it
+                    }
+                }
             } catch (err) {
                 console.error('Failed to fetch creators:', err);
                 setError('Failed to load creators. Please try again later.');
@@ -28,8 +45,8 @@ const CreatorsPage: React.FC = () => {
             }
         };
 
-        fetchCreators();
-    }, []);
+        fetchData();
+    }, [user]);
 
     // Generate alphabet letters
     const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -59,6 +76,37 @@ const CreatorsPage: React.FC = () => {
                 top: offsetPosition,
                 behavior: 'smooth'
             });
+        }
+    };
+
+    const handleFollow = async (e: React.MouseEvent, creatorId: string) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!user) {
+            alert('Please sign in to follow creators');
+            return;
+        }
+
+        const isFollowing = followingIds.includes(creatorId);
+        const userId = user.id || (user as any)._id;
+
+        try {
+            if (isFollowing) {
+                await api.delete(`/api/users/${creatorId}/follow`, { data: { followerId: userId } });
+                setFollowingIds(prev => prev.filter(id => id !== creatorId));
+                setCreators(prev => prev.map(c =>
+                    c.id === creatorId ? { ...c, followers: Math.max(0, c.followers - 1) } : c
+                ));
+            } else {
+                await api.post(`/api/users/${creatorId}/follow`, { followerId: userId });
+                setFollowingIds(prev => [...prev, creatorId]);
+                setCreators(prev => prev.map(c =>
+                    c.id === creatorId ? { ...c, followers: c.followers + 1 } : c
+                ));
+            }
+        } catch (error) {
+            console.error('Error toggling follow:', error);
         }
     };
 
@@ -93,8 +141,8 @@ const CreatorsPage: React.FC = () => {
                                     onClick={() => hasCreators && scrollToSection(letter)}
                                     disabled={!hasCreators}
                                     className={`px-3 py-2 rounded-full font-medium transition-colors ${hasCreators
-                                            ? 'bg-cardItemBg text-textColor hover:bg-mainColor hover:text-white'
-                                            : 'bg-transparent text-textColorWeak opacity-30 cursor-not-allowed'
+                                        ? 'bg-cardItemBg text-textColor hover:bg-mainColor hover:text-white'
+                                        : 'bg-transparent text-textColorWeak opacity-30 cursor-not-allowed'
                                         }`}
                                     title={hasCreators ? `${count} creator${count !== 1 ? 's' : ''}` : 'No creators'}
                                 >
@@ -122,7 +170,7 @@ const CreatorsPage: React.FC = () => {
                         {availableLetters.map((letter) => (
                             <div
                                 key={letter}
-                                ref={(el) => (sectionRefs.current[letter] = el)}
+                                ref={(el) => { sectionRefs.current[letter] = el; }}
                                 className="mb-12"
                             >
                                 {/* Letter Header */}
@@ -138,63 +186,67 @@ const CreatorsPage: React.FC = () => {
 
                                 {/* Creators Grid */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                    {groupedCreators[letter].map((creator) => (
-                                        <div
-                                            key={creator.id}
-                                            onClick={() => setSelectedCreator(creator)}
-                                            className="group relative bg-cardBg rounded-3xl overflow-hidden hover:bg-cardItemBg hover:transition-colors hover:duration-300 cursor-pointer flex flex-col h-full"
-                                        >
-                                            {/* Avatar & Info */}
-                                            <div className="px-5 py-5 flex-1 flex flex-col">
-                                                <div className="mb-3 flex justify-between items-end">
-                                                    <div className="relative">
-                                                        <img
-                                                            src={creator.avatar}
-                                                            alt={creator.name}
-                                                            className="w-20 h-20 rounded-full border border-cardBg group-hover:border-cardItemBg object-cover bg-cardBg"
-                                                        />
-                                                        {creator.isVerified && (
-                                                            <div className="absolute -bottom-1 -right-1 bg-cardBg rounded-full p-px flex">
-                                                                <div className='size-[14px] top-0 left-0 right-0 bottom-0 m-auto bg-white rounded-full absolute z-0'></div>
-                                                                <HiBadgeCheck className="text-blue-500 text-2xl z-20" />
-                                                            </div>
-                                                        )}
+                                    {groupedCreators[letter].map((creator) => {
+                                        const isFollowing = followingIds.includes(creator.id);
+                                        return (
+                                            <Link
+                                                key={creator.id}
+                                                to="/profile/$profileId"
+                                                params={{ profileId: creator.id }}
+                                                className="group relative bg-cardBg rounded-3xl overflow-hidden hover:bg-cardItemBg hover:transition-colors hover:duration-300 cursor-pointer flex flex-col h-full"
+                                            >
+                                                {/* Avatar & Info */}
+                                                <div className="px-5 py-5 flex-1 flex flex-col">
+                                                    <div className="mb-3 flex justify-between items-end">
+                                                        <div className="relative">
+                                                            <img
+                                                                src={creator.avatar}
+                                                                alt={creator.name}
+                                                                className="w-20 h-20 rounded-full border border-cardBg group-hover:border-cardItemBg object-cover bg-cardBg"
+                                                            />
+                                                            {creator.isVerified && (
+                                                                <div className="absolute -bottom-1 -right-1 bg-cardBg rounded-full p-px flex">
+                                                                    <div className='size-[14px] top-0 left-0 right-0 bottom-0 m-auto bg-white rounded-full absolute z-0'></div>
+                                                                    <HiBadgeCheck className="text-blue-500 text-2xl z-20" />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <button
+                                                            onClick={(e) => handleFollow(e, creator.id)}
+                                                            className={`text-sm font-semibold px-5 py-2.5 rounded-full transition-colors duration-300 ${isFollowing
+                                                                ? 'bg-cardItemBg text-textColor border border-linesColor hover:bg-red-500 hover:text-white hover:border-transparent'
+                                                                : 'bg-mainColor text-white hover:bg-mainColorHover'
+                                                                }`}
+                                                        >
+                                                            {isFollowing ? 'Following' : 'Follow'}
+                                                        </button>
                                                     </div>
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            // TODO: Implement follow functionality
-                                                        }}
-                                                        className="bg-mainColor text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-mainColorHover transition-colors duration-300"
-                                                    >
-                                                        Follow
-                                                    </button>
-                                                </div>
 
-                                                <div className="mb-4">
-                                                    <h3 className="text-textColor text-lg font-bold flex items-center gap-1">
-                                                        {creator.name}
-                                                    </h3>
-                                                    <p className="text-textColorWeak text-sm font-medium">@{creator.username}</p>
-                                                </div>
-
-                                                <p className="text-textColorWeak text-sm line-clamp-2 mb-4 flex-1">
-                                                    {creator.bio}
-                                                </p>
-
-                                                <div className="flex items-center gap-4 pt-4 border-t border-linesColor">
-                                                    <div className="flex items-center gap-1.5 text-sm font-medium text-textColor">
-                                                        <HiUserGroup className="text-textColorWeak text-lg" />
-                                                        <span>{(creator.followers / 1000).toFixed(1)}k</span>
+                                                    <div className="mb-4">
+                                                        <h3 className="text-textColor text-lg font-bold flex items-center gap-1">
+                                                            {creator.name}
+                                                        </h3>
+                                                        <p className="text-textColorWeak text-sm font-medium">@{creator.username}</p>
                                                     </div>
-                                                    <div className="flex items-center gap-1.5 text-sm font-medium text-textColor">
-                                                        <HiCube className="text-textColorWeak text-lg" />
-                                                        <span>{creator.appsCount} Apps</span>
+
+                                                    <p className="text-textColorWeak text-sm line-clamp-2 mb-4 flex-1">
+                                                        {creator.bio}
+                                                    </p>
+
+                                                    <div className="flex items-center gap-4 pt-4 border-t border-linesColor">
+                                                        <div className="flex items-center gap-1.5 text-sm font-medium text-textColor">
+                                                            <HiUserGroup className="text-textColorWeak text-lg" />
+                                                            <span>{(creator.followers / 1000).toFixed(1)}k</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-1.5 text-sm font-medium text-textColor">
+                                                            <HiCube className="text-textColorWeak text-lg" />
+                                                            <span>{creator.appsCount} Apps</span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    ))}
+                                            </Link>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         ))}
@@ -202,96 +254,6 @@ const CreatorsPage: React.FC = () => {
                 )}
             </div>
 
-            {/* Creator Details Modal (Similar to Home) */}
-            <AnimatePresence mode="wait">
-                {selectedCreator && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex justify-center"
-                        onClick={() => setSelectedCreator(null)}
-                    >
-                        <motion.div
-                            initial={{ y: "100%" }}
-                            animate={{ y: 0 }}
-                            exit={{ y: "100%" }}
-                            transition={{
-                                duration: 0.32,
-                                ease: [0.25, 0.1, 0.25, 1],
-                            }}
-                            className="w-full max-w-[84%] max-lg:max-w-full mx-auto h-[calc(100svh-56px)] overflow-y-auto bg-modalBg rounded-t-3xl shadow-xl fixed top-14 left-0 right-0"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <div className="flex flex-col max-w-[88%] mx-auto pb-10 max-lg:pb-6">
-                                {/* Header */}
-                                <div className="w-full sticky top-0 z-10 bg-modalBg px-10 pt-8 max-xl:px-10 max-lg:pt-6 max-lg:px-0 flex items-start justify-between max-md:flex-col max-md:items-start gap-3">
-                                    <div className="flex gap-4 items-start mb-6 min-w-fit">
-                                        <div className="relative">
-                                            <img
-                                                src={selectedCreator.avatar}
-                                                className="w-20 h-20 rounded-2xl object-cover"
-                                                alt={selectedCreator.name}
-                                            />
-                                            {selectedCreator.isVerified && (
-                                                <div className="absolute -bottom-1 -right-1 bg-modalBg rounded-full p-px flex">
-                                                    <div className='size-[14px] top-0 left-0 right-0 bottom-0 m-auto bg-white rounded-full absolute z-0'></div>
-                                                    <HiBadgeCheck className="text-blue-500 text-2xl z-20" />
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div>
-                                            <h2 className="text-3xl font-bold text-textColor">
-                                                {selectedCreator.name}
-                                            </h2>
-                                            <p className="text-textColorWeak">@{selectedCreator.username}</p>
-                                            <p className="text-textColor mt-2">{selectedCreator.bio}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex w-full items-center justify-end gap-6 pt-3 max-md:pt-0 max-sm:gap-3">
-                                        <div className="border-r pr-6 max-md:border-r-[0] mr-0 border-linesColor h-[48px] flex items-center flex-col max-sm:items-end">
-                                            <h1 className="flex items-center text-xl font-semibold gap-1">
-                                                <HiUserGroup className="text-2xl text-mainColor" />
-                                                {(selectedCreator.followers / 1000).toFixed(1)}k
-                                            </h1>
-                                            <p className="text-sm font-medium text-textColorWeak">Followers</p>
-                                        </div>
-                                        <div className="border-r pr-6 max-md:border-r-[0] mr-0 border-linesColor h-[48px] flex items-center flex-col max-sm:items-end">
-                                            <h1 className="flex items-center text-xl font-semibold gap-1">
-                                                <HiCube className="text-2xl text-mainColor" />
-                                                {selectedCreator.appsCount}
-                                            </h1>
-                                            <p className="text-sm font-medium text-textColorWeak">Apps</p>
-                                        </div>
-                                        <button className="text-white h-[48px] bg-mainColor px-6 rounded-full font-medium hover:bg-mainColorHover transition-colors">
-                                            Follow
-                                        </button>
-                                        <Link
-                                            to="/profile/$profileId"
-                                            params={{ profileId: selectedCreator.id }}
-                                            className="text-textColor h-[48px] bg-cardItemBg px-6 rounded-full font-medium hover:bg-cardBg transition-colors flex items-center"
-                                        >
-                                            View Full Profile
-                                        </Link>
-                                    </div>
-                                </div>
-
-                                {/* Creator's Apps */}
-                                <div className="px-10 max-xl:px-10 max-lg:px-0 mt-8">
-                                    <h3 className="text-2xl font-bold text-textColor mb-6">
-                                        Apps by {selectedCreator.name}
-                                    </h3>
-                                    <div className="text-center py-10 text-textColorWeak">
-                                        <p>Apps will be displayed here</p>
-                                        <p className="text-sm mt-2">Showing {selectedCreator.appsCount} apps</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
         </div>
     );
 };

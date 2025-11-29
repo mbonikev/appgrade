@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { RxMixerHorizontal } from "react-icons/rx";
-import { categories } from "../../Search/data/mockSearchData";
 import { AnimatePresence, motion } from "framer-motion";
 
 const tabs = ["All", "Screens", "UI Elements", "Themes"];
@@ -29,21 +28,19 @@ const FilterBar = ({
       <div className="flex items-center space-x-1 bg-cardBg p-1 rounded-full">
         <button
           onClick={() => onViewChange("Discover")}
-          className={`px-3.5 py-1.5 text-base font-medium rounded-full transition-colors ${
-            activeView === "Discover"
+          className={`px-3.5 py-1.5 text-base font-medium rounded-full transition-colors ${activeView === "Discover"
               ? "bg-bodyBg shadow-sm text-textColor"
               : "text-textColorWeak hover:text-textColor"
-          }`}
+            }`}
         >
           Discover
         </button>
         <button
           onClick={() => onViewChange("Following")}
-          className={`px-3.5 py-1.5 text-base font-medium rounded-full transition-colors ${
-            activeView === "Following"
+          className={`px-3.5 py-1.5 text-base font-medium rounded-full transition-colors ${activeView === "Following"
               ? "bg-bodyBg shadow-sm text-textColor"
               : "text-textColorWeak hover:text-textColor"
-          }`}
+            }`}
         >
           Following
         </button>
@@ -54,11 +51,10 @@ const FilterBar = ({
           <button
             key={tab}
             onClick={() => onTabChange(tab)}
-            className={`font-medium transition-colors duration-200 pt-2 pb-1 border-b-2 ${
-              activeTab === tab
+            className={`font-medium transition-colors duration-200 pt-2 pb-1 border-b-2 ${activeTab === tab
                 ? "text-textColor border-textColor"
                 : "text-textColorWeak border-transparent hover:text-textColor"
-            }`}
+              }`}
           >
             {tab}
           </button>
