@@ -100,7 +100,7 @@ const AppCard: React.FC<AppCardProps> = ({
           </button>
         )}
 
-        <div className="relative aspect-[16/10] bg-cardBg overflow-hidden rounded-2xl">
+        <div className="relative aspect-[16/9] bg-cardBg overflow-hidden rounded-2xl">
           <img
             src={image}
             alt={title}
