@@ -165,7 +165,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
                                 bio: displayUser.bio,
                                 website: displayUser.website,
                                 location: "San Francisco, CA", // Mock location for now
-                                joinedDate: "Dec 2023", // Mock date
+                                joinedDate: displayUser.createdAt ? new Date(displayUser.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : "N/A",
                                 isVerified: true // Mock verified
                             }}
                             stats={{
