@@ -12,7 +12,6 @@ import DeleteConfirmDialog from '../components/DeleteConfirmDialog';
 import ScreensViewPage from '../components/ScreensViewPage';
 import api from '../../../lib/api';
 import { useAuth } from '../../../contexts/AuthContext';
-import { mockStats } from '../data/mockProfile'; // Keep mock stats for now if backend doesn't provide all
 
 interface ProfilePageProps {
     profileId?: string;
@@ -166,13 +165,13 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
                                 website: displayUser.website,
                                 location: "San Francisco, CA", // Mock location for now
                                 joinedDate: displayUser.createdAt ? new Date(displayUser.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : "N/A",
-                                isVerified: true // Mock verified
+                                isVerified: displayUser.isVerified || false
                             }}
                             stats={{
-                                followers: displayUser.followers || mockStats.followers,
-                                following: displayUser.following || mockStats.following,
-                                projects: displayUser.appsCount || projects.length,
-                                likes: 11200 // Mock likes
+                                followers: displayUser.followers || 0,
+                                following: displayUser.following || 0,
+                                projects: projects.length, // Use actual fetched projects count
+                                likes: 0 // TODO: Implement likes tracking in the future
                             }}
                             isOwnProfile={isOwnProfile}
                             onEditClick={() => setIsSettingsOpen(true)}
