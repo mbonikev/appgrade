@@ -9,7 +9,6 @@ import { useRouter, Link } from "@tanstack/react-router";
 import SearchModal from "../../features/Search/components/SearchModal";
 import SubmitProjectModal from "../../features/Submit/components/SubmitProjectModal";
 import { Logo } from "../../assets";
-import ChangelogModal from "../../features/Changelog/components/ChangelogModal";
 
 import SettingsModal from "../../features/Profile/components/SettingsModal";
 import SignInModal from "../auth/SignInModal";
@@ -25,7 +24,6 @@ function Navbar() {
   const profileRef = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isChangelogOpen, setIsChangelogOpen] = useState(false);
   const [openSignInModal, setOpenSignInModal] = useState(false);
 
   const { user, logout } = useAuth();
@@ -127,10 +125,7 @@ function Navbar() {
         onClose={() => setIsSettingsOpen(false)}
       />
 
-      <ChangelogModal
-        isOpen={isChangelogOpen}
-        onClose={() => setIsChangelogOpen(false)}
-      />
+
 
       <SignInModal
         isOpen={openSignInModal}
@@ -263,15 +258,13 @@ function Navbar() {
                       >
                         Settings
                       </button>
-                      <button
-                        onClick={() => {
-                          setIsChangelogOpen(true);
-                          setOpenProfile(false);
-                        }}
+                      <Link
+                        to="/changelog"
                         className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between"
+                        onClick={() => setOpenProfile(false)}
                       >
                         Changelog
-                      </button>
+                      </Link>
                       <Link
                         to="/support"
                         className="text-left py-1.5 text-textColor hover:bg-cardItemBg px-3 rounded-xl font-medium flex items-center justify-between"
