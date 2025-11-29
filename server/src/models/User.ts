@@ -10,6 +10,9 @@ export interface IUser extends Document {
     role: 'user' | 'creator' | 'admin';
     followers: number;
     following: number;
+    followersArray: mongoose.Types.ObjectId[];
+    followingArray: mongoose.Types.ObjectId[];
+    savedProjects: mongoose.Types.ObjectId[];
     appsCount: number;
     isVerified: boolean;
     coverImage?: string;
@@ -63,6 +66,21 @@ const UserSchema = new Schema<IUser>(
             type: Number,
             default: 0,
         },
+        followersArray: [{
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            default: []
+        }],
+        followingArray: [{
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            default: []
+        }],
+        savedProjects: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Project',
+            default: []
+        }],
         appsCount: {
             type: Number,
             default: 0,

@@ -26,7 +26,9 @@ interface ProfileSidebarProps {
     likes?: number;
   };
   isOwnProfile: boolean;
+  isFollowing?: boolean;
   onEditClick?: () => void;
+  onFollowClick?: () => void;
 }
 export const getHighResAvatar = (url: string) => {
   if (!url) return url;
@@ -42,7 +44,9 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
   user,
   stats,
   isOwnProfile,
+  isFollowing = false,
   onEditClick,
+  onFollowClick,
 }) => {
   return (
     <div className="flex flex-col gap-6 relative -mt-20 px-4 md:px-0">
@@ -50,7 +54,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
       <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-bodyBg overflow-hidden bg-cardBg shadow-lg">
         <img
           src={getHighResAvatar(user.avatar)}
-        //   alt={user.name}
+          //   alt={user.name}
           className="w-full h-full object-cover"
         />
       </div>
@@ -132,8 +136,14 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
           </button>
         ) : (
           <div className="flex gap-3">
-            <button className="flex-1 py-2.5 rounded-xl bg-mainColor text-white font-medium hover:bg-mainColorHover transition-colors shadow-lg shadow-mainColor/20">
-              Follow
+            <button
+              onClick={onFollowClick}
+              className={`flex-1 py-2.5 rounded-xl font-medium transition-colors shadow-lg ${isFollowing
+                  ? 'bg-cardItemBg text-textColor border border-linesColor hover:bg-red-500 hover:text-white hover:border-transparent shadow-none'
+                  : 'bg-mainColor text-white hover:bg-mainColorHover shadow-mainColor/20'
+                }`}
+            >
+              {isFollowing ? 'Following' : 'Follow'}
             </button>
             <button className="flex-1 py-2.5 rounded-xl border border-linesColor text-textColor font-medium hover:bg-cardBg transition-colors">
               Message

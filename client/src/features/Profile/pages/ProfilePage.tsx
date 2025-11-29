@@ -32,6 +32,10 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
     const [deleteProjectId, setDeleteProjectId] = useState<string | null>(null);
     const [viewScreensProject, setViewScreensProject] = useState<any | null>(null);
 
+    // Follow State
+    const [isFollowing, setIsFollowing] = useState(false);
+    const [followerCount, setFollowerCount] = useState(0);
+
     // Determine effective profile ID and ownership
     // If profileId is passed, use it. Otherwise, if authUser exists, use their ID.
     const effectiveProfileId = profileId || authUser?.id || (authUser as any)?._id;
@@ -68,6 +72,21 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
                 }));
                 setProjects(mappedProjects);
 
+                // Check if current user is following this profile (if not own profile)
+                if (!isOwnProfile && authUser) {
+                    try {
+                        const userId = authUser.id || (authUser as any)._id;
+                        const followingRes = await api.get(`/api/users/${userId}/following`);
+                        const followingIds = followingRes.data.map((u: any) => u._id);
+                        setIsFollowing(followingIds.includes(effectiveProfileId));
+                    } catch (err) {
+                        console.error('Error checking follow status:', err);
+                    }
+                }
+
+                // Set initial follower count
+                setFollowerCount(userRes.data.followers || 0);
+
             } catch (error) {
                 console.error('Error fetching profile data:', error);
             } finally {
@@ -76,7 +95,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
         };
 
         fetchData();
-    }, [effectiveProfileId]);
+    }, [effectiveProfileId, isOwnProfile, authUser]);
 
     // Derived User Object for Display
     const displayUser = useMemo(() => {
@@ -119,6 +138,32 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
             setViewScreensProject(project);
         } else {
             console.log('Navigate to project:', project.id);
+        }
+    };
+
+    const handleFollowToggle = async () => {
+        if (!authUser) {
+            alert('Please sign in to follow users');
+            return;
+        }
+
+        if (!effectiveProfileId) return;
+
+        const userId = authUser.id || (authUser as any)._id;
+
+        try {
+            if (isFollowing) {
+                await api.delete(`/api/users/${effectiveProfileId}/follow`, { data: { followerId: userId } });
+                setIsFollowing(false);
+                setFollowerCount(prev => Math.max(0, prev - 1));
+            } else {
+                await api.post(`/api/users/${effectiveProfileId}/follow`, { followerId: userId });
+                setIsFollowing(true);
+                setFollowerCount(prev => prev + 1);
+            }
+        } catch (error) {
+            console.error('Error toggling follow:', error);
+            alert('Failed to update follow status. Please try again.');
         }
     };
 
@@ -167,13 +212,15 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
                                 isVerified: displayUser.isVerified || false
                             }}
                             stats={{
-                                followers: displayUser.followers || 0,
+                                followers: followerCount,
                                 following: displayUser.following || 0,
                                 projects: projects.length, // Use actual fetched projects count
                                 likes: 0 // TODO: Implement likes tracking in the future
                             }}
                             isOwnProfile={isOwnProfile}
+                            isFollowing={isFollowing}
                             onEditClick={() => setIsSettingsOpen(true)}
+                            onFollowClick={handleFollowToggle}
                         />
                     </div>
 
