@@ -29,6 +29,11 @@ const AppGrid = ({
   const [modalTab, setModalTab] = useState<'preview' | 'code'>('preview');
   const [savedProjectIds, setSavedProjectIds] = useState<string[]>([]);
 
+  // Reset modal tab when modal opens/closes
+  useEffect(() => {
+    setModalTab('preview');
+  }, [selectedApp]);
+
   useEffect(() => {
     const fetchProjects = async () => {
       setLoading(true);

@@ -44,6 +44,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
     const [selectedProject, setSelectedProject] = useState<any | null>(null);
     const [modalTab, setModalTab] = useState<'preview' | 'code'>('preview');
 
+    // Reset modal tab when modal opens/closes
+    useEffect(() => {
+        setModalTab('preview');
+    }, [selectedProject]);
+
     // Follow State
     const [isFollowing, setIsFollowing] = useState(false);
     const [followerCount, setFollowerCount] = useState(0);
