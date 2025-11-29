@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Project from '../models/Project';
+import Review from '../models/Review';
 import { uploadBufferToCloudinary, uploadMultipleBuffersToCloudinary } from '../utils/uploadToCloudinary';
 
 // Get all projects (for Discover tab)
@@ -330,6 +331,42 @@ export const getFollowedProjects = async (req: Request, res: Response) => {
     } catch (error) {
         console.error('Error fetching followed projects:', error);
         res.status(500).json({ message: 'Server error fetching followed projects' });
+    }
+};
+
+export const addReview = async (req: Request, res: Response) => {
+    const { projectId } = req.params;
+    const { userId, rating, comment } = req.body;
+
+    try {
+        const project = await Project.findById(projectId);
+        if (!project) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+
+        const review = await Review.create({
+            project: projectId,
+            user: userId,
+            rating,
+            comment
+        });
+
+        // Update project stats
+        const reviews = await Review.find({ project: projectId });
+        const avgRating = reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length;
+
+        project.reviews.push(review._id as any);
+        project.averageRating = avgRating;
+        project.reviewsCount = reviews.length;
+        await project.save();
+
+        res.status(201).json(review);
+    } catch (error: any) {
+        if (error.code === 11000) {
+            return res.status(400).json({ message: 'You have already reviewed this project' });
+        }
+        console.error('Error adding review:', error);
+        res.status(500).json({ message: 'Server error adding review' });
     }
 };
 

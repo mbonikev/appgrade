@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import AppCard from "./AppCard";
 import { AnimatePresence, motion } from "framer-motion";
-import { HiStar, HiCursorClick, HiOutlineBookmark } from "react-icons/hi";
+import { HiStar, HiCursorClick, HiOutlineBookmark, HiBookmark } from "react-icons/hi";
 import { RiChatSmile2Line } from "react-icons/ri";
 import { Link } from "@tanstack/react-router";
 import ReviewModal from "../../Preview/components/ReviewModal";
 import api from "../../../lib/api";
+import { useAuth } from "../../../contexts/AuthContext";
 
 interface AppGridProps {
   activeView?: "Following" | "Discover";
@@ -18,6 +19,7 @@ const AppGrid = ({
   selectedCategory = "All",
   activeTab,
 }: AppGridProps) => {
+  const { user: authUser } = useAuth();
   const [selectedApp, setSelectedApp] = useState<any | null>(null);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [selectedProjectForReview, setSelectedProjectForReview] =
@@ -25,6 +27,7 @@ const AppGrid = ({
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalTab, setModalTab] = useState<'preview' | 'code'>('preview');
+  const [savedProjectIds, setSavedProjectIds] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -49,7 +52,23 @@ const AppGrid = ({
     };
 
     fetchProjects();
+    fetchProjects();
   }, [activeView]);
+
+  useEffect(() => {
+    const fetchSavedProjects = async () => {
+      if (authUser) {
+        try {
+          const userId = authUser.id || (authUser as any)._id;
+          const response = await api.get(`/api/projects/saved/${userId}`);
+          setSavedProjectIds(response.data.map((p: any) => p._id));
+        } catch (error) {
+          console.error("Error fetching saved projects:", error);
+        }
+      }
+    };
+    fetchSavedProjects();
+  }, [authUser]);
 
   useEffect(() => {
     if (selectedApp) {
@@ -84,6 +103,8 @@ const AppGrid = ({
     reviewsCount: project.reviewsCount || 0,
     reviews: project.reviews || [],
     createdAt: project.createdAt,
+    codeSnippet: project.codeSnippet,
+    isBookmarked: savedProjectIds.includes(project._id),
   }));
 
   const filteredApps = apps
@@ -118,10 +139,57 @@ const AppGrid = ({
     setReviewModalOpen(true);
   };
 
-  const handleReviewSubmit = () => {
-    console.log("Review submitted for:", selectedProjectForReview);
-    setReviewModalOpen(false);
-    setSelectedProjectForReview(null);
+  const handleReviewSubmit = async (data: { ux: number; ui: number; review: string }) => {
+    if (!authUser || !selectedProjectForReview) return;
+
+    const userId = authUser.id || (authUser as any)._id;
+    const rating = (data.ux + data.ui) / 2;
+
+    try {
+      await api.post(`/api/projects/${selectedProjectForReview.id}/reviews`, {
+        userId,
+        rating,
+        comment: data.review
+      });
+
+      alert('Review submitted successfully!');
+      setReviewModalOpen(false);
+      setSelectedProjectForReview(null);
+
+      // Refresh projects to show new rating
+      // Ideally we should refactor fetchProjects to be callable here
+      // For now, let's just update local state if possible or reload
+      window.location.reload();
+    } catch (error: any) {
+      console.error('Error submitting review:', error);
+      alert(error.response?.data?.message || 'Failed to submit review');
+    }
+  };
+
+  const handleBookmarkProject = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (!authUser) {
+      alert('Please sign in to bookmark projects');
+      return;
+    }
+
+    const userId = authUser.id || (authUser as any)._id;
+    const isBookmarked = savedProjectIds.includes(id);
+
+    try {
+      if (isBookmarked) {
+        await api.delete(`/api/projects/${id}/save`, { data: { userId } });
+        setSavedProjectIds(prev => prev.filter(pid => pid !== id));
+        alert('Project unsaved!');
+      } else {
+        await api.post(`/api/projects/${id}/save`, { userId });
+        setSavedProjectIds(prev => [...prev, id]);
+        alert('Project saved!');
+      }
+    } catch (error: any) {
+      console.error('Error toggling bookmark:', error);
+      alert('Failed to update bookmark');
+    }
   };
 
   if (loading) {
@@ -220,14 +288,17 @@ const AppGrid = ({
                     <div className="border-r pr-6 max-md:border-r-[0] mr-0 border-linesColor h-[48px] flex items-center flex-col max-sm:items-end ">
                       <h1 className="flex items-center text-xl font-semibold gap-1">
                         <HiStar className="text-2xl text-orange-500 dark:text-orange-400 " />
-                        3.3
+                        {selectedApp.averageRating || 0}
                       </h1>
                       <p className="text-sm font-medium text-textColorWeak">
-                        (22,342<span className="max-sm:hidden"> Tested</span>)
+                        ({selectedApp.reviewsCount || 0}<span className="max-sm:hidden"> Reviews</span>)
                       </p>
                     </div>
-                    <button className="text-textColor h-[48px] aspect-square flex items-center justify-center text-2xl rounded-full bg-cardItemBg">
-                      <HiOutlineBookmark />
+                    <button
+                      onClick={(e) => handleBookmarkProject(e, selectedApp.id)}
+                      className={`text-textColor h-[48px] aspect-square flex items-center justify-center text-2xl rounded-full bg-cardItemBg transition-colors ${selectedApp.isBookmarked ? 'text-mainColor' : 'hover:bg-cardItemBgHover'}`}
+                    >
+                      {selectedApp.isBookmarked ? <HiBookmark /> : <HiOutlineBookmark />}
                     </button>
                     {selectedApp.type === "project" ||
                       selectedApp.submissionType === "developed" ? (
@@ -435,7 +506,6 @@ const AppGrid = ({
         )}
       </AnimatePresence>
 
-      {/* Review Modal */}
       <ReviewModal
         isOpen={reviewModalOpen}
         onClose={() => setReviewModalOpen(false)}

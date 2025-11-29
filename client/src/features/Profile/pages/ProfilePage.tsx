@@ -10,8 +10,9 @@ import EditProjectModal from '../components/EditProjectModal';
 import DeleteConfirmDialog from '../components/DeleteConfirmDialog';
 import ScreensViewPage from '../components/ScreensViewPage';
 import FollowStatsModal from '../components/FollowStatsModal';
+import ReviewModal from '../../Preview/components/ReviewModal';
 import { AnimatePresence, motion } from 'framer-motion';
-import { HiStar, HiCursorClick, HiOutlineBookmark } from 'react-icons/hi';
+import { HiStar, HiCursorClick, HiOutlineBookmark, HiBookmark } from 'react-icons/hi';
 import { RiChatSmile2Line } from 'react-icons/ri';
 import { Link } from '@tanstack/react-router';
 import api from '../../../lib/api';
@@ -26,6 +27,10 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
     const [activeTab, setActiveTab] = useState('work');
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isSubmitOpen, setIsSubmitOpen] = useState(false);
+    const [isReviewOpen, setIsReviewOpen] = useState(false);
+    const [reviewProject, setReviewProject] = useState<any>(null);
+    const [savedProjects, setSavedProjects] = useState<any[]>([]);
+    const [savedProjectIds, setSavedProjectIds] = useState<string[]>([]);
 
     // Data State
     const [profileUser, setProfileUser] = useState<any>(null);
@@ -71,6 +76,22 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
         }
     };
 
+    // Fetch saved project IDs for auth user
+    useEffect(() => {
+        const fetchSavedIds = async () => {
+            if (authUser) {
+                try {
+                    const userId = authUser.id || (authUser as any)._id;
+                    const res = await api.get(`/api/projects/saved/${userId}`);
+                    setSavedProjectIds(res.data.map((p: any) => p._id));
+                } catch (error) {
+                    console.error('Error fetching saved project IDs:', error);
+                }
+            }
+        };
+        fetchSavedIds();
+    }, [authUser]);
+
     useEffect(() => {
         const fetchData = async () => {
             if (!effectiveProfileId) {
@@ -110,13 +131,38 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
         };
 
         fetchData();
-    }, [effectiveProfileId, isOwnProfile, authUser]);
+    }, [effectiveProfileId, authUser, isOwnProfile]);
+
+    // Fetch saved projects when tab changes
+    useEffect(() => {
+        const fetchSaved = async () => {
+            if (activeTab === 'saved' && isOwnProfile && authUser) {
+                try {
+                    const userId = authUser.id || (authUser as any)._id;
+                    const response = await api.get(`/api/projects/saved/${userId}`);
+                    const mappedSaved = response.data.map((p: any) => ({
+                        id: p._id,
+                        name: p.title,
+                        tagline: p.tagline,
+                        description: p.description,
+                        cover_image_url: p.images?.[0] || 'https://via.placeholder.com/800x600',
+                        logo_url: p.logo || '',
+                        type: p.type,
+                        is_bookmarked: true,
+                        ...p
+                    }));
+                    setSavedProjects(mappedSaved);
+                } catch (error) {
+                    console.error('Error fetching saved projects:', error);
+                }
+            }
+        };
+        fetchSaved();
+    }, [activeTab, isOwnProfile, authUser]);
 
     // Derived User Object for Display
     const displayUser = useMemo(() => {
         if (isOwnProfile && authUser) {
-            // Merge authUser with fetched profileUser to get latest updates but keep auth context if needed
-            // Actually, fetched profileUser is best source of truth for profile page
             return profileUser || authUser;
         }
         return profileUser;
@@ -124,11 +170,12 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
 
     // Filter projects based on active tab
     const displayedProjects = useMemo(() => {
-        if (activeTab === 'saved') {
-            return []; // Implement saved projects fetching later
-        }
-        return projects;
-    }, [activeTab, projects]);
+        let data = activeTab === 'saved' ? savedProjects : projects;
+        return data.map(p => ({
+            ...p,
+            is_bookmarked: savedProjectIds.includes(p.id)
+        }));
+    }, [activeTab, projects, savedProjects, savedProjectIds]);
 
     const handleEditProject = (id: string) => {
         setEditProjectId(id);
@@ -180,8 +227,65 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
         }
     };
 
-    const handleBookmarkProject = (id: string) => {
-        console.log('Bookmark project:', id);
+    const handleBookmarkProject = async (id: string) => {
+        if (!authUser) {
+            alert('Please sign in to bookmark projects');
+            return;
+        }
+
+        const userId = authUser.id || (authUser as any)._id;
+        const isBookmarked = savedProjectIds.includes(id);
+
+        try {
+            if (isBookmarked) {
+                await api.delete(`/api/projects/${id}/save`, { data: { userId } });
+                setSavedProjectIds(prev => prev.filter(pid => pid !== id));
+                if (activeTab === 'saved') {
+                    setSavedProjects(prev => prev.filter(p => p.id !== id));
+                }
+            } else {
+                await api.post(`/api/projects/${id}/save`, { userId });
+                setSavedProjectIds(prev => [...prev, id]);
+
+                const project = projects.find(p => p.id === id) || (selectedProject && selectedProject.id === id ? selectedProject : null);
+                if (project) {
+                    setSavedProjects(prev => [...prev, { ...project, is_bookmarked: true }]);
+                }
+            }
+        } catch (error) {
+            console.error('Error toggling bookmark:', error);
+            alert('Failed to update bookmark');
+        }
+    };
+
+    const handleReviewClick = (project: any) => {
+        setReviewProject(project);
+        setIsReviewOpen(true);
+    };
+
+    const handleReviewSubmit = async (data: { ux: number; ui: number; review: string }) => {
+        if (!authUser || !reviewProject) return;
+
+        const userId = authUser.id || (authUser as any)._id;
+        const rating = (data.ux + data.ui) / 2;
+
+        try {
+            await api.post(`/api/projects/${reviewProject.id}/reviews`, {
+                userId,
+                rating,
+                comment: data.review
+            });
+
+            alert('Review submitted successfully!');
+            setIsReviewOpen(false);
+            setReviewProject(null);
+
+            // Refresh projects to show new rating
+            fetchProjects();
+        } catch (error: any) {
+            console.error('Error submitting review:', error);
+            alert(error.response?.data?.message || 'Failed to submit review');
+        }
     };
 
     const handleProjectClick = (project: any) => {
@@ -303,7 +407,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
                             {activeTab === 'saved' && (
                                 <div className="animate-fade-in">
                                     <ProjectsGrid
-                                        projects={[]}
+                                        projects={savedProjects}
                                         isOwnProfile={!!isOwnProfile}
                                         onBookmark={handleBookmarkProject}
                                         onClick={handleProjectClick}
@@ -377,6 +481,12 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
                 />
             )}
 
+            <ReviewModal
+                isOpen={isReviewOpen}
+                onClose={() => setIsReviewOpen(false)}
+                onSubmit={handleReviewSubmit}
+            />
+
             {/* Project Details Modal */}
             <AnimatePresence mode="wait">
                 {selectedProject && (
@@ -444,8 +554,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
                                                 ({selectedProject.reviewsCount || 0}<span className="max-sm:hidden"> Reviews</span>)
                                             </p>
                                         </div>
-                                        <button className="text-textColor h-[48px] aspect-square flex items-center justify-center text-2xl rounded-full bg-cardItemBg">
-                                            <HiOutlineBookmark />
+                                        <button
+                                            onClick={() => handleBookmarkProject(selectedProject.id)}
+                                            className={`text-textColor h-[48px] aspect-square flex items-center justify-center text-2xl rounded-full bg-cardItemBg transition-colors ${selectedProject.is_bookmarked ? 'text-mainColor' : 'hover:bg-cardItemBgHover'}`}
+                                        >
+                                            {selectedProject.is_bookmarked ? <HiBookmark /> : <HiOutlineBookmark />}
                                         </button>
                                         {selectedProject.type === "project" || selectedProject.submissionType === "developed" ? (
                                             <Link
@@ -458,6 +571,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
                                             </Link>
                                         ) : (
                                             <button
+                                                onClick={() => handleReviewClick(selectedProject)}
                                                 className="text-left text-white h-[48px] max-md:flex-1 max-md:justify-center bg-mainColor pl-4 pr-5 whitespace-nowrap rounded-full font-medium flex items-center justify-start gap-2 hover:bg-mainColorHover transition-colors"
                                             >
                                                 <RiChatSmile2Line className="text-xl" />

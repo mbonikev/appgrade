@@ -5,7 +5,7 @@ import { RiCloseLine, RiStarFill, RiStarLine, RiArrowLeftLine } from 'react-icon
 interface ReviewModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: () => void;
+    onSubmit: (data: { ux: number; ui: number; review: string }) => void;
 }
 
 const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, onSubmit }) => {
@@ -28,7 +28,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, onSubmit }) 
         } else {
             // Submit logic
             console.log('Submitted Review:', ratings);
-            onSubmit();
+            onSubmit(ratings);
         }
     };
 
