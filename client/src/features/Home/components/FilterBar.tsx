@@ -3,17 +3,25 @@ import { RxMixerHorizontal } from "react-icons/rx";
 import { categories } from "../../Search/data/mockSearchData";
 import { AnimatePresence, motion } from "framer-motion";
 
-const tabs = ["Latest", "Most popular", "Top rated"];
+const tabs = ["All", "Screens", "UI Elements", "Themes"];
 
 interface FilterBarProps {
   activeView: "Following" | "Discover";
   onViewChange: (view: "Following" | "Discover") => void;
   selectedCategory: string;
   onCategoryChange: (category: string) => void;
+  activeTab: string;
+  onTabChange: (tab: string) => void;
 }
 
-const FilterBar = ({ activeView, onViewChange, selectedCategory, onCategoryChange }: FilterBarProps) => {
-  const [activeTab, setActiveTab] = useState("Latest");
+const FilterBar = ({
+  activeView,
+  onViewChange,
+  selectedCategory,
+  activeTab,
+  onCategoryChange,
+  onTabChange,
+}: FilterBarProps) => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   return (
@@ -21,34 +29,36 @@ const FilterBar = ({ activeView, onViewChange, selectedCategory, onCategoryChang
       <div className="flex items-center space-x-1 bg-cardBg p-1 rounded-full">
         <button
           onClick={() => onViewChange("Discover")}
-          className={`px-3.5 py-1.5 text-base font-medium rounded-full transition-colors ${activeView === "Discover"
-            ? "bg-bodyBg shadow-sm text-textColor"
-            : "text-textColorWeak hover:text-textColor"
-            }`}
+          className={`px-3.5 py-1.5 text-base font-medium rounded-full transition-colors ${
+            activeView === "Discover"
+              ? "bg-bodyBg shadow-sm text-textColor"
+              : "text-textColorWeak hover:text-textColor"
+          }`}
         >
           Discover
         </button>
         <button
           onClick={() => onViewChange("Following")}
-          className={`px-3.5 py-1.5 text-base font-medium rounded-full transition-colors ${activeView === "Following"
-            ? "bg-bodyBg shadow-sm text-textColor"
-            : "text-textColorWeak hover:text-textColor"
-            }`}
+          className={`px-3.5 py-1.5 text-base font-medium rounded-full transition-colors ${
+            activeView === "Following"
+              ? "bg-bodyBg shadow-sm text-textColor"
+              : "text-textColorWeak hover:text-textColor"
+          }`}
         >
           Following
         </button>
-
       </div>
 
       <div className="hidden flex-1 md:flex items-center space-x-6 border-l border-linesColor pl-5">
         {tabs.map((tab) => (
           <button
             key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`font-medium transition-colors duration-200 pt-2 pb-1 border-b-2 ${activeTab === tab
-              ? "text-textColor border-textColor"
-              : "text-textColorWeak border-transparent hover:text-textColor"
-              }`}
+            onClick={() => onTabChange(tab)}
+            className={`font-medium transition-colors duration-200 pt-2 pb-1 border-b-2 ${
+              activeTab === tab
+                ? "text-textColor border-textColor"
+                : "text-textColorWeak border-transparent hover:text-textColor"
+            }`}
           >
             {tab}
           </button>
@@ -58,16 +68,21 @@ const FilterBar = ({ activeView, onViewChange, selectedCategory, onCategoryChang
       <div className="relative">
         <button
           onClick={() => setIsFilterOpen(!isFilterOpen)}
-          className={`flex items-center space-x-2 text-textColor h-[44px] px-4 rounded-full hover:transition ${isFilterOpen || selectedCategory !== 'All' ? 'bg-mainColor text-white' : 'bg-cardBg'}`}
+          className={`flex items-center space-x-2 text-textColor h-[44px] px-4 rounded-full hover:transition ${isFilterOpen || selectedCategory !== "Latest" ? "bg-mainColor text-white" : "bg-cardBg"}`}
         >
           <RxMixerHorizontal className="text-lg" />
-          <span className="font-medium">{selectedCategory === 'All' ? 'Filter' : selectedCategory}</span>
+          <span className="font-medium">
+            {selectedCategory === "Latest" ? "Filter" : selectedCategory}
+          </span>
         </button>
 
         <AnimatePresence>
           {isFilterOpen && (
             <>
-              <div className="fixed inset-0 z-10" onClick={() => setIsFilterOpen(false)} />
+              <div
+                className="fixed inset-0 z-10"
+                onClick={() => setIsFilterOpen(false)}
+              />
               <motion.div
                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -75,25 +90,16 @@ const FilterBar = ({ activeView, onViewChange, selectedCategory, onCategoryChang
                 transition={{ duration: 0.1 }}
                 className="absolute right-0 top-full mt-2 w-56 bg-cardBg rounded-2xl shadow-xl border border-linesColor z-20 overflow-hidden py-2"
               >
-                <button
-                  onClick={() => {
-                    onCategoryChange('All');
-                    setIsFilterOpen(false);
-                  }}
-                  className={`w-full text-left px-4 py-2.5 text-sm font-medium hover:bg-cardItemBg transition-colors ${selectedCategory === 'All' ? 'text-mainColor' : 'text-textColor'}`}
-                >
-                  All Categories
-                </button>
-                {categories.map((cat) => (
+                {["Latest", "Most popular", "Top rated"].map((cat, index) => (
                   <button
-                    key={cat.id}
+                    key={index}
                     onClick={() => {
-                      onCategoryChange(cat.name);
+                      onCategoryChange(cat);
                       setIsFilterOpen(false);
                     }}
-                    className={`w-full text-left px-4 py-2.5 text-sm font-medium hover:bg-cardItemBg transition-colors ${selectedCategory === cat.name ? 'text-mainColor' : 'text-textColor'}`}
+                    className={`w-full text-left px-4 py-2.5 font-medium hover:bg-cardItemBg transition-colors ${selectedCategory === cat ? "text-mainColor" : "text-textColor"}`}
                   >
-                    {cat.name}
+                    {cat}
                   </button>
                 ))}
               </motion.div>

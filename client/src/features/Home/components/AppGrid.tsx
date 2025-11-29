@@ -3,19 +3,25 @@ import AppCard from "./AppCard";
 import { AnimatePresence, motion } from "framer-motion";
 import { HiStar, HiCursorClick, HiOutlineBookmark } from "react-icons/hi";
 import { RiChatSmile2Line } from "react-icons/ri";
-import { Link } from '@tanstack/react-router';
-import ReviewModal from '../../Preview/components/ReviewModal';
-import api from '../../../lib/api';
+import { Link } from "@tanstack/react-router";
+import ReviewModal from "../../Preview/components/ReviewModal";
+import api from "../../../lib/api";
 
 interface AppGridProps {
   activeView?: "Following" | "Discover";
   selectedCategory?: string;
+  activeTab: string;
 }
 
-const AppGrid = ({ activeView = "Discover", selectedCategory = 'All' }: AppGridProps) => {
+const AppGrid = ({
+  activeView = "Discover",
+  selectedCategory = "All",
+  activeTab,
+}: AppGridProps) => {
   const [selectedApp, setSelectedApp] = useState<any | null>(null);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
-  const [selectedProjectForReview, setSelectedProjectForReview] = useState<any>(null);
+  const [selectedProjectForReview, setSelectedProjectForReview] =
+    useState<any>(null);
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -25,7 +31,7 @@ const AppGrid = ({ activeView = "Discover", selectedCategory = 'All' }: AppGridP
       try {
         if (activeView === "Discover") {
           // Fetch all projects
-          const response = await api.get('/api/projects');
+          const response = await api.get("/api/projects");
           setProjects(response.data.projects || []);
         } else {
           // Fetch projects from followed users
@@ -34,7 +40,7 @@ const AppGrid = ({ activeView = "Discover", selectedCategory = 'All' }: AppGridP
           setProjects([]);
         }
       } catch (error) {
-        console.error('Error fetching projects:', error);
+        console.error("Error fetching projects:", error);
         setProjects([]);
       } finally {
         setLoading(false);
@@ -57,15 +63,17 @@ const AppGrid = ({ activeView = "Discover", selectedCategory = 'All' }: AppGridP
   }, [selectedApp]);
 
   // Map backend projects to frontend format
-  const apps = projects.map(project => ({
+  const apps = projects.map((project) => ({
     id: project._id,
     title: project.title,
     description: project.tagline,
-    image: project.images?.[0] || 'https://via.placeholder.com/800x600',
-    icon: project.logo || `https://ui-avatars.com/api/?name=${encodeURIComponent(project.title)}`,
+    image: project.images?.[0] || "https://via.placeholder.com/800x600",
+    icon:
+      project.logo ||
+      `https://ui-avatars.com/api/?name=${encodeURIComponent(project.title)}`,
     badge: undefined,
     hasVideo: false,
-    category: project.categories?.[0] || 'Other',
+    category: project.categories?.[0] || "Other",
     type: project.type,
     submissionType: project.submissionType,
     link: project.link,
@@ -73,15 +81,35 @@ const AppGrid = ({ activeView = "Discover", selectedCategory = 'All' }: AppGridP
     author: project.author, // Include author data
     averageRating: project.averageRating || 0,
     reviewsCount: project.reviewsCount || 0,
-    reviews: project.reviews || []
+    reviews: project.reviews || [],
+    createdAt: project.createdAt,
   }));
 
-  const filteredApps = apps.filter(app => {
-    if (selectedCategory !== 'All' && app.category !== selectedCategory) {
-      return false;
-    }
-    return true;
-  });
+  const filteredApps = apps
+    // filter by TAB
+    .filter((app) => {
+      if (activeTab === "All") return true;
+      if (activeTab === "Screens") return app.type === "screens";
+      if (activeTab === "UI Elements") return app.type === "ui_element";
+      if (activeTab === "Themes") return app.type === "theme";
+      return true;
+    })
+
+    // SORT based on dropdown
+    .sort((a, b) => {
+      if (selectedCategory === "Latest") {
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      }
+      if (selectedCategory === "Most popular") {
+        return (b.reviewsCount || 0) - (a.reviewsCount || 0);
+      }
+      if (selectedCategory === "Top rated") {
+        return (b.averageRating || 0) - (a.averageRating || 0);
+      }
+      return 0;
+    });
 
   const handleReviewClick = (app: any) => {
     setSelectedProjectForReview(app);
@@ -107,7 +135,9 @@ const AppGrid = ({ activeView = "Discover", selectedCategory = 'All' }: AppGridP
       <div className="w-full flex flex-col justify-center items-center py-20 text-textColorWeak">
         <p className="text-lg">No projects found</p>
         {activeView === "Following" && (
-          <p className="text-sm mt-2">Follow some creators to see their projects here</p>
+          <p className="text-sm mt-2">
+            Follow some creators to see their projects here
+          </p>
         )}
       </div>
     );
@@ -118,10 +148,7 @@ const AppGrid = ({ activeView = "Discover", selectedCategory = 'All' }: AppGridP
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8 pb-10">
         {filteredApps.map((app) => (
           <div key={app.id} onClick={() => setSelectedApp(app)}>
-            <AppCard
-              {...app}
-              onReview={() => handleReviewClick(app)}
-            />
+            <AppCard {...app} onReview={() => handleReviewClick(app)} />
           </div>
         ))}
       </div>
@@ -157,17 +184,32 @@ const AppGrid = ({ activeView = "Discover", selectedCategory = 'All' }: AppGridP
                     />
                     <div>
                       <h2 className="text-3xl font-bold text-textColor">
-                        {selectedApp.title} {selectedApp.type && selectedApp.type !== 'project' && (
-                          <span className="text-textColorWeak">({selectedApp.type === 'ui_element' ? 'UI Element' : selectedApp.type === 'screens' ? 'Screen' : 'Theme'})</span>
+                        {selectedApp.title}{" "}
+                        {selectedApp.type && selectedApp.type !== "project" && (
+                          <span className="text-textColorWeak">
+                            (
+                            {selectedApp.type === "ui_element"
+                              ? "UI Element"
+                              : selectedApp.type === "screens"
+                                ? "Screen"
+                                : "Theme"}
+                            )
+                          </span>
                         )}
                       </h2>
                       <p className="text-textColor">
                         {selectedApp.description}
                       </p>
                       <div className="flex items-start justify-start gap-2 flex-wrap mt-3">
-                        <p className="bg-cardItemBg text-textColorWeak text-sm px-2 py-0.5 rounded-full font-medium">UI/UX</p>
-                        <p className="bg-cardItemBg text-textColorWeak text-sm px-2 py-0.5 rounded-full font-medium">Design Work</p>
-                        <p className="bg-cardItemBg text-textColorWeak text-sm px-2 py-0.5 rounded-full font-medium">No Backend</p>
+                        <p className="bg-cardItemBg text-textColorWeak text-sm px-2 py-0.5 rounded-full font-medium">
+                          UI/UX
+                        </p>
+                        <p className="bg-cardItemBg text-textColorWeak text-sm px-2 py-0.5 rounded-full font-medium">
+                          Design Work
+                        </p>
+                        <p className="bg-cardItemBg text-textColorWeak text-sm px-2 py-0.5 rounded-full font-medium">
+                          No Backend
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -178,12 +220,15 @@ const AppGrid = ({ activeView = "Discover", selectedCategory = 'All' }: AppGridP
                         <HiStar className="text-2xl text-orange-500 dark:text-orange-400 " />
                         3.3
                       </h1>
-                      <p className="text-sm font-medium text-textColorWeak">(22,342<span className="max-sm:hidden"> Tested</span>)</p>
+                      <p className="text-sm font-medium text-textColorWeak">
+                        (22,342<span className="max-sm:hidden"> Tested</span>)
+                      </p>
                     </div>
                     <button className="text-textColor h-[48px] aspect-square flex items-center justify-center text-2xl rounded-full bg-cardItemBg">
                       <HiOutlineBookmark />
                     </button>
-                    {selectedApp.type === 'project' || selectedApp.submissionType === 'developed' ? (
+                    {selectedApp.type === "project" ||
+                    selectedApp.submissionType === "developed" ? (
                       <Link
                         to="/preview/$projectId"
                         params={{ projectId: selectedApp.id.toString() }}
@@ -217,20 +262,31 @@ const AppGrid = ({ activeView = "Discover", selectedCategory = 'All' }: AppGridP
                   <div className="w-full border-t border-linesColor mt-20 max-md:mt-14 pb-10 flex items-center justify-center flex-col gap-1.5 max-w-[90%] mx-auto">
                     <div className="size-20 max-md:size-14 -mt-11 max-md:-mt-8 ring-[10px] ring-modalBg rounded-full bg-cardBg shadow-md mb-2.5 overflow-hidden cursor-pointer">
                       <img
-                        src={selectedApp.author?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedApp.author?.name || 'User')}`}
+                        src={
+                          selectedApp.author?.avatar ||
+                          `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedApp.author?.name || "User")}`
+                        }
                         className="w-full h-full object-cover"
-                        alt={selectedApp.author?.name || 'User'}
+                        alt={selectedApp.author?.name || "User"}
                       />
                     </div>
                     <p className="text-textColor text-lg font-medium">
-                      {selectedApp.author?.name || 'Anonymous'}
+                      {selectedApp.author?.name || "Anonymous"}
                     </p>
                     <p className="text-textColorWeak text-sm">
-                      @{selectedApp.author?.username || selectedApp.author?.email?.split('@')[0] || 'user'}
+                      @
+                      {selectedApp.author?.username ||
+                        selectedApp.author?.email?.split("@")[0] ||
+                        "user"}
                     </p>
                     <Link
                       to="/profile/$profileId"
-                      params={{ profileId: selectedApp.author?._id || selectedApp.author?.id || '' }}
+                      params={{
+                        profileId:
+                          selectedApp.author?._id ||
+                          selectedApp.author?.id ||
+                          "",
+                      }}
                       className="text-left text-white h-[44px] mt-3 max-md:justify-center bg-mainColor px-5 whitespace-nowrap rounded-full font-medium flex items-center justify-start gap-2 hover:bg-mainColorHover transition-colors"
                     >
                       View profile
@@ -239,7 +295,9 @@ const AppGrid = ({ activeView = "Discover", selectedCategory = 'All' }: AppGridP
 
                   {/* Reviews & Comments Section */}
                   <div className="w-full border-t border-linesColor mt-10 pt-10">
-                    <h3 className="text-2xl font-bold text-textColor mb-6">Reviews & Comments</h3>
+                    <h3 className="text-2xl font-bold text-textColor mb-6">
+                      Reviews & Comments
+                    </h3>
 
                     {/* Reviews Stats */}
                     <div className="flex items-center gap-6 mb-8 pb-6 border-b border-linesColor">
@@ -270,32 +328,48 @@ const AppGrid = ({ activeView = "Discover", selectedCategory = 'All' }: AppGridP
                     {/* Comments List */}
                     <div className="space-y-6">
                       {selectedApp.reviews && selectedApp.reviews.length > 0 ? (
-                        selectedApp.reviews.map((review: any, index: number) => (
-                          <div key={index} className="flex gap-4 pb-6 border-b border-linesColor last:border-0">
-                            <img
-                              src={review.author?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(review.author?.name || 'User')}`}
-                              className="w-10 h-10 rounded-full"
-                              alt={review.author?.name}
-                            />
-                            <div className="flex-1">
-                              <div className="flex items-center justify-between mb-2">
-                                <div>
-                                  <p className="font-medium text-textColor">{review.author?.name}</p>
-                                  <p className="text-xs text-textColorWeak">
-                                    {new Date(review.createdAt).toLocaleDateString()}
-                                  </p>
-                                </div>
-                                {review.rating && (
-                                  <div className="flex items-center gap-1">
-                                    <HiStar className="text-orange-500" />
-                                    <span className="text-sm font-medium">{review.rating}</span>
+                        selectedApp.reviews.map(
+                          (review: any, index: number) => (
+                            <div
+                              key={index}
+                              className="flex gap-4 pb-6 border-b border-linesColor last:border-0"
+                            >
+                              <img
+                                src={
+                                  review.author?.avatar ||
+                                  `https://ui-avatars.com/api/?name=${encodeURIComponent(review.author?.name || "User")}`
+                                }
+                                className="w-10 h-10 rounded-full"
+                                alt={review.author?.name}
+                              />
+                              <div className="flex-1">
+                                <div className="flex items-center justify-between mb-2">
+                                  <div>
+                                    <p className="font-medium text-textColor">
+                                      {review.author?.name}
+                                    </p>
+                                    <p className="text-xs text-textColorWeak">
+                                      {new Date(
+                                        review.createdAt
+                                      ).toLocaleDateString()}
+                                    </p>
                                   </div>
-                                )}
+                                  {review.rating && (
+                                    <div className="flex items-center gap-1">
+                                      <HiStar className="text-orange-500" />
+                                      <span className="text-sm font-medium">
+                                        {review.rating}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                                <p className="text-textColorWeak">
+                                  {review.comment}
+                                </p>
                               </div>
-                              <p className="text-textColorWeak">{review.comment}</p>
                             </div>
-                          </div>
-                        ))
+                          )
+                        )
                       ) : (
                         <div className="text-center py-10 text-textColorWeak">
                           <p>No reviews yet. Be the first to review!</p>
