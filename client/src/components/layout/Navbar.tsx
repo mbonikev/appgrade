@@ -9,7 +9,6 @@ import { useRouter, Link } from "@tanstack/react-router";
 import SearchModal from "../../features/Search/components/SearchModal";
 import SubmitProjectModal from "../../features/Submit/components/SubmitProjectModal";
 import { Logo } from "../../assets";
-import ChangelogModal from "../../features/Changelog/components/ChangelogModal";
 
 import SettingsModal from "../../features/Profile/components/SettingsModal";
 import SignInModal from "../auth/SignInModal";
@@ -126,10 +125,7 @@ function Navbar() {
         onClose={() => setIsSettingsOpen(false)}
       />
 
-      <ChangelogModal
-        isOpen={isChangelogOpen}
-        onClose={() => setIsChangelogOpen(false)}
-      />
+
 
       <SignInModal
         isOpen={openSignInModal}
