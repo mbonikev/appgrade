@@ -3,52 +3,116 @@ import { motion, AnimatePresence } from "framer-motion";
 import { RiCloseLine } from "react-icons/ri";
 import StepEssentials from "../../Submit/components/StepEssentials";
 import StepVisuals from "../../Submit/components/StepVisuals";
+import api from "../../../lib/api";
 
 interface EditProjectModalProps {
     isOpen: boolean;
     onClose: () => void;
     projectId: string;
+    onProjectUpdated?: () => void;
 }
-
-// Mock data fetcher - in real app this would come from API
-const getProjectData = (id: string) => ({
-    id: id,
-    name: "Dashboard UI Kit",
-    tagline: "Modern dashboard screens",
-    description: "A set of clean and modern dashboard screens for SaaS apps.",
-    website: "https://example.com",
-    categories: ["Design", "UI Kit"],
-    tags: [],
-    logo: null,
-    coverImage: null,
-    videoUrl: "",
-    codeSnippet: "",
-    type: 'screens' as const
-});
 
 const EditProjectModal: React.FC<EditProjectModalProps> = ({
     isOpen,
     onClose,
     projectId,
+    onProjectUpdated,
 }) => {
     const [currentStep, setCurrentStep] = useState(1);
     const [projectData, setProjectData] = useState<any>(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (isOpen && projectId) {
-            // Simulate fetching data
-            setProjectData(getProjectData(projectId));
-        }
+        const fetchProject = async () => {
+            if (isOpen && projectId) {
+                setLoading(true);
+                try {
+                    const response = await api.get(`/api/projects/${projectId}`);
+                    const project = response.data;
+
+                    // Map backend data to form format
+                    setProjectData({
+                        id: project._id,
+                        name: project.title,
+                        tagline: project.tagline,
+                        description: project.description,
+                        website: project.website || "",
+                        categories: project.categories || [],
+                        tags: project.tags || [],
+                        logo: project.logo || null,
+                        coverImage: project.images?.[0] || null,
+                        gallery: project.images?.slice(1) || [],
+                        videoUrl: project.videoUrl || "",
+                        codeSnippet: project.codeSnippet || "",
+                        type: project.type,
+                        submissionType: project.submissionType,
+                        link: project.link || ""
+                    });
+                } catch (error) {
+                    console.error('Error fetching project:', error);
+                    alert('Failed to load project data');
+                } finally {
+                    setLoading(false);
+                }
+            }
+        };
+
+        fetchProject();
     }, [isOpen, projectId]);
 
     const totalSteps = 2; // Essentials + Visuals
 
-    const handleNext = () => {
+    const handleNext = async () => {
         if (currentStep < totalSteps) {
             setCurrentStep((prev) => prev + 1);
         } else {
-            console.log("Updating Project:", projectData);
-            onClose();
+            // Submit update
+            setLoading(true);
+            try {
+                const formData = new FormData();
+
+                // Add text fields
+                formData.append('title', projectData.name);
+                formData.append('tagline', projectData.tagline);
+                formData.append('description', projectData.description);
+                formData.append('website', projectData.website || '');
+                formData.append('categories', JSON.stringify(projectData.categories));
+                formData.append('tags', JSON.stringify(projectData.tags));
+                formData.append('type', projectData.type);
+                formData.append('submissionType', projectData.submissionType);
+                formData.append('link', projectData.link || '');
+                formData.append('codeSnippet', projectData.codeSnippet || '');
+
+                // Add files if they are new uploads (File objects)
+                if (projectData.logo instanceof File) {
+                    formData.append('logo', projectData.logo);
+                }
+                if (projectData.coverImage instanceof File) {
+                    formData.append('coverImage', projectData.coverImage);
+                }
+                if (projectData.gallery && Array.isArray(projectData.gallery)) {
+                    projectData.gallery.forEach((file: any) => {
+                        if (file instanceof File) {
+                            formData.append('gallery', file);
+                        }
+                    });
+                }
+
+                await api.put(`/api/projects/${projectId}`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+
+                alert('Project updated successfully!');
+                onProjectUpdated?.();
+                onClose();
+            } catch (error: any) {
+                console.error('Error updating project:', error);
+                alert(`Failed to update project: ${error.response?.data?.message || error.message}`);
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
@@ -62,7 +126,26 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
         setProjectData((prev: any) => ({ ...prev, ...data }));
     };
 
-    if (!projectData) return null;
+    if (!projectData || loading) {
+        return (
+            <AnimatePresence>
+                {isOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                            onClick={onClose}
+                        />
+                        <div className="relative bg-bodyBg rounded-3xl p-8">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-mainColor"></div>
+                        </div>
+                    </div>
+                )}
+            </AnimatePresence>
+        );
+    }
 
     return (
         <AnimatePresence>

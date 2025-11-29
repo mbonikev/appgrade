@@ -163,6 +163,89 @@ export const deleteProject = async (req: Request, res: Response) => {
     }
 };
 
+export const updateProject = async (req: Request, res: Response) => {
+    const { projectId } = req.params;
+    try {
+        const {
+            title,
+            tagline,
+            description,
+            website,
+            categories,
+            tags,
+            type,
+            submissionType,
+            link,
+            codeSnippet
+        } = req.body;
+
+        const project = await Project.findById(projectId);
+        if (!project) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+
+        // Handle file uploads if provided
+        const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+
+        // Upload logo if provided
+        if (files?.logo && files.logo[0]) {
+            const logoResult = await uploadBufferToCloudinary(
+                files.logo[0].buffer,
+                'appgrade/logos',
+                `logo-${Date.now()}`
+            );
+            project.logo = logoResult.url;
+        }
+
+        // Upload cover image if provided
+        if (files?.coverImage && files.coverImage[0]) {
+            const coverResult = await uploadBufferToCloudinary(
+                files.coverImage[0].buffer,
+                'appgrade/covers',
+                `cover-${Date.now()}`
+            );
+            // Replace first image or add if none
+            if (project.images && project.images.length > 0) {
+                project.images[0] = coverResult.url;
+            } else {
+                project.images = [coverResult.url];
+            }
+        }
+
+        // Upload gallery images if provided
+        if (files?.gallery && files.gallery.length > 0) {
+            const galleryBuffers = files.gallery.map(file => file.buffer);
+            const galleryResults = await uploadMultipleBuffersToCloudinary(
+                galleryBuffers,
+                'appgrade/gallery'
+            );
+            const galleryUrls = galleryResults.map(result => result.url);
+            // Append to existing images (keeping cover as first)
+            const coverImage = project.images && project.images.length > 0 ? [project.images[0]] : [];
+            project.images = [...coverImage, ...galleryUrls];
+        }
+
+        // Update text fields
+        if (title) project.title = title;
+        if (tagline) project.tagline = tagline;
+        if (description) project.description = description;
+        if (website !== undefined) project.website = website;
+        if (categories) project.categories = JSON.parse(categories);
+        if (tags) project.tags = JSON.parse(tags);
+        if (type) project.type = type;
+        if (submissionType) project.submissionType = submissionType;
+        if (link !== undefined) project.link = link;
+        if (codeSnippet !== undefined) project.codeSnippet = codeSnippet;
+
+        await project.save();
+
+        res.status(200).json(project);
+    } catch (error) {
+        console.error('Error updating project:', error);
+        res.status(500).json({ message: 'Server error updating project' });
+    }
+};
+
 export const saveProject = async (req: Request, res: Response) => {
     const { projectId } = req.params;
     const { userId } = req.body;

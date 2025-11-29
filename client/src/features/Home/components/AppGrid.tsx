@@ -24,6 +24,7 @@ const AppGrid = ({
     useState<any>(null);
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [modalTab, setModalTab] = useState<'preview' | 'code'>('preview');
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -89,6 +90,7 @@ const AppGrid = ({
     // filter by TAB
     .filter((app) => {
       if (activeTab === "All") return true;
+      if (activeTab === "Projects") return app.type === "project";
       if (activeTab === "Screens") return app.type === "screens";
       if (activeTab === "UI Elements") return app.type === "ui_element";
       if (activeTab === "Themes") return app.type === "theme";
@@ -228,7 +230,7 @@ const AppGrid = ({
                       <HiOutlineBookmark />
                     </button>
                     {selectedApp.type === "project" ||
-                    selectedApp.submissionType === "developed" ? (
+                      selectedApp.submissionType === "developed" ? (
                       <Link
                         to="/preview/$projectId"
                         params={{ projectId: selectedApp.id.toString() }}
@@ -250,12 +252,61 @@ const AppGrid = ({
                 </div>
 
                 <div className="px-10 max-xl:px-10 max-lg:px-0">
-                  {selectedApp.image && (
+                  {/* Preview/Code Tabs for UI Elements and Themes only */}
+                  {(selectedApp.type === "ui_element" || selectedApp.type === "theme") && (
+                    <div className="flex items-center gap-4 mb-6 border-b border-linesColor">
+                      <button
+                        onClick={() => setModalTab('preview')}
+                        className={`px-4 py-3 font-medium transition-colors border-b-2 ${modalTab === 'preview'
+                          ? 'text-mainColor border-mainColor'
+                          : 'text-textColorWeak border-transparent hover:text-textColor'
+                          }`}
+                      >
+                        Preview
+                      </button>
+                      <button
+                        onClick={() => setModalTab('code')}
+                        className={`px-4 py-3 font-medium transition-colors border-b-2 ${modalTab === 'code'
+                          ? 'text-mainColor border-mainColor'
+                          : 'text-textColorWeak border-transparent hover:text-textColor'
+                          }`}
+                      >
+                        Code
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Preview Tab Content */}
+                  {modalTab === 'preview' && selectedApp.image && (
                     <img
                       src={selectedApp.image}
                       className="w-full rounded-2xl mt-6 shadow-2xl"
                       alt={selectedApp.title}
                     />
+                  )}
+
+                  {/* Code Tab Content */}
+                  {modalTab === 'code' && (
+                    <div className="mt-6">
+                      <div className="bg-cardBg rounded-2xl p-6 border border-linesColor">
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-lg font-semibold text-textColor">Code</h3>
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(selectedApp.codeSnippet || '// No code available');
+                            }}
+                            className="px-3 py-1.5 text-sm bg-mainColor text-white rounded-lg hover:bg-mainColorHover transition-colors"
+                          >
+                            Copy Code
+                          </button>
+                        </div>
+                        <pre className="bg-bodyBg rounded-lg p-4 overflow-x-auto">
+                          <code className="text-sm text-textColor font-mono">
+                            {selectedApp.codeSnippet || '// No code snippet available for this project'}
+                          </code>
+                        </pre>
+                      </div>
+                    </div>
                   )}
 
                   {/* Author Section */}

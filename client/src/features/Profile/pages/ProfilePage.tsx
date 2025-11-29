@@ -37,6 +37,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
     const [deleteProjectId, setDeleteProjectId] = useState<string | null>(null);
     const [viewScreensProject, setViewScreensProject] = useState<any | null>(null);
     const [selectedProject, setSelectedProject] = useState<any | null>(null);
+    const [modalTab, setModalTab] = useState<'preview' | 'code'>('preview');
 
     // Follow State
     const [isFollowing, setIsFollowing] = useState(false);
@@ -49,6 +50,27 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
     const effectiveProfileId = profileId || authUser?.id || (authUser as any)?._id;
     const isOwnProfile = !profileId || (!!authUser && (authUser.id === profileId || (authUser as any)._id === profileId));
 
+    const fetchProjects = async () => {
+        if (!effectiveProfileId) return;
+        try {
+            const projectsRes = await api.get(`/api/projects/user/${effectiveProfileId}`);
+            const mappedProjects = projectsRes.data.map((p: any) => ({
+                id: p._id,
+                name: p.title,
+                tagline: p.tagline,
+                description: p.description,
+                cover_image_url: p.images?.[0] || 'https://via.placeholder.com/800x600',
+                logo_url: p.logo || '',
+                type: p.type,
+                is_bookmarked: false,
+                ...p
+            }));
+            setProjects(mappedProjects);
+        } catch (error) {
+            console.error('Error fetching projects:', error);
+        }
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             if (!effectiveProfileId) {
@@ -59,26 +81,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
             setLoading(true);
             try {
                 // Fetch User
-                // If it's own profile and we have authUser, we might skip fetching user if authUser has everything
-                // But fetching ensures fresh data.
                 const userRes = await api.get(`/api/users/${effectiveProfileId}`);
                 setProfileUser(userRes.data);
 
                 // Fetch Projects
-                const projectsRes = await api.get(`/api/projects/user/${effectiveProfileId}`);
-                // Map backend project to frontend expected shape
-                const mappedProjects = projectsRes.data.map((p: any) => ({
-                    id: p._id,
-                    name: p.title,
-                    tagline: p.tagline,
-                    description: p.description,
-                    cover_image_url: p.images?.[0] || 'https://via.placeholder.com/800x600', // Fallback
-                    logo_url: p.logo || '', // Assuming logo might be added later or mapped
-                    type: p.type,
-                    is_bookmarked: false, // Need bookmark logic later
-                    ...p
-                }));
-                setProjects(mappedProjects);
+                await fetchProjects();
 
                 // Check if current user is following this profile (if not own profile)
                 if (!isOwnProfile && authUser) {
@@ -339,6 +346,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
                     isOpen={!!editProjectId}
                     onClose={() => setEditProjectId(null)}
                     projectId={editProjectId}
+                    onProjectUpdated={fetchProjects}
                 />
             )}
 
@@ -460,12 +468,61 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
                                 </div>
 
                                 <div className="px-10 max-xl:px-10 max-lg:px-0">
-                                    {selectedProject.cover_image_url && (
+                                    {/* Preview/Code Tabs for UI Elements and Themes only */}
+                                    {(selectedProject.type === "ui_element" || selectedProject.type === "theme") && (
+                                        <div className="flex items-center gap-4 mb-6 border-b border-linesColor">
+                                            <button
+                                                onClick={() => setModalTab('preview')}
+                                                className={`px-4 py-3 font-medium transition-colors border-b-2 ${modalTab === 'preview'
+                                                    ? 'text-mainColor border-mainColor'
+                                                    : 'text-textColorWeak border-transparent hover:text-textColor'
+                                                    }`}
+                                            >
+                                                Preview
+                                            </button>
+                                            <button
+                                                onClick={() => setModalTab('code')}
+                                                className={`px-4 py-3 font-medium transition-colors border-b-2 ${modalTab === 'code'
+                                                    ? 'text-mainColor border-mainColor'
+                                                    : 'text-textColorWeak border-transparent hover:text-textColor'
+                                                    }`}
+                                            >
+                                                Code
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {/* Preview Tab Content */}
+                                    {modalTab === 'preview' && selectedProject.cover_image_url && (
                                         <img
                                             src={selectedProject.cover_image_url}
                                             className="w-full rounded-2xl mt-6 shadow-2xl"
                                             alt={selectedProject.name || selectedProject.title}
                                         />
+                                    )}
+
+                                    {/* Code Tab Content */}
+                                    {modalTab === 'code' && (
+                                        <div className="mt-6">
+                                            <div className="bg-cardBg rounded-2xl p-6 border border-linesColor">
+                                                <div className="flex items-center justify-between mb-4">
+                                                    <h3 className="text-lg font-semibold text-textColor">Code</h3>
+                                                    <button
+                                                        onClick={() => {
+                                                            navigator.clipboard.writeText(selectedProject.codeSnippet || '// No code available');
+                                                        }}
+                                                        className="px-3 py-1.5 text-sm bg-mainColor text-white rounded-lg hover:bg-mainColorHover transition-colors"
+                                                    >
+                                                        Copy Code
+                                                    </button>
+                                                </div>
+                                                <pre className="bg-bodyBg rounded-lg p-4 overflow-x-auto">
+                                                    <code className="text-sm text-textColor font-mono">
+                                                        {selectedProject.codeSnippet || '// No code snippet available for this project'}
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                        </div>
                                     )}
 
                                     {/* Author Section */}

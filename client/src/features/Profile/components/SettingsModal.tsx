@@ -48,13 +48,15 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   ];
 
   const handleSaveBio = async () => {
-    if (!user?.id) return;
+    const userId = user?.id || (user as any)?._id;
+    if (!userId) return;
     try {
-      await api.put(`/api/users/${user.id}`, { bio });
-      // Optionally refresh user data here
+      await api.put(`/api/users/${userId}`, { bio });
+      alert('Bio updated successfully!');
       onClose();
     } catch (err) {
       console.error("Failed to update bio:", err);
+      alert('Failed to update bio. Please try again.');
     }
   };
 

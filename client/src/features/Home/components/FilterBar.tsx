@@ -2,7 +2,7 @@ import { useState } from "react";
 import { RxMixerHorizontal } from "react-icons/rx";
 import { AnimatePresence, motion } from "framer-motion";
 
-const tabs = ["All", "Screens", "UI Elements", "Themes"];
+const tabs = ["All", "Projects", "Screens", "UI Elements", "Themes"];
 
 interface FilterBarProps {
   activeView: "Following" | "Discover";
@@ -29,8 +29,8 @@ const FilterBar = ({
         <button
           onClick={() => onViewChange("Discover")}
           className={`px-3.5 py-1.5 text-base font-medium rounded-full transition-colors ${activeView === "Discover"
-              ? "bg-bodyBg shadow-sm text-textColor"
-              : "text-textColorWeak hover:text-textColor"
+            ? "bg-bodyBg shadow-sm text-textColor"
+            : "text-textColorWeak hover:text-textColor"
             }`}
         >
           Discover
@@ -38,8 +38,8 @@ const FilterBar = ({
         <button
           onClick={() => onViewChange("Following")}
           className={`px-3.5 py-1.5 text-base font-medium rounded-full transition-colors ${activeView === "Following"
-              ? "bg-bodyBg shadow-sm text-textColor"
-              : "text-textColorWeak hover:text-textColor"
+            ? "bg-bodyBg shadow-sm text-textColor"
+            : "text-textColorWeak hover:text-textColor"
             }`}
         >
           Following
@@ -52,8 +52,8 @@ const FilterBar = ({
             key={tab}
             onClick={() => onTabChange(tab)}
             className={`font-medium transition-colors duration-200 pt-2 pb-1 border-b-2 ${activeTab === tab
-                ? "text-textColor border-textColor"
-                : "text-textColorWeak border-transparent hover:text-textColor"
+              ? "text-textColor border-textColor"
+              : "text-textColorWeak border-transparent hover:text-textColor"
               }`}
           >
             {tab}

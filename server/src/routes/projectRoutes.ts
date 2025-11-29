@@ -5,6 +5,7 @@ import {
     getProjectById,
     getAllProjects,
     deleteProject,
+    updateProject,
     saveProject,
     unsaveProject,
     getSavedProjects,
@@ -32,6 +33,9 @@ router.post('/', uploadFields, createProject);
 // Save/Unsave project
 router.post('/:projectId/save', saveProject);
 router.delete('/:projectId/save', unsaveProject);
+
+// Update project
+router.put('/:projectId', uploadFields, updateProject);
 
 // Delete project
 router.delete('/:projectId', deleteProject);
