@@ -77,7 +77,7 @@ const ListPreviewView: React.FC<ListPreviewViewProps> = ({
                     className="flex projects-center justify-between px-4 py-3 rounded-xl cursor-pointer hover:bg-cardItemBg transition-colors group"
                   >
                     <span className="text-textColor font-medium transition-colors">
-                      {item.tagline}
+                      {item.title}
                     </span>
                     {item.count && (
                       <span className="text-textColorWeak text-sm transition-colors">
