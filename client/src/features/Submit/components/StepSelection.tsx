@@ -1,18 +1,25 @@
 import React from 'react';
-import { RiLayoutGridFill, RiPriceTag3Fill, RiFileCodeFill } from 'react-icons/ri';
+import { RiLayoutGridFill, RiPriceTag3Fill, RiFileCodeFill, RiSmartphoneLine } from 'react-icons/ri';
 
 interface StepSelectionProps {
-    onSelect: (type: 'screens' | 'ui_elements' | 'themes') => void;
+    onSelect: (type: 'design' | 'developed' | 'ui_elements' | 'themes') => void;
 }
 
 const StepSelection: React.FC<StepSelectionProps> = ({ onSelect }) => {
     const options = [
         {
-            id: 'screens',
-            title: 'Screens',
+            id: 'design',
+            title: 'Design UI',
             description: 'Upload screens for UI/UX testing and feedback.',
             icon: RiLayoutGridFill,
             color: 'bg-blue-500',
+        },
+        {
+            id: 'developed',
+            title: 'Developed App',
+            description: 'Share a fully developed application with a link.',
+            icon: RiSmartphoneLine,
+            color: 'bg-green-500',
         },
         {
             id: 'ui_elements',
@@ -37,7 +44,7 @@ const StepSelection: React.FC<StepSelectionProps> = ({ onSelect }) => {
                 <p className="text-textColorWeak mt-2">Choose the type of content you want to submit.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {options.map((option) => (
                     <button
                         key={option.id}

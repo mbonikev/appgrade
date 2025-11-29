@@ -4,14 +4,13 @@ import { RiCloseLine, RiCheckLine, RiArrowLeftLine } from "react-icons/ri";
 import StepEssentials from "./StepEssentials";
 import StepVisuals from "./StepVisuals";
 import StepSelection from "./StepSelection";
-import StepSubmissionType from "./StepSubmissionType";
 
 interface SubmitProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-type ViewState = "selection" | "submission_type" | "screens" | "ui_elements" | "themes";
+type ViewState = "selection" | "screens" | "ui_elements" | "themes";
 
 const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
   isOpen,
@@ -53,35 +52,20 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
     if (currentStep > 1) {
       setCurrentStep((prev) => prev - 1);
     } else {
-      if (view === "submission_type") {
-        setView("selection");
-      } else if (view === "screens" && projectData.submissionType) {
-        // If we are in screens view and came from submission_type (implied by having a submission type set, though we might want a better check)
-        // Actually, if we are in 'screens' view, back should go to 'submission_type' if it was a screens flow, or 'selection' otherwise?
-        // Let's simplify: if view is screens, check if we want to go back to submission_type
-        setView("submission_type");
-      } else {
-        setView("selection");
-      }
+      setView("selection");
     }
   };
 
-  const handleSelection = (type: 'screens' | 'ui_elements' | 'themes') => {
-    if (type === 'screens') {
-      setView('submission_type');
+  const handleSelection = (type: 'design' | 'developed' | 'ui_elements' | 'themes') => {
+    if (type === 'design') {
+      setProjectData(prev => ({ ...prev, submissionType: 'design' }));
+      setView('screens');
+    } else if (type === 'developed') {
+      setProjectData(prev => ({ ...prev, submissionType: 'developed' }));
+      setView('screens');
     } else {
       setView(type);
-      // Default submission type for others? Or maybe they are always 'developed' or 'design'?
-      // For now let's assume they follow the standard flow or we can set a default.
-      // The user said "3 of them have the review btn on the home preview not the page", implying UI elements and themes are like "Design UI" in some way or just handled differently.
-      // But for "Developed", we need a link.
-      // Let's keep it simple.
     }
-  };
-
-  const handleSubmissionTypeSelect = (type: 'design' | 'developed') => {
-    setProjectData(prev => ({ ...prev, submissionType: type }));
-    setView('screens'); // We reuse 'screens' view for the form steps, but we'll conditionally render inside
   };
 
   const handleClose = () => {
@@ -169,8 +153,7 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
     switch (view) {
       case "selection":
         return "Submit Content";
-      case "submission_type":
-        return "Submission Type";
+
       case "screens":
         return projectData.submissionType === 'developed' ? "Submit App" : "Submit Design";
       case "ui_elements":
@@ -180,7 +163,7 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
     }
   };
 
-  const isFlowView = view !== "selection" && view !== "submission_type";
+  const isFlowView = view !== "selection";
 
   return (
     <AnimatePresence>
@@ -251,7 +234,7 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
             {/* Content */}
             <div className="p-6 overflow-y-auto flex-1">
               {view === "selection" && <StepSelection onSelect={handleSelection} />}
-              {view === "submission_type" && <StepSubmissionType onSelect={handleSubmissionTypeSelect} />}
+
               {isFlowView && renderProjectStep()}
             </div>
 
