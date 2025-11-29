@@ -128,6 +128,10 @@ export const createProject = async (req: Request, res: Response) => {
 
         await project.save();
 
+        // Update user's appsCount
+        const User = require('../models/User').default;
+        await User.findByIdAndUpdate(author, { $inc: { appsCount: 1 } });
+
         res.status(201).json({
             message: 'Project created successfully',
             project
@@ -135,6 +139,111 @@ export const createProject = async (req: Request, res: Response) => {
     } catch (error) {
         console.error('Error creating project:', error);
         res.status(500).json({ message: 'Server error creating project' });
+    }
+};
+
+export const deleteProject = async (req: Request, res: Response) => {
+    const { projectId } = req.params;
+    try {
+        const project = await Project.findById(projectId);
+        if (!project) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+
+        await Project.findByIdAndDelete(projectId);
+
+        // Update user's appsCount
+        const User = require('../models/User').default;
+        await User.findByIdAndUpdate(project.author, { $inc: { appsCount: -1 } });
+
+        res.status(200).json({ message: 'Project deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting project:', error);
+        res.status(500).json({ message: 'Server error deleting project' });
+    }
+};
+
+export const saveProject = async (req: Request, res: Response) => {
+    const { projectId } = req.params;
+    const { userId } = req.body;
+
+    try {
+        const User = require('../models/User').default;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (!user.savedProjects.includes(projectId)) {
+            await user.updateOne({ $push: { savedProjects: projectId } });
+            res.status(200).json({ message: 'Project saved' });
+        } else {
+            res.status(400).json({ message: 'Project already saved' });
+        }
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};
+
+export const unsaveProject = async (req: Request, res: Response) => {
+    const { projectId } = req.params;
+    const { userId } = req.body;
+
+    try {
+        const User = require('../models/User').default;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (user.savedProjects.includes(projectId)) {
+            await user.updateOne({ $pull: { savedProjects: projectId } });
+            res.status(200).json({ message: 'Project unsaved' });
+        } else {
+            res.status(400).json({ message: 'Project not saved' });
+        }
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};
+
+export const getSavedProjects = async (req: Request, res: Response) => {
+    const { userId } = req.params;
+    try {
+        const User = require('../models/User').default;
+        const user = await User.findById(userId).populate({
+            path: 'savedProjects',
+            populate: { path: 'author', select: 'name username avatar' }
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json(user.savedProjects);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};
+
+export const getFollowedProjects = async (req: Request, res: Response) => {
+    const { userId } = req.params;
+    try {
+        const User = require('../models/User').default;
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const projects = await Project.find({ author: { $in: user.followingArray } })
+            .populate('author', 'name username avatar')
+            .sort({ createdAt: -1 });
+
+        res.status(200).json(projects);
+    } catch (error) {
+        console.error('Error fetching followed projects:', error);
+        res.status(500).json({ message: 'Server error fetching followed projects' });
     }
 };
 

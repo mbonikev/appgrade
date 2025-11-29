@@ -41,11 +41,9 @@ function Navbar() {
   const [theme, setTheme] = useState<Theme>("system");
 
   const [projects, setProjects] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProjects = async () => {
-      setLoading(true);
       try {
         // Fetch all projects
         const response = await api.get("/api/projects");
@@ -53,8 +51,6 @@ function Navbar() {
       } catch (error) {
         console.error("Error fetching projects:", error);
         setProjects([]);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -378,7 +374,6 @@ function Navbar() {
         isOpen={openSearchModal}
         onClose={() => setOpenSearchModal(false)}
         projects={projects}
-        loading={loading}
       />
     </>
   );

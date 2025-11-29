@@ -1,5 +1,15 @@
 import { Router } from 'express';
-import { getProjectsByUserId, createProject, getProjectById, getAllProjects } from '../controllers/projectController';
+import {
+    getProjectsByUserId,
+    createProject,
+    getProjectById,
+    getAllProjects,
+    deleteProject,
+    saveProject,
+    unsaveProject,
+    getSavedProjects,
+    getFollowedProjects
+} from '../controllers/projectController';
 import { uploadFields } from '../config/multerConfig';
 
 const router = Router();
@@ -10,11 +20,24 @@ router.get('/', getAllProjects);
 // Get projects by user ID
 router.get('/user/:userId', getProjectsByUserId);
 
-// Get single project by ID
-router.get('/:projectId', getProjectById);
+// Get followed projects
+router.get('/followed/:userId', getFollowedProjects);
+
+// Get saved projects
+router.get('/saved/:userId', getSavedProjects);
 
 // Create new project with file uploads
 router.post('/', uploadFields, createProject);
+
+// Save/Unsave project
+router.post('/:projectId/save', saveProject);
+router.delete('/:projectId/save', unsaveProject);
+
+// Delete project
+router.delete('/:projectId', deleteProject);
+
+// Get single project by ID (keep last to avoid conflicts)
+router.get('/:projectId', getProjectById);
 
 export default router;
 

@@ -4,9 +4,7 @@ import { RiSearch2Line, RiCloseLine } from "react-icons/ri";
 import SearchSidebar from "./SearchSidebar";
 import TrendingView from "./TrendingView";
 import ListPreviewView from "./ListPreviewView";
-import ThemesView from "./ThemesView";
 import CreatorsView from "./CreatorsView";
-import { uiElements, trendingScreens, themes } from "../data/mockSearchData";
 import api from "../../../lib/api";
 import type { Creator } from "../../Creators/data/types";
 
@@ -14,14 +12,12 @@ interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
   projects: any[];
-  loading: boolean;
 }
 
 const SearchModal: React.FC<SearchModalProps> = ({
   isOpen,
   onClose,
   projects,
-  loading,
 }) => {
   const [activeTab, setActiveTab] = useState("trending");
   const [searchQuery, setSearchQuery] = useState("");
