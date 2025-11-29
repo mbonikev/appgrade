@@ -9,6 +9,7 @@ import SubmitProjectModal from '../../Submit/components/SubmitProjectModal';
 import EditProjectModal from '../components/EditProjectModal';
 import DeleteConfirmDialog from '../components/DeleteConfirmDialog';
 import ScreensViewPage from '../components/ScreensViewPage';
+import FollowStatsModal from '../components/FollowStatsModal';
 import api from '../../../lib/api';
 import { useAuth } from '../../../contexts/AuthContext';
 
@@ -35,6 +36,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
     // Follow State
     const [isFollowing, setIsFollowing] = useState(false);
     const [followerCount, setFollowerCount] = useState(0);
+    const [isFollowStatsOpen, setIsFollowStatsOpen] = useState(false);
+    const [followStatsTab, setFollowStatsTab] = useState<'followers' | 'following'>('followers');
 
     // Determine effective profile ID and ownership
     // If profileId is passed, use it. Otherwise, if authUser exists, use their ID.
@@ -167,6 +170,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
         }
     };
 
+    const handleOpenFollowStats = (tab: 'followers' | 'following') => {
+        setFollowStatsTab(tab);
+        setIsFollowStatsOpen(true);
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen bg-bodyBg">
@@ -221,6 +229,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
                             isFollowing={isFollowing}
                             onEditClick={() => setIsSettingsOpen(true)}
                             onFollowClick={handleFollowToggle}
+                            onFollowersClick={() => handleOpenFollowStats('followers')}
+                            onFollowingClick={() => handleOpenFollowStats('following')}
                         />
                     </div>
 
@@ -309,6 +319,15 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
                     onClose={() => setViewScreensProject(null)}
                     images={viewScreensProject.images || [viewScreensProject.cover_image_url]}
                     title={viewScreensProject.name}
+                />
+            )}
+
+            {effectiveProfileId && (
+                <FollowStatsModal
+                    isOpen={isFollowStatsOpen}
+                    onClose={() => setIsFollowStatsOpen(false)}
+                    userId={effectiveProfileId}
+                    initialTab={followStatsTab}
                 />
             )}
         </div>

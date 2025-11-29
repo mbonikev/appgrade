@@ -4,6 +4,7 @@ import { Link } from '@tanstack/react-router';
 import Navbar from '../../../components/layout/Navbar';
 import api from '../../../lib/api';
 import { useAuth } from '../../../contexts/AuthContext';
+import { formatCount } from '../../../utils/formatters';
 import type { Creator } from '../data/types';
 
 const CreatorsPage: React.FC = () => {
@@ -236,7 +237,7 @@ const CreatorsPage: React.FC = () => {
                                                     <div className="flex items-center gap-4 pt-4 border-t border-linesColor">
                                                         <div className="flex items-center gap-1.5 text-sm font-medium text-textColor">
                                                             <HiUserGroup className="text-textColorWeak text-lg" />
-                                                            <span>{(creator.followers / 1000).toFixed(1)}k</span>
+                                                            <span>{formatCount(creator.followers)}</span>
                                                         </div>
                                                         <div className="flex items-center gap-1.5 text-sm font-medium text-textColor">
                                                             <HiCube className="text-textColorWeak text-lg" />

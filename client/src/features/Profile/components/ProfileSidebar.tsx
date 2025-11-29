@@ -5,6 +5,7 @@ import {
   RiLink,
   RiCalendarLine,
 } from "react-icons/ri";
+import { formatCount } from "../../../utils/formatters";
 
 interface ProfileSidebarProps {
   user: {
@@ -29,6 +30,8 @@ interface ProfileSidebarProps {
   isFollowing?: boolean;
   onEditClick?: () => void;
   onFollowClick?: () => void;
+  onFollowersClick?: () => void;
+  onFollowingClick?: () => void;
 }
 export const getHighResAvatar = (url: string) => {
   if (!url) return url;
@@ -47,6 +50,8 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
   isFollowing = false,
   onEditClick,
   onFollowClick,
+  onFollowersClick,
+  onFollowingClick,
 }) => {
   return (
     <div className="flex flex-col gap-6 relative -mt-20 px-4 md:px-0">
@@ -106,23 +111,31 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
 
         {/* Stats */}
         <div className="flex items-center gap-6 py-4 border-y border-linesColor">
-          <div className="flex flex-col">
+          <button
+            onClick={onFollowersClick}
+            className="flex flex-col items-start hover:opacity-70 transition-opacity"
+          >
             <span className="font-bold text-textColor text-lg">
-              {(stats.followers / 1000).toFixed(1)}k
+              {formatCount(stats.followers)}
             </span>
             <span className="text-xs text-textColorWeak">Followers</span>
-          </div>
-          <div className="flex flex-col">
+          </button>
+
+          <button
+            onClick={onFollowingClick}
+            className="flex flex-col items-start hover:opacity-70 transition-opacity"
+          >
             <span className="font-bold text-textColor text-lg">
-              {stats.projects}
+              {formatCount(stats.following)}
+            </span>
+            <span className="text-xs text-textColorWeak">Following</span>
+          </button>
+
+          <div className="flex flex-col items-start">
+            <span className="font-bold text-textColor text-lg">
+              {formatCount(stats.projects)}
             </span>
             <span className="text-xs text-textColorWeak">Posts</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold text-textColor text-lg">
-              {(stats.likes || 0 / 1000).toFixed(1)}k
-            </span>
-            <span className="text-xs text-textColorWeak">Likes</span>
           </div>
         </div>
 
@@ -139,8 +152,8 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
             <button
               onClick={onFollowClick}
               className={`flex-1 py-2.5 rounded-xl font-medium transition-colors shadow-lg ${isFollowing
-                  ? 'bg-cardItemBg text-textColor border border-linesColor hover:bg-red-500 hover:text-white hover:border-transparent shadow-none'
-                  : 'bg-mainColor text-white hover:bg-mainColorHover shadow-mainColor/20'
+                ? 'bg-cardItemBg text-textColor border border-linesColor hover:bg-red-500 hover:text-white hover:border-transparent shadow-none'
+                : 'bg-mainColor text-white hover:bg-mainColorHover shadow-mainColor/20'
                 }`}
             >
               {isFollowing ? 'Following' : 'Follow'}
