@@ -1,13 +1,16 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import Navbar from '../../../components/layout/Navbar'
-import FilterBar from '../components/FilterBar'
-import ProBanner from '../components/ProBanner'
-import AppGrid from '../components/AppGrid'
+import Navbar from "../../../components/layout/Navbar";
+import FilterBar from "../components/FilterBar";
+import ProBanner from "../components/ProBanner";
+import AppGrid from "../components/AppGrid";
 
 function Home() {
-  const [activeView, setActiveView] = useState<"Following" | "Discover">("Discover");
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [activeView, setActiveView] = useState<"Following" | "Discover">(
+    "Discover"
+  );
+  const [selectedCategory, setSelectedCategory] = useState("Latest");
+  const [activeTab, setActiveTab] = useState("All");
 
   return (
     <div className="h-fit bg-bodyBg text-textColor">
@@ -18,12 +21,20 @@ function Home() {
           onViewChange={setActiveView}
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
         />
-        <ProBanner />
-        <AppGrid activeView={activeView} selectedCategory={selectedCategory} />
+
+        {/* <ProBanner /> */}
+
+        <AppGrid
+          activeView={activeView}
+          selectedCategory={selectedCategory}
+          activeTab={activeTab}
+        />
       </div>
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;
