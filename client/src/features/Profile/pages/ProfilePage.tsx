@@ -126,10 +126,46 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
         setDeleteProjectId(id);
     };
 
-    const handleConfirmDelete = () => {
-        console.log('Deleting project:', deleteProjectId);
-        setDeleteProjectId(null);
-        // In real app: call API and refresh list
+    const handleConfirmDelete = async () => {
+        console.log('[DELETE] Starting delete process...');
+        console.log('[DELETE] deleteProjectId:', deleteProjectId);
+
+        if (!deleteProjectId) {
+            console.log('[DELETE] No project ID found, aborting');
+            return;
+        }
+
+        try {
+            console.log('[DELETE] Calling API:', `/api/projects/${deleteProjectId}`);
+            const response = await api.delete(`/api/projects/${deleteProjectId}`);
+            console.log('[DELETE] API Response:', response.data);
+
+            // Remove from local state
+            console.log('[DELETE]Removing from local state');
+            setProjects(prev => {
+                const filtered = prev.filter(p => p.id !== deleteProjectId);
+                console.log('[DELETE] Projects before:', prev.length, 'after:', filtered.length);
+                return filtered;
+            });
+
+            // Update apps count if we have the user object
+            if (profileUser) {
+                console.log('[DELETE] Updating user apps count');
+                setProfileUser((prev: any) => ({
+                    ...prev,
+                    appsCount: Math.max(0, (prev.appsCount || 0) - 1)
+                }));
+            }
+
+            console.log('[DELETE] Closing dialog');
+            setDeleteProjectId(null);
+            console.log('[DELETE] Delete completed successfully');
+        } catch (error: any) {
+            console.error('[DELETE] Error deleting project:', error);
+            console.error('[DELETE] Error response:', error.response?.data);
+            console.error('[DELETE] Error status:', error.response?.status);
+            alert(`Failed to delete project: ${error.response?.data?.message || error.message}`);
+        }
     };
 
     const handleBookmarkProject = (id: string) => {
