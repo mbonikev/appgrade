@@ -8,7 +8,7 @@ export const getCreators = async (req: Request, res: Response) => {
 
         // Map to Creator interface expected by frontend
         const creators = users.map(user => ({
-            id: user._id,
+            id: user._id.toString(),
             name: user.name,
             username: user.username || `@${user.email.split('@')[0]}`, // Fallback
             avatar: user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}`,
@@ -50,3 +50,18 @@ export const updateUser = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'Server error updating user' });
     }
 };
+
+export const getUserById = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json(user);
+    } catch (error) {
+        console.error('Error fetching user by id:', error);
+        res.status(500).json({ message: 'Server error fetching user' });
+    }
+};
+

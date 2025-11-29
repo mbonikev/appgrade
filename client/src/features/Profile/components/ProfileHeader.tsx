@@ -64,12 +64,18 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 </div>
             )}
 
-            {isOwnProfile && onEditClick && (
+            {isOwnProfile && onEditClick ? (
                 <button
                     onClick={onEditClick}
                     className="px-6 py-2 rounded-full border border-linesColor text-textColor font-medium hover:bg-cardBg transition-colors"
                 >
                     Edit profile
+                </button>
+            ) : (
+                <button
+                    className="px-6 py-2 rounded-full bg-mainColor text-white font-medium hover:bg-mainColorHover transition-colors"
+                >
+                    Follow
                 </button>
             )}
         </div>

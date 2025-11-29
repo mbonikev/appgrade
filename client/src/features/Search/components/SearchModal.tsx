@@ -7,7 +7,8 @@ import ListPreviewView from './ListPreviewView';
 import ThemesView from './ThemesView';
 import CreatorsView from './CreatorsView';
 import { uiElements, trendingScreens, themes } from '../data/mockSearchData';
-import { topCreators, mostActiveCreators } from '../../Creators/data/mockCreators';
+import api from '../../../lib/api';
+import type { Creator } from '../../Creators/data/types';
 
 interface SearchModalProps {
     isOpen: boolean;
@@ -17,6 +18,22 @@ interface SearchModalProps {
 const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
     const [activeTab, setActiveTab] = useState('trending');
     const [searchQuery, setSearchQuery] = useState('');
+    const [creators, setCreators] = useState<Creator[]>([]);
+
+    useEffect(() => {
+        const fetchCreators = async () => {
+            try {
+                const response = await api.get('/api/users/creators');
+                setCreators(response.data);
+            } catch (error) {
+                console.error('Failed to fetch creators:', error);
+            }
+        };
+
+        if (activeTab === 'creators') {
+            fetchCreators();
+        }
+    }, [activeTab]);
 
     // Close on Escape key
     useEffect(() => {
@@ -42,7 +59,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
             case 'themes':
                 return <ThemesView items={themes} />;
             case 'creators':
-                return <CreatorsView items={[...topCreators, ...mostActiveCreators]} searchQuery={searchQuery} onClose={onClose} />;
+                return <CreatorsView items={creators} searchQuery={searchQuery} onClose={onClose} />;
             default:
                 return <TrendingView />;
         }
