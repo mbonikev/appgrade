@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useParams } from '@tanstack/react-router'; // Kept for potential future use or remove if strictly unused
 import Navbar from '../../../components/layout/Navbar';
 import ProfileBanner from '../components/ProfileBanner';
 import ProfileSidebar from '../components/ProfileSidebar';
