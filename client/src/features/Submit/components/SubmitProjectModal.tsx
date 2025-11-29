@@ -43,7 +43,46 @@ const SubmitProjectModal: React.FC<SubmitProjectModalProps> = ({
 
   const totalProjectSteps = 3;
 
+  const validateCurrentStep = (): boolean => {
+    setSubmitError(null);
+
+    if (currentStep === 1) {
+      // Validate essentials
+      if (!projectData.name.trim()) {
+        setSubmitError('Project name is required');
+        return false;
+      }
+      if (!projectData.tagline.trim()) {
+        setSubmitError('Tagline is required');
+        return false;
+      }
+      if (!projectData.description.trim()) {
+        setSubmitError('Description is required');
+        return false;
+      }
+      // Validate link for developed projects
+      if (projectData.submissionType === 'developed' && view === 'screens' && !projectData.link?.trim()) {
+        setSubmitError('Live URL is required for developed projects');
+        return false;
+      }
+    }
+
+    if (currentStep === 2) {
+      // Validate visuals
+      if (!projectData.coverImage) {
+        setSubmitError('Cover image is required');
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const handleNext = async () => {
+    if (!validateCurrentStep()) {
+      return;
+    }
+
     if (currentStep < totalProjectSteps) {
       setCurrentStep((prev) => prev + 1);
     } else {

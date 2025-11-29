@@ -69,7 +69,11 @@ const AppGrid = ({ activeView = "Discover", selectedCategory = 'All' }: AppGridP
     type: project.type,
     submissionType: project.submissionType,
     link: project.link,
-    isLocked: false
+    isLocked: false,
+    author: project.author, // Include author data
+    averageRating: project.averageRating || 0,
+    reviewsCount: project.reviewsCount || 0,
+    reviews: project.reviews || []
   }));
 
   const filteredApps = apps.filter(app => {
@@ -209,25 +213,95 @@ const AppGrid = ({ activeView = "Discover", selectedCategory = 'All' }: AppGridP
                     />
                   )}
 
+                  {/* Author Section */}
                   <div className="w-full border-t border-linesColor mt-20 max-md:mt-14 pb-10 flex items-center justify-center flex-col gap-1.5 max-w-[90%] mx-auto">
                     <div className="size-20 max-md:size-14 -mt-11 max-md:-mt-8 ring-[10px] ring-modalBg rounded-full bg-cardBg shadow-md mb-2.5 overflow-hidden cursor-pointer">
                       <img
-                        src="https://i.pinimg.com/736x/a9/70/8f/a9708f9840565fc2aae91b5847fcceab.jpg"
+                        src={selectedApp.author?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedApp.author?.name || 'User')}`}
                         className="w-full h-full object-cover"
-                        alt="User"
+                        alt={selectedApp.author?.name || 'User'}
                       />
                     </div>
-                    <p className="text-textColor text-lg font-medium">UserName</p>
-                    <p className="text-textColor">🇳🇬 Nigeria</p>
-                    <p className="line-clamp-2 max-w-[280px] text-textColorWeak text-center">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Aperiam eos sit nostrum totam temporibus iusto illo
-                      praesentium sed veniam! Deserunt ab rem minima suscipit
-                      obcaecati doloribus commodi repudiandae aspernatur autem.
+                    <p className="text-textColor text-lg font-medium">
+                      {selectedApp.author?.name || 'Anonymous'}
                     </p>
-                    <button className="text-left text-white h-[44px] mt-3 max-md:justify-center bg-mainColor px-5 whitespace-nowrap rounded-full font-medium flex items-center justify-start gap-2">
+                    <p className="text-textColorWeak text-sm">
+                      @{selectedApp.author?.username || selectedApp.author?.email?.split('@')[0] || 'user'}
+                    </p>
+                    <Link
+                      to="/profile/$profileId"
+                      params={{ profileId: selectedApp.author?._id || selectedApp.author?.id || '' }}
+                      className="text-left text-white h-[44px] mt-3 max-md:justify-center bg-mainColor px-5 whitespace-nowrap rounded-full font-medium flex items-center justify-start gap-2 hover:bg-mainColorHover transition-colors"
+                    >
                       View profile
-                    </button>
+                    </Link>
+                  </div>
+
+                  {/* Reviews & Comments Section */}
+                  <div className="w-full border-t border-linesColor mt-10 pt-10">
+                    <h3 className="text-2xl font-bold text-textColor mb-6">Reviews & Comments</h3>
+
+                    {/* Reviews Stats */}
+                    <div className="flex items-center gap-6 mb-8 pb-6 border-b border-linesColor">
+                      <div className="flex flex-col items-center">
+                        <div className="flex items-center gap-1 mb-1">
+                          <HiStar className="text-3xl text-orange-500" />
+                          <span className="text-3xl font-bold text-textColor">
+                            {selectedApp.averageRating || 0}
+                          </span>
+                        </div>
+                        <p className="text-sm text-textColorWeak">
+                          {selectedApp.reviewsCount || 0} reviews
+                        </p>
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-textColorWeak text-sm mb-2">
+                          Be the first to review this project
+                        </p>
+                        <button
+                          onClick={() => handleReviewClick(selectedApp)}
+                          className="px-4 py-2 bg-mainColor text-white rounded-lg font-medium hover:bg-mainColorHover transition-colors text-sm"
+                        >
+                          Write a Review
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Comments List */}
+                    <div className="space-y-6">
+                      {selectedApp.reviews && selectedApp.reviews.length > 0 ? (
+                        selectedApp.reviews.map((review: any, index: number) => (
+                          <div key={index} className="flex gap-4 pb-6 border-b border-linesColor last:border-0">
+                            <img
+                              src={review.author?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(review.author?.name || 'User')}`}
+                              className="w-10 h-10 rounded-full"
+                              alt={review.author?.name}
+                            />
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between mb-2">
+                                <div>
+                                  <p className="font-medium text-textColor">{review.author?.name}</p>
+                                  <p className="text-xs text-textColorWeak">
+                                    {new Date(review.createdAt).toLocaleDateString()}
+                                  </p>
+                                </div>
+                                {review.rating && (
+                                  <div className="flex items-center gap-1">
+                                    <HiStar className="text-orange-500" />
+                                    <span className="text-sm font-medium">{review.rating}</span>
+                                  </div>
+                                )}
+                              </div>
+                              <p className="text-textColorWeak">{review.comment}</p>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center py-10 text-textColorWeak">
+                          <p>No reviews yet. Be the first to review!</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
