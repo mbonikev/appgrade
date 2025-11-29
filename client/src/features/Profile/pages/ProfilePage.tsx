@@ -10,6 +10,10 @@ import EditProjectModal from '../components/EditProjectModal';
 import DeleteConfirmDialog from '../components/DeleteConfirmDialog';
 import ScreensViewPage from '../components/ScreensViewPage';
 import FollowStatsModal from '../components/FollowStatsModal';
+import { AnimatePresence, motion } from 'framer-motion';
+import { HiStar, HiCursorClick, HiOutlineBookmark } from 'react-icons/hi';
+import { RiChatSmile2Line } from 'react-icons/ri';
+import { Link } from '@tanstack/react-router';
 import api from '../../../lib/api';
 import { useAuth } from '../../../contexts/AuthContext';
 
@@ -32,6 +36,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
     const [editProjectId, setEditProjectId] = useState<string | null>(null);
     const [deleteProjectId, setDeleteProjectId] = useState<string | null>(null);
     const [viewScreensProject, setViewScreensProject] = useState<any | null>(null);
+    const [selectedProject, setSelectedProject] = useState<any | null>(null);
 
     // Follow State
     const [isFollowing, setIsFollowing] = useState(false);
@@ -173,11 +178,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
     };
 
     const handleProjectClick = (project: any) => {
-        if (project.type === 'screens') {
-            setViewScreensProject(project);
-        } else {
-            console.log('Navigate to project:', project.id);
-        }
+        // Open modal for all project types
+        setSelectedProject(project);
     };
 
     const handleFollowToggle = async () => {
@@ -366,6 +368,141 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
                     initialTab={followStatsTab}
                 />
             )}
+
+            {/* Project Details Modal */}
+            <AnimatePresence mode="wait">
+                {selectedProject && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex justify-center"
+                        onClick={() => setSelectedProject(null)}
+                    >
+                        <motion.div
+                            initial={{ y: "100%" }}
+                            animate={{ y: 0 }}
+                            exit={{ y: "100%" }}
+                            transition={{
+                                duration: 0.32,
+                                ease: [0.25, 0.1, 0.25, 1],
+                            }}
+                            className="w-full max-w-[84%] max-lg:max-w-full mx-auto h-[calc(100svh-56px)] overflow-y-auto bg-modalBg rounded-t-3xl shadow-xl fixed top-14 left-0 right-0"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="flex flex-col max-w-[88%] mx-auto pb-10 max-lg:pb-6">
+                                <div className="w-full sticky top-0 z-10 bg-modalBg px-10 pt-8 max-xl:px-10 max-lg:pt-6 max-lg:px-0 flex items-start justify-between max-md:flex-col max-md:items-start gap-3 max-md:gap-0">
+                                    <div className="flex gap-4 items-start mb-6 min-w-fit">
+                                        <img
+                                            src={selectedProject.logo_url || selectedProject.icon || `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedProject.name || selectedProject.title)}`}
+                                            className="w-14 h-14 rounded-2xl"
+                                            alt={selectedProject.name || selectedProject.title}
+                                        />
+                                        <div>
+                                            <h2 className="text-3xl font-bold text-textColor">
+                                                {selectedProject.name || selectedProject.title}{" "}
+                                                {selectedProject.type && selectedProject.type !== "project" && (
+                                                    <span className="text-textColorWeak">
+                                                        (
+                                                        {selectedProject.type === "ui_element"
+                                                            ? "UI Element"
+                                                            : selectedProject.type === "screens"
+                                                                ? "Screen"
+                                                                : "Theme"}
+                                                        )
+                                                    </span>
+                                                )}
+                                            </h2>
+                                            <p className="text-textColor">
+                                                {selectedProject.tagline || selectedProject.description}
+                                            </p>
+                                            <div className="flex items-start justify-start gap-2 flex-wrap mt-3">
+                                                {selectedProject.categories?.map((cat: string, idx: number) => (
+                                                    <p key={idx} className="bg-cardItemBg text-textColorWeak text-sm px-2 py-0.5 rounded-full font-medium">
+                                                        {cat}
+                                                    </p>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex w-full items-center justify-end gap-6 pt-3 max-md:pt-0 max-sm:gap-3 max-md:flex-row-reverse">
+                                        <div className="border-r pr-6 max-md:border-r-[0] mr-0 border-linesColor h-[48px] flex items-center flex-col max-sm:items-end">
+                                            <h1 className="flex items-center text-xl font-semibold gap-1">
+                                                <HiStar className="text-2xl text-orange-500 dark:text-orange-400" />
+                                                {selectedProject.averageRating || 3.3}
+                                            </h1>
+                                            <p className="text-sm font-medium text-textColorWeak">
+                                                ({selectedProject.reviewsCount || 0}<span className="max-sm:hidden"> Reviews</span>)
+                                            </p>
+                                        </div>
+                                        <button className="text-textColor h-[48px] aspect-square flex items-center justify-center text-2xl rounded-full bg-cardItemBg">
+                                            <HiOutlineBookmark />
+                                        </button>
+                                        {selectedProject.type === "project" || selectedProject.submissionType === "developed" ? (
+                                            <Link
+                                                to="/preview/$projectId"
+                                                params={{ projectId: selectedProject.id.toString() }}
+                                                className="text-left text-white h-[48px] max-md:flex-1 max-md:justify-center bg-mainColor pl-4 pr-5 whitespace-nowrap rounded-full font-medium flex items-center justify-start gap-2 hover:bg-mainColorHover transition-colors"
+                                            >
+                                                <HiCursorClick className="text-xl" />
+                                                Start Testing
+                                            </Link>
+                                        ) : (
+                                            <button
+                                                className="text-left text-white h-[48px] max-md:flex-1 max-md:justify-center bg-mainColor pl-4 pr-5 whitespace-nowrap rounded-full font-medium flex items-center justify-start gap-2 hover:bg-mainColorHover transition-colors"
+                                            >
+                                                <RiChatSmile2Line className="text-xl" />
+                                                Review
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="px-10 max-xl:px-10 max-lg:px-0">
+                                    {selectedProject.cover_image_url && (
+                                        <img
+                                            src={selectedProject.cover_image_url}
+                                            className="w-full rounded-2xl mt-6 shadow-2xl"
+                                            alt={selectedProject.name || selectedProject.title}
+                                        />
+                                    )}
+
+                                    {/* Author Section */}
+                                    <div className="w-full border-t border-linesColor mt-20 max-md:mt-14 pb-10 flex items-center justify-center flex-col gap-1.5 max-w-[90%] mx-auto">
+                                        <div className="size-20 max-md:size-14 -mt-11 max-md:-mt-8 ring-[10px] ring-modalBg rounded-full bg-cardBg shadow-md mb-2.5 overflow-hidden cursor-pointer">
+                                            <img
+                                                src={
+                                                    selectedProject.author?.avatar ||
+                                                    profileUser?.avatar ||
+                                                    `https://ui-avatars.com/api/?name=${encodeURIComponent(profileUser?.name || "User")}`
+                                                }
+                                                className="w-full h-full object-cover"
+                                                alt={profileUser?.name || "User"}
+                                            />
+                                        </div>
+                                        <p className="text-textColor text-lg font-medium">
+                                            {profileUser?.name || "Anonymous"}
+                                        </p>
+                                        <p className="text-textColorWeak text-sm">
+                                            @{profileUser?.username || profileUser?.email?.split("@")[0] || "user"}
+                                        </p>
+                                        {!isOwnProfile && (
+                                            <Link
+                                                to="/profile/$profileId"
+                                                params={{ profileId: effectiveProfileId || "" }}
+                                                className="text-left text-white h-[44px] mt-3 max-md:justify-center bg-mainColor px-5 whitespace-nowrap rounded-full font-medium flex items-center justify-start gap-2 hover:bg-mainColorHover transition-colors"
+                                            >
+                                                View profile
+                                            </Link>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
