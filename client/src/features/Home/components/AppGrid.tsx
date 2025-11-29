@@ -6,7 +6,6 @@ import { RiChatSmile2Line } from "react-icons/ri";
 import { Link } from '@tanstack/react-router';
 import ReviewModal from '../../Preview/components/ReviewModal';
 import api from '../../../lib/api';
-import { useAuth } from '../../../contexts/AuthContext';
 
 interface AppGridProps {
   activeView?: "Following" | "Discover";
@@ -14,7 +13,6 @@ interface AppGridProps {
 }
 
 const AppGrid = ({ activeView = "Discover", selectedCategory = 'All' }: AppGridProps) => {
-  const { user } = useAuth();
   const [selectedApp, setSelectedApp] = useState<any | null>(null);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [selectedProjectForReview, setSelectedProjectForReview] = useState<any>(null);
