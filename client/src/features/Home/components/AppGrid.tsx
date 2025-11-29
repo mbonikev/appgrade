@@ -146,11 +146,11 @@ const AppGrid = ({ selectedCategory = 'All' }: AppGridProps) => {
                 duration: 0.32,
                 ease: [0.25, 0.1, 0.25, 1], // smooth cubic-bezier, no bounce
               }}
-              className="w-full max-w-[84%] max-lg:max-w-full mx-auto h-[calc(100svh-56px)] p-6 max-xl:p-2 max-lg:px-0 overflow-y-auto bg-modalBg rounded-t-3xl shadow-xl fixed top-14 left-0 right-0"
+              className="w-full max-w-[84%] max-lg:max-w-full mx-auto h-[calc(100svh-56px)] overflow-y-auto bg-modalBg rounded-t-3xl shadow-xl fixed top-14 left-0 right-0"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex flex-col max-w-[88%] mx-auto p-10 max-xl:px-10 max-lg:py-6 max-lg:px-0">
-                <div className="w-full sticky top-0 z-10 bg-modalBg pb-4 flex items-start justify-between max-md:flex-col max-md:items-start gap-3 max-md:gap-0">
+              <div className="flex flex-col max-w-[88%] mx-auto pb-10 max-lg:pb-6">
+                <div className="w-full sticky top-0 z-10 bg-modalBg px-10 pt-10 max-xl:px-10 max-lg:pt-6 max-lg:px-0 pb-4 flex items-start justify-between max-md:flex-col max-md:items-start gap-3 max-md:gap-0">
                   <div className="flex gap-4 items-start mb-6 min-w-fit">
                     <img
                       src={selectedApp.icon}
@@ -205,36 +205,38 @@ const AppGrid = ({ selectedCategory = 'All' }: AppGridProps) => {
                     )}
                   </div>
                 </div>
-                {selectedApp.image && (
-                  <img
-                    src={selectedApp.image}
-                    className="w-full rounded-2xl mt-6 shadow-2xl"
-                    alt={selectedApp.title}
-                  />
-                )}
-              </div>
-              <div className="w-full border-t border-linesColor mt-20 max-md:mt-14 pb-10 flex items-center justify-center flex-col gap-1.5 max-w-[90%] mx-auto">
-                <div className="size-20 max-md:size-14 -mt-11 max-md:-mt-8 ring-[10px] ring-modalBg rounded-full bg-cardBg shadow-md mb-2.5 overflow-hidden cursor-pointer">
-                  <img
-                    src="https://i.pinimg.com/736x/a9/70/8f/a9708f9840565fc2aae91b5847fcceab.jpg"
-                    className="w-full h-full object-cover"
-                    alt="User"
-                  />
-                </div>
-                <p className="text-textColor text-lg font-medium">UserName</p>
-                <p className="text-textColor">🇳🇬 Nigeria</p>
-                <p className="line-clamp-2 max-w-[280px] text-textColorWeak text-center">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Aperiam eos sit nostrum totam temporibus iusto illo
-                  praesentium sed veniam! Deserunt ab rem minima suscipit
-                  obcaecati doloribus commodi repudiandae aspernatur autem.
-                </p>
-                <button className="text-left text-white h-[44px] mt-3 max-md:justify-center bg-mainColor px-5 whitespace-nowrap rounded-full font-medium flex items-center justify-start gap-2">
-                  View profile
-                </button>
-              </div>
 
-              <div className=""></div>
+                <div className="px-10 max-xl:px-10 max-lg:px-0">
+                  {selectedApp.image && (
+                    <img
+                      src={selectedApp.image}
+                      className="w-full rounded-2xl mt-6 shadow-2xl"
+                      alt={selectedApp.title}
+                    />
+                  )}
+
+                  <div className="w-full border-t border-linesColor mt-20 max-md:mt-14 pb-10 flex items-center justify-center flex-col gap-1.5 max-w-[90%] mx-auto">
+                    <div className="size-20 max-md:size-14 -mt-11 max-md:-mt-8 ring-[10px] ring-modalBg rounded-full bg-cardBg shadow-md mb-2.5 overflow-hidden cursor-pointer">
+                      <img
+                        src="https://i.pinimg.com/736x/a9/70/8f/a9708f9840565fc2aae91b5847fcceab.jpg"
+                        className="w-full h-full object-cover"
+                        alt="User"
+                      />
+                    </div>
+                    <p className="text-textColor text-lg font-medium">UserName</p>
+                    <p className="text-textColor">🇳🇬 Nigeria</p>
+                    <p className="line-clamp-2 max-w-[280px] text-textColorWeak text-center">
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Aperiam eos sit nostrum totam temporibus iusto illo
+                      praesentium sed veniam! Deserunt ab rem minima suscipit
+                      obcaecati doloribus commodi repudiandae aspernatur autem.
+                    </p>
+                    <button className="text-left text-white h-[44px] mt-3 max-md:justify-center bg-mainColor px-5 whitespace-nowrap rounded-full font-medium flex items-center justify-start gap-2">
+                      View profile
+                    </button>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </motion.div>
         )}
