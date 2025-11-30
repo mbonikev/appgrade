@@ -68,7 +68,7 @@ const AppCard: React.FC<AppCardProps> = ({
           <div className="absolute top-3 right-3 z-20">
             <button
               onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
-              className="p-2 rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-white/20 transition-colors"
+              className="p-2 rounded-full bg-black backdrop-blur-md text-white hover:bg-white/20 transition-colors"
             >
               <RiMore2Fill />
             </button>
