@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { HiStar, HiCursorClick, HiOutlineBookmark, HiBookmark } from "react-icons/hi";
 import { RiChatSmile2Line } from "react-icons/ri";
 import { Link } from "@tanstack/react-router";
+import ReviewsSection from "./ReviewsSection";
 import ReviewModal from "../../Preview/components/ReviewModal";
 import api from "../../../lib/api";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -441,89 +442,13 @@ const AppGrid = ({
                   </div>
 
                   {/* Reviews & Comments Section */}
-                  <div className="w-full border-t border-linesColor mt-10 pt-10">
-                    <h3 className="text-2xl font-bold text-textColor mb-6">
-                      Reviews & Comments
-                    </h3>
-
-                    {/* Reviews Stats */}
-                    <div className="flex items-center gap-6 mb-8 pb-6 border-b border-linesColor">
-                      <div className="flex flex-col items-center">
-                        <div className="flex items-center gap-1 mb-1">
-                          <HiStar className="text-3xl text-orange-500" />
-                          <span className="text-3xl font-bold text-textColor">
-                            {selectedApp.averageRating || 0}
-                          </span>
-                        </div>
-                        <p className="text-sm text-textColorWeak">
-                          {selectedApp.reviewsCount || 0} reviews
-                        </p>
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-textColorWeak text-sm mb-2">
-                          Be the first to review this project
-                        </p>
-                        <button
-                          onClick={() => handleReviewClick(selectedApp)}
-                          className="px-4 py-2 bg-mainColor text-white rounded-lg font-medium hover:bg-mainColorHover transition-colors text-sm"
-                        >
-                          Write a Review
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Comments List */}
-                    <div className="space-y-6">
-                      {selectedApp.reviews && selectedApp.reviews.length > 0 ? (
-                        selectedApp.reviews.map(
-                          (review: any, index: number) => (
-                            <div
-                              key={index}
-                              className="flex gap-4 pb-6 border-b border-linesColor last:border-0"
-                            >
-                              <img
-                                src={
-                                  review.author?.avatar ||
-                                  `https://ui-avatars.com/api/?name=${encodeURIComponent(review.author?.name || "User")}`
-                                }
-                                className="w-10 h-10 rounded-full"
-                                alt={review.author?.name}
-                              />
-                              <div className="flex-1">
-                                <div className="flex items-center justify-between mb-2">
-                                  <div>
-                                    <p className="font-medium text-textColor">
-                                      {review.author?.name}
-                                    </p>
-                                    <p className="text-xs text-textColorWeak">
-                                      {new Date(
-                                        review.createdAt
-                                      ).toLocaleDateString()}
-                                    </p>
-                                  </div>
-                                  {review.rating && (
-                                    <div className="flex items-center gap-1">
-                                      <HiStar className="text-orange-500" />
-                                      <span className="text-sm font-medium">
-                                        {review.rating}
-                                      </span>
-                                    </div>
-                                  )}
-                                </div>
-                                <p className="text-textColorWeak">
-                                  {review.comment}
-                                </p>
-                              </div>
-                            </div>
-                          )
-                        )
-                      ) : (
-                        <div className="text-center py-10 text-textColorWeak">
-                          <p>No reviews yet. Be the first to review!</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  <ReviewsSection
+                    reviews={selectedApp.reviews || []}
+                    averageRating={selectedApp.averageRating || 0}
+                    reviewsCount={selectedApp.reviewsCount || 0}
+                    onWriteReview={() => handleReviewClick(selectedApp)}
+                    currentUser={authUser}
+                  />
                 </div>
               </div>
             </motion.div>
