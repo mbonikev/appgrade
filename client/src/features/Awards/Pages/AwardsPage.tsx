@@ -1,5 +1,5 @@
 import AwardsShowcase from '../components/AwardsShowcase';
-import NomineesCarousel from '../components/NomineesCarousel';
+import AwardsTable from '../components/AwardsTable';
 import { awardCategories } from '../data/mockAwards';
 
 const AwardsPage = () => {
@@ -11,14 +11,8 @@ const AwardsPage = () => {
             {/* Awards Showcase Section */}
             <AwardsShowcase awards={featuredAwards} />
 
-            {/* Nominees Sections - One for each award category */}
-            {awardCategories.map((category) => (
-                <NomineesCarousel
-                    key={category.id}
-                    category={category.title}
-                    nominees={category.nominees}
-                />
-            ))}
+            {/* Awards Table with Tabs */}
+            <AwardsTable />
         </div>
     );
 };

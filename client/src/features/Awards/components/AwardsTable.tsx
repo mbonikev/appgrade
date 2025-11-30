@@ -1,48 +1,31 @@
-import React, { useState } from 'react';
-import { honorableMentions, bestDesign, bestUX } from '../data/mockAwards';
+import { useState } from 'react';
+import { awardCategories } from '../data/mockAwards';
 import Button from '../../../components/ui/Button';
-import { RiAddLine, RiGlobalLine, RiMapPin2Line, RiEarthLine } from 'react-icons/ri';
+import { RiAddLine } from 'react-icons/ri';
+import { Link } from '@tanstack/react-router';
 
 const AwardsTable = () => {
-    const [activeTab, setActiveTab] = useState<'country' | 'continent' | 'world'>('world');
+    // Default to the first category
+    const [activeCategoryId, setActiveCategoryId] = useState(awardCategories[0].id);
 
-    // Mock data for the table - reusing existing data for demo
-    const allApps = [...honorableMentions, ...bestDesign, ...bestUX];
-
-    // Filter logic (mocked for now since we don't have location data)
-    const getFilteredApps = () => {
-        // Just shuffling or slicing for demo purposes to show different data per tab
-        if (activeTab === 'country') return allApps.slice(0, 5);
-        if (activeTab === 'continent') return allApps.slice(3, 8);
-        return allApps;
-    };
-
-    const filteredApps = getFilteredApps();
+    // Get active category data
+    const activeCategory = awardCategories.find(c => c.id === activeCategoryId) || awardCategories[0];
+    const nominees = activeCategory.nominees;
 
     return (
         <div className="w-full max-w-[1600px] mx-auto px-4 md:px-10 py-20">
             <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
                 <div>
-                    <h2 className="text-3xl md:text-4xl font-bold text-textColor mb-4">Leaderboard</h2>
-                    <div className="flex p-1 bg-cardBg rounded-full w-fit">
-                        <Tab
-                            label="Country"
-                            icon={<RiMapPin2Line />}
-                            isActive={activeTab === 'country'}
-                            onClick={() => setActiveTab('country')}
-                        />
-                        <Tab
-                            label="Continent"
-                            icon={<RiEarthLine />}
-                            isActive={activeTab === 'continent'}
-                            onClick={() => setActiveTab('continent')}
-                        />
-                        <Tab
-                            label="World"
-                            icon={<RiGlobalLine />}
-                            isActive={activeTab === 'world'}
-                            onClick={() => setActiveTab('world')}
-                        />
+                    <h2 className="text-3xl md:text-4xl font-bold text-textColor mb-4">Nominees & Winners</h2>
+                    <div className="flex flex-wrap gap-2">
+                        {awardCategories.map((category) => (
+                            <Tab
+                                key={category.id}
+                                label={category.title}
+                                isActive={activeCategoryId === category.id}
+                                onClick={() => setActiveCategoryId(category.id)}
+                            />
+                        ))}
                     </div>
                 </div>
 
@@ -65,19 +48,49 @@ const AwardsTable = () => {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="border-b border-white/5 text-textColorWeak text-sm uppercase tracking-wider">
-                                <th className="p-6 font-medium">Rank</th>
                                 <th className="p-6 font-medium">Project</th>
                                 <th className="p-6 font-medium">Developer</th>
-                                <th className="p-6 font-medium">Category</th>
-                                <th className="p-6 font-medium text-right">Score</th>
+                                <th className="p-6 font-medium">Status</th>
+                                <th className="p-6 font-medium text-right">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredApps.map((app, index) => (
+                            {/* Winner Row */}
+                            <tr className="border-b border-white/5 bg-mainColor/5 hover:bg-mainColor/10 transition-colors group cursor-pointer">
+                                <td className="p-6">
+                                    <div className="flex items-center gap-4">
+                                        <div className="relative">
+                                            <img src={activeCategory.winner.logo} alt={activeCategory.winner.name} className="w-14 h-14 rounded-xl object-cover bg-white/10 ring-2 ring-mainColor" />
+                                            <div className="absolute -top-2 -right-2 bg-mainColor text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg">
+                                                WINNER
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-textColor font-bold text-lg group-hover:text-mainColor transition-colors">
+                                                {activeCategory.winner.name}
+                                            </h3>
+                                            <p className="text-textColorWeak text-xs">{activeCategory.winner.tagline}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td className="p-6 text-textColor">
+                                    {activeCategory.winner.developer}
+                                </td>
+                                <td className="p-6">
+                                    <span className="px-3 py-1 rounded-full bg-mainColor/20 text-mainColor text-xs font-bold border border-mainColor/20">
+                                        Winner
+                                    </span>
+                                </td>
+                                <td className="p-6 text-right">
+                                    <Link to="/preview/$projectId" params={{ projectId: activeCategory.winner.id }} className="text-mainColor hover:underline text-sm font-medium">
+                                        View Project
+                                    </Link>
+                                </td>
+                            </tr>
+
+                            {/* Nominees Rows */}
+                            {nominees.map((app) => (
                                 <tr key={app.id} className="border-b border-white/5 hover:bg-white/5 transition-colors group cursor-pointer">
-                                    <td className="p-6 text-textColor font-bold text-xl">
-                                        #{index + 1}
-                                    </td>
                                     <td className="p-6">
                                         <div className="flex items-center gap-4">
                                             <img src={app.logo} alt={app.name} className="w-12 h-12 rounded-xl object-cover bg-white/10" />
@@ -94,18 +107,13 @@ const AwardsTable = () => {
                                     </td>
                                     <td className="p-6">
                                         <span className="px-3 py-1 rounded-full bg-white/5 text-textColorWeak text-xs border border-white/10">
-                                            {app.category}
+                                            Nominee
                                         </span>
                                     </td>
                                     <td className="p-6 text-right">
-                                        <div className="inline-flex flex-col items-end">
-                                            <span className="text-mainColor font-bold text-lg">
-                                                {(9.8 - (index * 0.2)).toFixed(1)}
-                                            </span>
-                                            <span className="text-textColorWeak text-[10px]">
-                                                / 10
-                                            </span>
-                                        </div>
+                                        <Link to="/preview/$projectId" params={{ projectId: app.id }} className="text-textColorWeak hover:text-textColor text-sm font-medium">
+                                            View Project
+                                        </Link>
                                     </td>
                                 </tr>
                             ))}
@@ -117,15 +125,14 @@ const AwardsTable = () => {
     );
 };
 
-const Tab = ({ label, icon, isActive, onClick }: { label: string, icon: React.ReactNode, isActive: boolean, onClick: () => void }) => (
+const Tab = ({ label, isActive, onClick }: { label: string, isActive: boolean, onClick: () => void }) => (
     <button
         onClick={onClick}
-        className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all duration-300 ${isActive
-                ? 'bg-mainColor text-white shadow-lg shadow-mainColor/20'
-                : 'text-textColorWeak hover:text-textColor hover:bg-white/5'
+        className={`px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap ${isActive
+            ? 'bg-mainColor text-white shadow-lg shadow-mainColor/20'
+            : 'bg-cardBg text-textColorWeak hover:text-textColor hover:bg-white/5 border border-white/5'
             }`}
     >
-        {icon}
         {label}
     </button>
 );

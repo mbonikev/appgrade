@@ -8,6 +8,7 @@ import { connectDatabase } from "./config/database";
 import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
 import projectRoutes from "./routes/projectRoutes";
+import nominationRoutes from "./routes/nominationRoutes";
 
 // Load environment variables
 dotenv.config();
@@ -52,6 +53,7 @@ app.use(passport.session());
 app.use("/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);
+app.use("/api/nominations", nominationRoutes);
 
 // Health check
 app.get("/health", (req, res) => {

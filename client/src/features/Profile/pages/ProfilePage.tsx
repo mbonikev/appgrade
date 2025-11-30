@@ -11,6 +11,7 @@ import DeleteConfirmDialog from '../components/DeleteConfirmDialog';
 import ScreensViewPage from '../components/ScreensViewPage';
 import FollowStatsModal from '../components/FollowStatsModal';
 import ReviewModal from '../../Preview/components/ReviewModal';
+import AwardsTab from '../components/AwardsTab';
 import { AnimatePresence, motion } from 'framer-motion';
 import { HiStar, HiCursorClick, HiOutlineBookmark, HiBookmark } from 'react-icons/hi';
 import { RiChatSmile2Line } from 'react-icons/ri';
@@ -461,9 +462,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
                                 </div>
                             )}
                             {activeTab === 'awards' && (
-                                <div className="flex items-center justify-center h-[400px] text-textColorWeak">
-                                    <p>No awards won yet.</p>
-                                </div>
+                                <AwardsTab
+                                    userId={effectiveProfileId || ''}
+                                    isOwnProfile={isOwnProfile}
+                                    projects={projects}
+                                />
                             )}
                             {activeTab === 'about' && (
                                 <div className="text-textColorWeak">
