@@ -442,6 +442,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
                             {activeTab === 'work' && (
                                 <div className="animate-fade-in">
                                     <ProjectsGrid
+                                        key="user-projects-grid"
                                         projects={displayedProjects}
                                         isOwnProfile={!!isOwnProfile}
                                         onEdit={handleEditProject}
@@ -454,10 +455,13 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
                             {activeTab === 'saved' && (
                                 <div className="animate-fade-in">
                                     <ProjectsGrid
+                                        key="saved-projects-grid"
                                         projects={savedProjects}
-                                        isOwnProfile={!!isOwnProfile}
+                                        isOwnProfile={false}
                                         onBookmark={handleBookmarkProject}
                                         onClick={handleProjectClick}
+                                        emptyTitle="No saved projects"
+                                        emptyDescription="Projects you bookmark will appear here."
                                     />
                                 </div>
                             )}

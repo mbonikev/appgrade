@@ -22,6 +22,8 @@ interface ProjectsGridProps {
     onDelete?: (projectId: string) => void;
     onBookmark?: (projectId: string) => void;
     onClick?: (project: Project) => void;
+    emptyTitle?: string;
+    emptyDescription?: string;
 }
 
 const ProjectsGrid: React.FC<ProjectsGridProps> = ({
@@ -31,7 +33,9 @@ const ProjectsGrid: React.FC<ProjectsGridProps> = ({
     onEdit,
     onDelete,
     onBookmark,
-    onClick
+    onClick,
+    emptyTitle,
+    emptyDescription
 }) => {
     if (isLoading) {
         return (
@@ -46,12 +50,12 @@ const ProjectsGrid: React.FC<ProjectsGridProps> = ({
     if (projects.length === 0) {
         return (
             <EmptyState
-                title={isOwnProfile ? "No projects yet" : "No projects found"}
-                description={isOwnProfile
+                title={emptyTitle || (isOwnProfile ? "No projects yet" : "No projects found")}
+                description={emptyDescription || (isOwnProfile
                     ? "Share your first project with the community!"
-                    : "This creator hasn't published any projects yet."}
-                actionLabel={isOwnProfile ? "Submit Project" : undefined}
-                onAction={isOwnProfile ? () => { /* Open submit modal */ } : undefined}
+                    : "This creator hasn't published any projects yet.")}
+                actionLabel={isOwnProfile && !emptyTitle ? "Submit Project" : undefined}
+                onAction={isOwnProfile && !emptyTitle ? () => { /* Open submit modal */ } : undefined}
             />
         );
     }
