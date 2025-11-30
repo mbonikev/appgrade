@@ -2,9 +2,13 @@ import { createRootRoute, Outlet } from '@tanstack/react-router';
 import { AuthProvider } from '../contexts/AuthContext';
 import NotFoundPage from '../features/NotFound/Pages/NotFoundPage';
 
+import { ToastProvider } from '../contexts/ToastContext';
+
 const RootLayout = () => (
   <AuthProvider>
-    <Outlet />
+    <ToastProvider>
+      <Outlet />
+    </ToastProvider>
   </AuthProvider>
 );
 

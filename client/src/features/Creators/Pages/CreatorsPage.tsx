@@ -4,6 +4,7 @@ import { Link } from '@tanstack/react-router';
 import Navbar from '../../../components/layout/Navbar';
 import api from '../../../lib/api';
 import { useAuth } from '../../../contexts/AuthContext';
+import { useToast } from '../../../contexts/ToastContext';
 import { formatCount } from '../../../utils/formatters';
 import type { Creator } from '../data/types';
 
@@ -80,34 +81,56 @@ const CreatorsPage: React.FC = () => {
         }
     };
 
+    const { showToast } = useToast();
+
     const handleFollow = async (e: React.MouseEvent, creatorId: string) => {
         e.preventDefault();
         e.stopPropagation();
 
         if (!user) {
-            alert('Please sign in to follow creators');
+            showToast('Please sign in to follow creators', 'info');
             return;
         }
 
         const isFollowing = followingIds.includes(creatorId);
         const userId = user.id || (user as any)._id;
 
+        // Optimistic Update
+        if (isFollowing) {
+            setFollowingIds(prev => prev.filter(id => id !== creatorId));
+            setCreators(prev => prev.map(c =>
+                c.id === creatorId ? { ...c, followers: Math.max(0, c.followers - 1) } : c
+            ));
+        } else {
+            setFollowingIds(prev => [...prev, creatorId]);
+            setCreators(prev => prev.map(c =>
+                c.id === creatorId ? { ...c, followers: c.followers + 1 } : c
+            ));
+        }
+
         try {
             if (isFollowing) {
                 await api.delete(`/api/users/${creatorId}/follow`, { data: { followerId: userId } });
-                setFollowingIds(prev => prev.filter(id => id !== creatorId));
-                setCreators(prev => prev.map(c =>
-                    c.id === creatorId ? { ...c, followers: Math.max(0, c.followers - 1) } : c
-                ));
             } else {
                 await api.post(`/api/users/${creatorId}/follow`, { followerId: userId });
+            }
+        } catch (error) {
+            console.error('Error toggling follow:', error);
+
+            // Revert Optimistic Update
+            if (isFollowing) {
                 setFollowingIds(prev => [...prev, creatorId]);
                 setCreators(prev => prev.map(c =>
                     c.id === creatorId ? { ...c, followers: c.followers + 1 } : c
                 ));
+            } else {
+                setFollowingIds(prev => prev.filter(id => id !== creatorId));
+                setCreators(prev => prev.map(c =>
+                    c.id === creatorId ? { ...c, followers: Math.max(0, c.followers - 1) } : c
+                ));
             }
-        } catch (error) {
-            console.error('Error toggling follow:', error);
+
+            showToast('Failed to update follow status', 'error');
         }
     };
 

@@ -17,6 +17,7 @@ import { RiChatSmile2Line } from 'react-icons/ri';
 import { Link } from '@tanstack/react-router';
 import api from '../../../lib/api';
 import { useAuth } from '../../../contexts/AuthContext';
+import { useToast } from '../../../contexts/ToastContext';
 
 interface ProfilePageProps {
     profileId?: string;
@@ -232,34 +233,59 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
         }
     };
 
+    const { showToast } = useToast();
+
     const handleBookmarkProject = async (id: string) => {
         if (!authUser) {
-            alert('Please sign in to bookmark projects');
+            showToast('Please sign in to bookmark projects', 'info');
             return;
         }
 
         const userId = authUser.id || (authUser as any)._id;
         const isBookmarked = savedProjectIds.includes(id);
 
+        // Optimistic Update
+        if (isBookmarked) {
+            setSavedProjectIds(prev => prev.filter(pid => pid !== id));
+            if (activeTab === 'saved') {
+                setSavedProjects(prev => prev.filter(p => p.id !== id));
+            }
+        } else {
+            setSavedProjectIds(prev => [...prev, id]);
+
+            // For saved tab, we can't fully optimistically add the project object if we don't have it handy
+            // But if we are on 'work' tab, we might have it in 'projects'
+            const project = projects.find(p => p.id === id) || (selectedProject && selectedProject.id === id ? selectedProject : null);
+            if (project) {
+                setSavedProjects(prev => [...prev, { ...project, is_bookmarked: true }]);
+            }
+        }
+
         try {
             if (isBookmarked) {
                 await api.delete(`/api/projects/${id}/save`, { data: { userId } });
-                setSavedProjectIds(prev => prev.filter(pid => pid !== id));
-                if (activeTab === 'saved') {
-                    setSavedProjects(prev => prev.filter(p => p.id !== id));
-                }
             } else {
                 await api.post(`/api/projects/${id}/save`, { userId });
-                setSavedProjectIds(prev => [...prev, id]);
-
-                const project = projects.find(p => p.id === id) || (selectedProject && selectedProject.id === id ? selectedProject : null);
-                if (project) {
-                    setSavedProjects(prev => [...prev, { ...project, is_bookmarked: true }]);
-                }
             }
         } catch (error) {
             console.error('Error toggling bookmark:', error);
-            alert('Failed to update bookmark');
+
+            // Revert Optimistic Update
+            if (isBookmarked) {
+                setSavedProjectIds(prev => [...prev, id]);
+                // Re-fetch saved projects to restore state correctly or just let it be if complex
+                // For simplicity, we might just want to re-fetch or undo the filter
+                // But since we filtered out, we lost the object reference in savedProjects state if we didn't store it
+                // So re-fetching might be safer or just showing error
+            } else {
+                setSavedProjectIds(prev => prev.filter(pid => pid !== id));
+                setSavedProjects(prev => prev.filter(p => p.id !== id));
+            }
+
+            showToast('Failed to update bookmark', 'error', {
+                label: 'Report Issue',
+                onClick: () => window.open('mailto:support@appgrade.com?subject=Bookmark%20Error', '_blank')
+            });
         }
     };
 
@@ -300,7 +326,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
 
     const handleFollowToggle = async () => {
         if (!authUser) {
-            alert('Please sign in to follow users');
+            showToast('Please sign in to follow users', 'info');
             return;
         }
 
@@ -308,19 +334,34 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
 
         const userId = authUser.id || (authUser as any)._id;
 
+        // Optimistic Update
+        if (isFollowing) {
+            setIsFollowing(false);
+            setFollowerCount(prev => Math.max(0, prev - 1));
+        } else {
+            setIsFollowing(true);
+            setFollowerCount(prev => prev + 1);
+        }
+
         try {
             if (isFollowing) {
                 await api.delete(`/api/users/${effectiveProfileId}/follow`, { data: { followerId: userId } });
-                setIsFollowing(false);
-                setFollowerCount(prev => Math.max(0, prev - 1));
             } else {
                 await api.post(`/api/users/${effectiveProfileId}/follow`, { followerId: userId });
-                setIsFollowing(true);
-                setFollowerCount(prev => prev + 1);
             }
         } catch (error) {
             console.error('Error toggling follow:', error);
-            alert('Failed to update follow status. Please try again.');
+
+            // Revert Optimistic Update
+            if (isFollowing) {
+                setIsFollowing(true);
+                setFollowerCount(prev => prev + 1);
+            } else {
+                setIsFollowing(false);
+                setFollowerCount(prev => Math.max(0, prev - 1));
+            }
+
+            showToast('Failed to update follow status. Please try again.', 'error');
         }
     };
 
@@ -559,12 +600,15 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ profileId }) => {
                                                 ({selectedProject.reviewsCount || 0}<span className="max-sm:hidden"> Reviews</span>)
                                             </p>
                                         </div>
-                                        <button
+                                        <motion.button
+                                            whileTap={{ scale: 0.9 }}
+                                            animate={{ scale: selectedProject.is_bookmarked ? [1, 1.2, 1] : 1 }}
+                                            transition={{ duration: 0.3 }}
                                             onClick={() => handleBookmarkProject(selectedProject.id)}
-                                            className={`text-textColor h-[48px] aspect-square flex items-center justify-center text-2xl rounded-full bg-cardItemBg transition-colors ${selectedProject.is_bookmarked ? 'text-mainColor' : 'hover:bg-cardItemBgHover'}`}
+                                            className={`h-[48px] aspect-square flex items-center justify-center text-2xl rounded-full transition-colors ${selectedProject.is_bookmarked ? 'bg-mainColor text-white' : 'bg-cardItemBg text-textColor hover:bg-cardItemBgHover'}`}
                                         >
                                             {selectedProject.is_bookmarked ? <HiBookmark /> : <HiOutlineBookmark />}
-                                        </button>
+                                        </motion.button>
                                         {selectedProject.type === "project" || selectedProject.submissionType === "developed" ? (
                                             <Link
                                                 to="/preview/$projectId"

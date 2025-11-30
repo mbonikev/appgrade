@@ -92,12 +92,15 @@ const AppCard: React.FC<AppCardProps> = ({
 
         {/* Bookmark Button (Other Projects) */}
         {!isOwnProject && onBookmark && (
-          <button
+          <motion.button
+            whileTap={{ scale: 0.8 }}
+            animate={{ scale: isBookmarked ? [1, 1.2, 1] : 1 }}
+            transition={{ duration: 0.3 }}
             onClick={(e) => { e.stopPropagation(); onBookmark(); }}
-            className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-white/20 transition-colors opacity-0 group-hover:opacity-100"
+            className={`absolute top-3 right-3 z-20 p-2 rounded-full backdrop-blur-md transition-colors opacity-0 group-hover:opacity-100 ${isBookmarked ? 'bg-mainColor text-white' : 'bg-white/10 text-white hover:bg-white/20'}`}
           >
-            {isBookmarked ? <RiBookmarkFill className="text-mainColor" /> : <RiBookmarkLine />}
-          </button>
+            {isBookmarked ? <RiBookmarkFill /> : <RiBookmarkLine />}
+          </motion.button>
         )}
 
         <div className="relative aspect-[16/9] bg-cardBg overflow-hidden rounded-2xl">

@@ -7,6 +7,7 @@ import { Link } from "@tanstack/react-router";
 import ReviewModal from "../../Preview/components/ReviewModal";
 import api from "../../../lib/api";
 import { useAuth } from "../../../contexts/AuthContext";
+import { useToast } from "../../../contexts/ToastContext";
 
 interface AppGridProps {
   activeView?: "Following" | "Discover";
@@ -171,29 +172,45 @@ const AppGrid = ({
     }
   };
 
+  const { showToast } = useToast();
+
   const handleBookmarkProject = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     if (!authUser) {
-      alert('Please sign in to bookmark projects');
+      showToast('Please sign in to bookmark projects', 'info');
       return;
     }
 
     const userId = authUser.id || (authUser as any)._id;
     const isBookmarked = savedProjectIds.includes(id);
 
+    // Optimistic Update
+    if (isBookmarked) {
+      setSavedProjectIds(prev => prev.filter(pid => pid !== id));
+    } else {
+      setSavedProjectIds(prev => [...prev, id]);
+    }
+
     try {
       if (isBookmarked) {
         await api.delete(`/api/projects/${id}/save`, { data: { userId } });
-        setSavedProjectIds(prev => prev.filter(pid => pid !== id));
-        alert('Project unsaved!');
       } else {
         await api.post(`/api/projects/${id}/save`, { userId });
-        setSavedProjectIds(prev => [...prev, id]);
-        alert('Project saved!');
       }
     } catch (error: any) {
       console.error('Error toggling bookmark:', error);
-      alert('Failed to update bookmark');
+
+      // Revert Optimistic Update
+      if (isBookmarked) {
+        setSavedProjectIds(prev => [...prev, id]);
+      } else {
+        setSavedProjectIds(prev => prev.filter(pid => pid !== id));
+      }
+
+      showToast('Failed to update bookmark', 'error', {
+        label: 'Report Issue',
+        onClick: () => window.open('mailto:support@appgrade.com?subject=Bookmark%20Error', '_blank')
+      });
     }
   };
 
@@ -299,12 +316,15 @@ const AppGrid = ({
                         ({selectedApp.reviewsCount || 0}<span className="max-sm:hidden"> Reviews</span>)
                       </p>
                     </div>
-                    <button
+                    <motion.button
+                      whileTap={{ scale: 0.9 }}
+                      animate={{ scale: selectedApp.isBookmarked ? [1, 1.2, 1] : 1 }}
+                      transition={{ duration: 0.3 }}
                       onClick={(e) => handleBookmarkProject(e, selectedApp.id)}
-                      className={`text-textColor h-[48px] aspect-square flex items-center justify-center text-2xl rounded-full bg-cardItemBg transition-colors ${selectedApp.isBookmarked ? 'text-mainColor' : 'hover:bg-cardItemBgHover'}`}
+                      className={`h-[48px] aspect-square flex items-center justify-center text-2xl rounded-full transition-colors ${selectedApp.isBookmarked ? 'bg-mainColor text-white' : 'bg-cardItemBg text-textColor hover:bg-cardItemBgHover'}`}
                     >
                       {selectedApp.isBookmarked ? <HiBookmark /> : <HiOutlineBookmark />}
-                    </button>
+                    </motion.button>
                     {selectedApp.type === "project" ||
                       selectedApp.submissionType === "developed" ? (
                       <Link
