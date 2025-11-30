@@ -13,6 +13,7 @@ interface AppCardProps {
   type?: 'project' | 'screens' | 'ui_element' | 'theme';
   isOwnProject?: boolean;
   isBookmarked?: boolean;
+  averageRating?: number;
   onEdit?: () => void;
   onDelete?: () => void;
   onBookmark?: () => void;
@@ -29,6 +30,7 @@ const AppCard: React.FC<AppCardProps> = ({
   type = 'project',
   isOwnProject,
   isBookmarked,
+  averageRating = 0,
   onEdit,
   onDelete,
   onBookmark,
@@ -135,7 +137,7 @@ const AppCard: React.FC<AppCardProps> = ({
         </div>
         <div className="flex items-center text-sm font-semibold gap-1">
           <HiStar className="text-base text-orange-500 dark:text-orange-400 " />
-          3.4
+          {averageRating > 0 ? averageRating.toFixed(1) : '0.0'}
         </div>
       </div>
     </div>
