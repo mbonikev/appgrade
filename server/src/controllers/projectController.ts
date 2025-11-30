@@ -9,6 +9,13 @@ export const getAllProjects = async (req: Request, res: Response) => {
         const { limit = 50, skip = 0 } = req.query;
         const projects = await Project.find()
             .populate('author', 'name username email avatar')
+            .populate({
+                path: 'reviews',
+                populate: {
+                    path: 'user',
+                    select: 'name username email avatar'
+                }
+            })
             .sort({ createdAt: -1 })
             .limit(Number(limit))
             .skip(Number(skip));
@@ -40,7 +47,15 @@ export const getProjectsByUserId = async (req: Request, res: Response) => {
 export const getProjectById = async (req: Request, res: Response) => {
     const { projectId } = req.params;
     try {
-        const project = await Project.findById(projectId).populate('author', 'name username email avatar');
+        const project = await Project.findById(projectId)
+            .populate('author', 'name username email avatar')
+            .populate({
+                path: 'reviews',
+                populate: {
+                    path: 'user',
+                    select: 'name username email avatar'
+                }
+            });
         if (!project) {
             return res.status(404).json({ message: 'Project not found' });
         }
@@ -351,6 +366,9 @@ export const addReview = async (req: Request, res: Response) => {
             comment
         });
 
+        // Populate the user data
+        await review.populate('user', 'name username email avatar');
+
         // Update project stats
         const reviews = await Review.find({ project: projectId });
         const avgRating = reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length;
@@ -367,6 +385,44 @@ export const addReview = async (req: Request, res: Response) => {
         }
         console.error('Error adding review:', error);
         res.status(500).json({ message: 'Server error adding review' });
+    }
+};
+
+export const deleteReview = async (req: Request, res: Response) => {
+    const { projectId, reviewId } = req.params;
+    const { userId } = req.body;
+
+    try {
+        const review = await Review.findById(reviewId);
+        if (!review) {
+            return res.status(404).json({ message: 'Review not found' });
+        }
+
+        // Check if user is the author of the review
+        if (review.user.toString() !== userId) {
+            return res.status(403).json({ message: 'Not authorized to delete this review' });
+        }
+
+        await Review.findByIdAndDelete(reviewId);
+
+        // Update project stats
+        const project = await Project.findById(projectId);
+        if (project) {
+            const reviews = await Review.find({ project: projectId });
+            const avgRating = reviews.length > 0
+                ? reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length
+                : 0;
+
+            project.reviews = project.reviews.filter((r: any) => r.toString() !== reviewId);
+            project.averageRating = avgRating;
+            project.reviewsCount = reviews.length;
+            await project.save();
+        }
+
+        res.status(200).json({ message: 'Review deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting review:', error);
+        res.status(500).json({ message: 'Server error deleting review' });
     }
 };
 

@@ -1,11 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { HiStar, HiUserCircle } from 'react-icons/hi';
+import { HiStar } from 'react-icons/hi';
 import { RiChatSmile2Line } from 'react-icons/ri';
 
 interface Review {
     _id?: string;
-    author: {
+    user: {
+        _id?: string;
         name: string;
         avatar?: string;
         username?: string;
@@ -20,6 +21,7 @@ interface ReviewsSectionProps {
     averageRating: number;
     reviewsCount: number;
     onWriteReview: () => void;
+    onDeleteReview: (reviewId: string) => void;
     currentUser?: any;
 }
 
@@ -28,10 +30,14 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({
     averageRating,
     reviewsCount,
     onWriteReview,
+    onDeleteReview,
     currentUser
 }) => {
     const formatDate = (dateString: string) => {
+        if (!dateString) return 'Unknown date';
         const date = new Date(dateString);
+        if (isNaN(date.getTime())) return 'Unknown date';
+
         const now = new Date();
         const diffTime = Math.abs(now.getTime() - date.getTime());
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -42,6 +48,20 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({
         }
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     };
+
+    // Calculate rating distribution
+    const ratingDistribution = React.useMemo(() => {
+        const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+        if (!reviews || reviews.length === 0) return distribution;
+
+        reviews.forEach(review => {
+            const rating = Math.round(review.rating);
+            if (rating >= 1 && rating <= 5) {
+                distribution[rating as keyof typeof distribution]++;
+            }
+        });
+        return distribution;
+    }, [reviews]);
 
     return (
         <div className="w-full border-t border-linesColor mt-10 pt-10">
@@ -76,55 +96,79 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({
                         </p>
                     </div>
 
-                    {/* Rating Distribution (Mock for now as we don't have this data easily) */}
+                    {/* Rating Distribution */}
                     <div className="mt-8 space-y-3">
-                        {[5, 4, 3, 2, 1].map((star) => (
-                            <div key={star} className="flex items-center gap-3 text-sm">
-                                <span className="font-medium text-textColor w-3">{star}</span>
-                                <div className="flex-1 h-2 bg-bodyBg rounded-full overflow-hidden">
-                                    <div
-                                        className="h-full bg-orange-500 rounded-full"
-                                        style={{ width: star === 5 ? '60%' : star === 4 ? '30%' : '5%' }} // Mock widths
-                                    ></div>
+                        {[5, 4, 3, 2, 1].map((star) => {
+                            const count = ratingDistribution[star as keyof typeof ratingDistribution];
+                            const percentage = reviewsCount > 0 ? (count / reviewsCount) * 100 : 0;
+
+                            return (
+                                <div key={star} className="flex items-center gap-3 text-sm">
+                                    <span className="font-medium text-textColor w-3">{star}</span>
+                                    <div className="flex-1 h-2 bg-bodyBg rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-orange-500 rounded-full"
+                                            style={{ width: `${percentage}%` }}
+                                        ></div>
+                                    </div>
+                                    <span className="text-xs text-textColorWeak w-6 text-right">{count}</span>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
 
                 {/* Reviews List */}
                 <div className="space-y-6">
                     {reviews && reviews.length > 0 ? (
-                        reviews.map((review, index) => (
-                            <motion.div
-                                key={index}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.1 }}
-                                className="bg-cardBg p-6 rounded-3xl"
-                            >
-                                <div className="flex justify-between items-start mb-4">
-                                    <div className="flex items-center gap-3">
-                                        <img
-                                            src={review.author?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(review.author?.name || 'User')}`}
-                                            alt={review.author?.name}
-                                            className="w-10 h-10 rounded-full object-cover"
-                                        />
-                                        <div>
-                                            <h5 className="font-bold text-textColor">{review.author?.name}</h5>
-                                            <p className="text-xs text-textColorWeak">{formatDate(review.createdAt)}</p>
+                        reviews.map((review, index) => {
+                            const isAuthor = currentUser && (
+                                currentUser.id === review.user?._id ||
+                                currentUser._id === review.user?._id
+                            );
+
+                            return (
+                                <motion.div
+                                    key={review._id || index}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: index * 0.1 }}
+                                    className="bg-cardBg p-6 rounded-3xl group relative"
+                                >
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div className="flex items-center gap-3">
+                                            <img
+                                                src={review.user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(review.user?.name || 'User')}`}
+                                                alt={review.user?.name}
+                                                className="w-10 h-10 rounded-full object-cover"
+                                            />
+                                            <div>
+                                                <h5 className="font-bold text-textColor">{review.user?.name}</h5>
+                                                <p className="text-xs text-textColorWeak">{formatDate(review.createdAt)}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-1 bg-bodyBg px-2 py-1 rounded-lg">
+                                                <HiStar className="text-orange-500 text-sm" />
+                                                <span className="font-bold text-textColor text-sm">{review.rating}</span>
+                                            </div>
+
+                                            {isAuthor && (
+                                                <button
+                                                    onClick={() => review._id && onDeleteReview(review._id)}
+                                                    className="text-red-500 hover:text-red-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity"
+                                                >
+                                                    Delete
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-1 bg-bodyBg px-2 py-1 rounded-lg">
-                                        <HiStar className="text-orange-500 text-sm" />
-                                        <span className="font-bold text-textColor text-sm">{review.rating}</span>
-                                    </div>
-                                </div>
-                                <p className="text-textColor leading-relaxed">
-                                    {review.comment}
-                                </p>
-                            </motion.div>
-                        ))
+                                    <p className="text-textColor leading-relaxed">
+                                        {review.comment}
+                                    </p>
+                                </motion.div>
+                            );
+                        })
                     ) : (
                         <div className="text-center py-12 bg-cardBg rounded-3xl border-2 border-dashed border-linesColor">
                             <div className="w-16 h-16 bg-cardItemBg rounded-full flex items-center justify-center mx-auto mb-4">

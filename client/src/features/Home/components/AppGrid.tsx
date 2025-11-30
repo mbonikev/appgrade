@@ -159,17 +159,38 @@ const AppGrid = ({
         comment: data.review
       });
 
-      alert('Review submitted successfully!');
+      showToast('Review submitted successfully!', 'success');
       setReviewModalOpen(false);
       setSelectedProjectForReview(null);
 
       // Refresh projects to show new rating
-      // Ideally we should refactor fetchProjects to be callable here
-      // For now, let's just update local state if possible or reload
       window.location.reload();
     } catch (error: any) {
       console.error('Error submitting review:', error);
-      alert(error.response?.data?.message || 'Failed to submit review');
+      showToast(error.response?.data?.message || 'Failed to submit review', 'error');
+    }
+  };
+
+  const handleDeleteReview = async (reviewId: string) => {
+    if (!authUser || !selectedApp) return;
+
+    if (!window.confirm('Are you sure you want to delete this review?')) return;
+
+    const userId = authUser.id || (authUser as any)._id;
+
+    try {
+      await api.delete(`/api/projects/${selectedApp.id}/reviews/${reviewId}`, {
+        data: { userId }
+      });
+
+      showToast('Review deleted successfully', 'success');
+
+      // Optimistically update UI or reload
+      // For simplicity and to ensure stats are correct, reload
+      window.location.reload();
+    } catch (error: any) {
+      console.error('Error deleting review:', error);
+      showToast(error.response?.data?.message || 'Failed to delete review', 'error');
     }
   };
 
@@ -447,6 +468,7 @@ const AppGrid = ({
                     averageRating={selectedApp.averageRating || 0}
                     reviewsCount={selectedApp.reviewsCount || 0}
                     onWriteReview={() => handleReviewClick(selectedApp)}
+                    onDeleteReview={handleDeleteReview}
                     currentUser={authUser}
                   />
                 </div>

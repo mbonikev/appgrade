@@ -10,7 +10,8 @@ import {
     unsaveProject,
     getSavedProjects,
     getFollowedProjects,
-    addReview
+    addReview,
+    deleteReview
 } from '../controllers/projectController';
 import { uploadFields } from '../config/multerConfig';
 
@@ -46,6 +47,9 @@ router.get('/:projectId', getProjectById);
 
 // Add review
 router.post('/:projectId/reviews', addReview);
+
+// Delete review
+router.delete('/:projectId/reviews/:reviewId', deleteReview);
 
 export default router;
 
