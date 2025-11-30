@@ -1,12 +1,28 @@
 import { Request, Response } from 'express';
 import User from '../models/User';
+import Project from '../models/Project';
 
 export const getCreators = async (req: Request, res: Response) => {
     try {
         // Fetch all users for now (in real app, filter by role 'creator' or similar)
         const users = await User.find().sort({ createdAt: -1 });
 
-        // Map to Creator interface expected by frontend
+        // Get actual project counts for all users using aggregation
+        const projectCounts = await Project.aggregate([
+            {
+                $group: {
+                    _id: '$author',
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
+
+        // Create a map of userId -> actual project count
+        const projectCountMap = new Map(
+            projectCounts.map(item => [item._id.toString(), item.count])
+        );
+
+        // Map to Creator interface expected by frontend with actual app counts
         const creators = users.map(user => ({
             id: user._id.toString(),
             name: user.name,
@@ -14,7 +30,7 @@ export const getCreators = async (req: Request, res: Response) => {
             avatar: user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}`,
             bio: user.bio || 'No bio yet.',
             followers: user.followers || 0,
-            appsCount: user.appsCount || 0,
+            appsCount: projectCountMap.get(user._id.toString()) || 0, // Use actual count from database
             isVerified: user.isVerified || false,
             coverImage: user.coverImage || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=1000' // Default cover
         }));
